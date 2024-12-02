@@ -7,7 +7,7 @@
 #' @param rho numeric [-1,1] (vectorized); A \code{rho} must be provided, otherwise a blank list will be returned.
 #' @param type options("spearman", "pearson", "NNScor", "NNSdep"); \code{type = "spearman"}(default) dependence metric desired.
 #' @param drift logical; \code{drift = TRUE} (default) preserves the drift of the original series.
-#' @param target_drift numerical; code{NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.
+#' @param target_drift numerical; code{target_drift = NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.
 #' @param trim numeric [0,1]; The mean trimming proportion, defaults to \code{trim = 0.1}.
 #' @param xmin numeric; the lower limit for the left tail.
 #' @param xmax numeric; the upper limit for the right tail.
@@ -41,6 +41,8 @@
 #' \item{kappa} scale adjustment to the variance of ME density.
 #' \item{elaps} elapsed time.
 #' }
+#' 
+#' @note Vectorized \code{rho} and \code{drift} parameters will not vectorize both simultaneously.  Also, do not specify \code{target_drift = NULL}.
 #'
 #' @references
 #' \itemize{
@@ -57,7 +59,7 @@
 #' @examples
 #' \dontrun{
 #' # To generate an orthogonal rank correlated time-series to AirPassengers
-#' boots <- NNS.meboot(AirPassengers, reps=100, rho = 0, xmin = 0)
+#' boots <- NNS.meboot(AirPassengers, reps = 100, rho = 0, xmin = 0)
 #'
 #' # Verify correlation of replicates ensemble to original
 #' cor(boots["ensemble",]$ensemble, AirPassengers, method = "spearman")
@@ -67,6 +69,17 @@
 #'
 #' # Plot ensemble
 #' lines(boots["ensemble",]$ensemble, lwd = 3)
+#' 
+#' 
+#' ### Vectorized drift with a single rho
+#' boots <- NNS.meboot(AirPassengers, reps = 100, rho = 0, xmin = 0, target_drift = c(1,7))
+#' matplot(do.call(cbind, boots["replicates", ]), type = "l")
+#' lines(1:length(AirPassengers), AirPassengers, lwd = 3, col = "red")
+#' 
+#' ### Vectorized rho with a single target drift
+#' boots <- NNS.meboot(AirPassengers, reps = 100, rho = c(0, .5, 1), xmin = 0, target_drift = 3)
+#' matplot(do.call(cbind, boots["replicates", ]), type = "l")
+#' lines(1:length(AirPassengers), AirPassengers, lwd = 3, col = "red") 
 #' }
 #' @export
 
@@ -107,7 +120,14 @@
     ordxx <- order(x)
 
 
-    ### Fred Viole SUGGESTION PART 1 of 2
+    if(is.null(target_drift)){
+      orig_coef <- fast_lm(1:n, x)$coef
+      orig_intercept <- orig_coef[1]
+      orig_drift <- orig_coef[2]
+      target_drift <- orig_drift
+    }
+    
+
 
     if(rho < 1){
       if(rho < -0.5) ordxx_2 <- rev(ordxx) else ordxx_2 <- order(ordxx)
@@ -194,11 +214,8 @@
 
     ensemble[ordxx,] <- qseq
 
-  
-    ### Fred Viole SUGGESTION  PART 2 of 2
-    ### Average two ordxx ensemble matrices
 
-    if(rho<1){
+    if(any(rho<1)){
       matrix2 = matrix(0, nrow=length(x), ncol = reps)
       matrix2[ordxx_2,] = qseq
 
@@ -240,9 +257,9 @@
       
       new_coef <- apply(ensemble, 2, function(i) fast_lm(1:n, i)$coef)
       slopes <- new_coef[2,]
-      
+     
       if(drift){
-        if(is.null(target_drift)) new_slopes <- (orig_drift - slopes) else new_slopes <- (target_drift - slopes)
+        new_slopes <- (target_drift - slopes)
         ensemble <- ensemble + t(t(sapply(new_slopes, function(slope) cumsum(rep(slope, n)))))
         
         new_intercepts <- orig_intercept - new_coef[1,]
@@ -303,4 +320,4 @@
     return(final)
  }
  
-NNS.meboot <- Vectorize(NNS.meboot, vectorize.args = "rho")
+NNS.meboot <- Vectorize(NNS.meboot, vectorize.args = c("rho", "target_drift"))

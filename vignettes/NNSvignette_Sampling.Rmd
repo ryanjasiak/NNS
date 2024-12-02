@@ -227,7 +227,22 @@ sapply(boots, function(r) cor(r, x, method = "spearman"))
  1.0000000  0.4989619 -0.4984818 -0.9779778
 ```
 
-More replicates and ensembles thereof can be generated for any number of $\rho$ values. Please see the full **`NNS.meboot`** and **`NNS.MC`** argument documentation.
+More replicates and ensembles thereof can be generated for any number of $\rho$ values. 
+
+### `target_drift` Specification
+We can also specify a target drift in our replicates with the `target_drift` parameter.
+
+```{r tgt_drift, fig.align='center', fig.width=8, fig.height=8, eval=FALSE}
+boots = NNS.MC(x, reps = 1, lower_rho = -1, upper_rho = 1, by = .5, target_drift = 0.05)$replicates
+reps = do.call(cbind, boots)
+
+plot(x, type = "l", lwd = 3, ylim = c(min(reps), max(reps)))
+matplot(reps, type = "l", col = rainbow(length(boots)), add = TRUE)
+```
+
+![](images/NNSmc_1_tgt_drift.png)
+
+Please see the full **`NNS.meboot`** and **`NNS.MC`** argument documentation.
 
 ## Simulating a Multivariate Dependence Structure
 

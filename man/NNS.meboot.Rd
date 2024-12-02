@@ -38,7 +38,7 @@ NNS.meboot(
 
 \item{drift}{logical; \code{drift = TRUE} (default) preserves the drift of the original series.}
 
-\item{target_drift}{numerical; code{NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.}
+\item{target_drift}{numerical; code{target_drift = NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.}
 
 \item{trim}{numeric [0,1]; The mean trimming proportion, defaults to \code{trim = 0.1}.}
 
@@ -91,10 +91,13 @@ Returns the following row names in a matrix:
 \description{
 Adapted maximum entropy bootstrap routine from \code{meboot} \url{https://cran.r-project.org/package=meboot}.
 }
+\note{
+Vectorized \code{rho} and \code{drift} parameters will not vectorize both simultaneously.  Also, do not specify \code{target_drift = NULL}.
+}
 \examples{
 \dontrun{
 # To generate an orthogonal rank correlated time-series to AirPassengers
-boots <- NNS.meboot(AirPassengers, reps=100, rho = 0, xmin = 0)
+boots <- NNS.meboot(AirPassengers, reps = 100, rho = 0, xmin = 0)
 
 # Verify correlation of replicates ensemble to original
 cor(boots["ensemble",]$ensemble, AirPassengers, method = "spearman")
@@ -104,6 +107,17 @@ matplot(boots["replicates",]$replicates , type = 'l')
 
 # Plot ensemble
 lines(boots["ensemble",]$ensemble, lwd = 3)
+
+
+### Vectorized drift with a single rho
+boots <- NNS.meboot(AirPassengers, reps = 100, rho = 0, xmin = 0, target_drift = c(1,7))
+matplot(do.call(cbind, boots["replicates", ]), type = "l")
+lines(1:length(AirPassengers), AirPassengers, lwd = 3, col = "red")
+
+### Vectorized rho with a single target drift
+boots <- NNS.meboot(AirPassengers, reps = 100, rho = c(0, .5, 1), xmin = 0, target_drift = 3)
+matplot(do.call(cbind, boots["replicates", ]), type = "l")
+lines(1:length(AirPassengers), AirPassengers, lwd = 3, col = "red") 
 }
 }
 \references{

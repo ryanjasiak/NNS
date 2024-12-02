@@ -36,7 +36,7 @@ NNS.MC(
 
 \item{drift}{logical; \code{drift = TRUE} (default) preserves the drift of the original series.}
 
-\item{target_drift}{numerical; code{NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.}
+\item{target_drift}{numerical; code{target_drift = NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.}
 
 \item{xmin}{numeric; the lower limit for the left tail.}
 

@@ -151,6 +151,13 @@ legend('left', legend = c('ecdf', 'LPM.ratio'), fill=c('black','red'), border=NA
 #     rho = 1  rho = 0.5 rho = -0.5   rho = -1
 #   1.0000000  0.4989619 -0.4984818 -0.9779778
 
+## ----tgt_drift, fig.align='center', fig.width=8, fig.height=8, eval=FALSE-----
+#  boots = NNS.MC(x, reps = 1, lower_rho = -1, upper_rho = 1, by = .5, target_drift = 0.05)$replicates
+#  reps = do.call(cbind, boots)
+#  
+#  plot(x, type = "l", lwd = 3, ylim = c(min(reps), max(reps)))
+#  matplot(reps, type = "l", col = rainbow(length(boots)), add = TRUE)
+
 ## ----multisim, eval=FALSE-----------------------------------------------------
 #  set.seed(123)
 #  x <- rnorm(1000); y <- rnorm(1000); z <- rnorm(1000)
