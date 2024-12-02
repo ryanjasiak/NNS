@@ -38,7 +38,7 @@ NNS.meboot(
 
 \item{drift}{logical; \code{drift = TRUE} (default) preserves the drift of the original series.}
 
-\item{target_drift}{numerical; code{target_drift = NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.}
+\item{target_drift}{numerical; \code{target_drift = NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.}
 
 \item{trim}{numeric [0,1]; The mean trimming proportion, defaults to \code{trim = 0.1}.}
 
