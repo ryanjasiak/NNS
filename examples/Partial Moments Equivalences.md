@@ -26,46 +26,53 @@ set.seed(123); x = rnorm(100); y = rnorm(100)
 ### Variance
 A sum of the squared upside area and the squared downside area.
 ```r
+# Sample Variance (base R):
 > var(x)
+[1] 0.8332328 
+> # Sample Variance:
+> (UPM(2, mean(x), x) + LPM(2, mean(x), x)) * (length(x) / (length(x) - 1))
 [1] 0.8332328
-# Sample Variance:
-> UPM(2,mean(x),x)+LPM(2,mean(x),x)
+
+# Population Adjustment of Sample Variance (base R):
+> var(x) * ((length(x) - 1) / length(x))
 [1] 0.8249005
+
 # Population Variance:
-> (UPM(2,mean(x),x)+LPM(2,mean(x),x))*(length(x)/(length(x)-1))
-[1] 0.8332328
+> UPM(2, mean(x), x) + LPM(2, mean(x), x)
+[1] 0.8249005
+
 # Variance is also the co-variance of itself:
-> (Co.LPM(1,x,x,mean(x),mean(x))+Co.UPM(1,x,x,mean(x),mean(x))-D.LPM(1,1,x,x,mean(x),mean(x))-D.UPM(1,1,x,x,mean(x),mean(x)))*(length(x)/(length(x)-1))
-[1] 0.8332328
+> (Co.LPM(1, x, x, mean(x), mean(x)) + Co.UPM(1, x, x, mean(x), mean(x)) - D.LPM(1, 1, x, x, mean(x), mean(x)) - D.UPM(1, 1, x, x, mean(x), mean(x)))
+[1] 0.8249005
 ```
 
 ### The first 4 moments are returned with the function `NNS.moments`. For sample statistics, set `population = FALSE`.
 ```r
-> NNS.moments(x)
-$mean
-[1] 0.09040591
-
-$variance
-[1] 0.8332328
-
-$skewness
-[1] 0.06049948
- 
-$kurtosis
-[1] -0.161053
-
 > NNS.moments(x, population = FALSE)
 $mean
 [1] 0.09040591
 
 $variance
-[1] 0.8249005
- 
+[1] 0.8332328
+
 $skewness
 [1] 0.06235774
 
 $kurtosis
 [1] -0.1069186
+
+> NNS.moments(x, population = TRUE)
+$mean
+[1] 0.09040591
+
+$variance
+[1] 0.8249005
+
+$skewness
+[1] 0.06049948
+
+$kurtosis
+[1] -0.161053
 ```
 
 ### Standard Deviation
@@ -73,6 +80,8 @@ $kurtosis
 > sd(x)
 [1] 0.9128159
 > ((UPM(2,mean(x),x)+LPM(2,mean(x),x))*(length(x)/(length(x)-1)))^.5
+[1] 0.9128159
+> sqrt(NNS.moments(x, population = FALSE)$variance)
 [1] 0.9128159
 ```
 ### Covariance
@@ -150,6 +159,8 @@ A normalized difference between upside area and downside area.
 [1] 0.06049948
 > ((UPM(3,mean(x),x)-LPM(3,mean(x),x))/(UPM(2,mean(x),x)+LPM(2,mean(x),x))^(3/2))
 [1] 0.06049948
+> NNS.moments(x, population = TRUE)$skewness
+[1] 0.06049948
 ```
 ### UPM/LPM - a more intuitive measure of skewness.  (Upside area / Downside area)
 ```r
@@ -163,6 +174,8 @@ A normalized sum of upside area and downside area.
 > kurtosis(x)
 [1] -0.161053
 > ((UPM(4,mean(x),x)+LPM(4,mean(x),x))/(UPM(2,mean(x),x)+LPM(2,mean(x),x))^2)-3
+[1] -0.161053
+> NNS.moments(x, population = TRUE)$kurtosis
 [1] -0.161053
 ```
 ### CDFs
