@@ -67,13 +67,13 @@ NNS.ARMA <- function(variable,
                      seasonal.plot = TRUE,
                      pred.int = NULL){
   
-
+  
   if(is.numeric(seasonal.factor) && dynamic) stop('Hmmm...Seems you have "seasonal.factor" specified and "dynamic = TRUE".  Nothing dynamic about static seasonal factors!  Please set "dynamic = FALSE" or "seasonal.factor = FALSE"')
-
+  
   if(any(class(variable)%in%c("tbl","data.table"))) variable <- as.vector(unlist(variable))
   
   if(sum(is.na(variable)) > 0) stop("You have some missing values, please address.")
-
+  
   method <- tolower(method)
   if(method == "means") shrink <- FALSE
   
@@ -99,7 +99,7 @@ NNS.ARMA <- function(variable,
   
   Estimates <- numeric(length = h)
   
- 
+  
   if(is.numeric(seasonal.factor)){
     seasonal.plot = FALSE
     M <- matrix(seasonal.factor, ncol=1)
@@ -147,9 +147,9 @@ NNS.ARMA <- function(variable,
     if(is.character(weights)) Weights <- rep(1/length(lag), length(lag))
     
   }
-
+  
   lin.resid <- list()
-
+  
   # Regression for each estimate in h
   for (j in 1:h) {
     # Regenerate seasonal.factor if dynamic
@@ -218,7 +218,7 @@ NNS.ARMA <- function(variable,
       Lin.Regression.Estimates <- unlist(Lin.Regression.Estimates)
       
       if (method != "means") lin.resid <- mean(abs(Lin.Regression.Estimates - mean(Lin.Regression.Estimates)))
- 
+      
       if (method %in% c("means", "shrink")) {
         Regression.Estimates_means <- sapply(Component.series, mean)
         if (shrink) Lin.Regression.Estimates <- (Lin.Regression.Estimates + Regression.Estimates_means) / 2 else Lin.Regression.Estimates <- Regression.Estimates_means
@@ -231,15 +231,15 @@ NNS.ARMA <- function(variable,
     if (method == "lin") Estimates[j] <- sum(Lin.estimates * Weights)
     
     if (method == 'both') Estimates[j] <- mean(c(Lin.estimates, Nonlin.estimates))
-  
+    
     if (method == "nonlin")  Estimates[j] <- sum(Nonlin.estimates * Weights)
-  
+    
     
     variable <- c(variable, Estimates[j])
     FV <- variable
   } # j loop
-
-
+  
+  
   if(!is.null(pred.int)){
     PIs <- do.call(cbind, NNS.MC(Estimates, lower_rho = 0, upper_rho = 1, by = .2, exp = 2)$replicates)
     lin.resid <- mean(unlist(lin.resid))
@@ -283,7 +283,7 @@ NNS.ARMA <- function(variable,
               col = rgb(1, 192/255, 203/255, alpha = 0.5),
               border = NA)
       
-
+      
       lines(OV, type = 'l', lwd = 2, col = 'steelblue')
       
       lines((training.set + 1) : (training.set + h), Estimates, type = 'l', lwd = 2, lty = 1, col = 'red')
