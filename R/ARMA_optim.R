@@ -175,16 +175,6 @@ NNS.ARMA.optim <- function(variable,
       
       if(is.null(ncol(seasonal.combs[[i]])) || dim(seasonal.combs[[i]])[2]==0) break 
       
-      # if(j=="lin"){
-      #   
-      #   nns.estimates.indiv <- lapply(1 : ncol(seasonal.combs[[i]]), function(k) {
-      #     actual <- tail(variable, h_eval)
-      #     if(print.trace) message("Testing seasonal.factor ", paste(unlist(seasonal.combs[[i]][ , k]), ","), "\r", appendLF = FALSE)
-      #     predicted <- NNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor =  seasonal.combs[[i]][ , k], method = "lin", plot = FALSE, negative.values = negative.values)
-      #     
-      #     return(eval(obj.fn))
-      #   })
-      # }
       if (j == "lin") {
         # Parallel or sequential computation based on num_cores
         nns.estimates.indiv <- if (num_cores > 1) {
