@@ -2828,7 +2828,7 @@ arma_parameters &lt;- NNS.ARMA.optim(variable = dtrain$tide_feet,
                                   pred.int = .95,
                                   seasonal.factor = nns_periods[1:200],
                                   print.trace = FALSE)</code></pre>
-<pre><code>## Time difference of 21.81794 mins</code></pre>
+<pre><code>## Time difference of 19.9947 mins</code></pre>
 </div>
 <div id="forecast" class="section level3">
 <h3>3.3: Forecast</h3>
@@ -2925,7 +2925,7 @@ scum_end.time &lt;- Sys.time()
 # SCUM execution time
 scum_time &lt;- scum_end.time - scum_start.time
 scum_time</code></pre>
-<pre><code>## Time difference of 6.915558 mins</code></pre>
+<pre><code>## Time difference of 6.835971 mins</code></pre>
 <pre class="r"><code># SCUM evaluation
 (sum((scum_forecast - mean(dtest$tide_feet)) * (dtest$tide_feet - mean(dtest$tide_feet))) ^ 2) / (sum((dtest$tide_feet - mean(dtest$tide_feet)) ^ 2) * sum((scum_forecast - mean(dtest$tide_feet)) ^ 2))</code></pre>
 <pre><code>## [1] 2.294788e-07</code></pre>
