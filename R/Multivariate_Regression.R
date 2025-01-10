@@ -353,10 +353,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
             }
           )
         }
-        
-        
       }
-      
       predict.fit <- DISTANCES
     }
     
