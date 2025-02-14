@@ -7,7 +7,7 @@
 NNS.SD.cluster(
   data,
   degree = 1,
-  type = "continuous",
+  type = "discrete",
   min_cluster = 1,
   dendrogram = FALSE
 )
@@ -17,7 +17,7 @@ NNS.SD.cluster(
 
 \item{degree}{Numeric options: (1, 2, 3). Degree of stochastic dominance test.}
 
-\item{type}{Character, either \code{"continuous"} (default) or \code{"discrete"}; specifies the type of CDF.}
+\item{type}{Character, either  \code{"discrete"} (default) or \code{"continuous"}; specifies the type of CDF.}
 
 \item{min_cluster}{Integer. The minimum number of elements required for a valid cluster.}
 

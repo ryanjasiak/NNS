@@ -5,7 +5,7 @@
 #'
 #' @param data A numeric matrix or data frame of variables to be clustered.
 #' @param degree Numeric options: (1, 2, 3). Degree of stochastic dominance test.
-#' @param type Character, either \code{"continuous"} (default) or \code{"discrete"}; specifies the type of CDF.
+#' @param type Character, either  \code{"discrete"} (default) or \code{"continuous"}; specifies the type of CDF.
 #' @param min_cluster Integer. The minimum number of elements required for a valid cluster.
 #' @param dendrogram Logical; \code{FALSE} (default). If \code{TRUE}, a dendrogram is produced based on a simple "distance" measure between clusters.
 #'
@@ -48,7 +48,7 @@
 #' @export
  
 
-NNS.SD.cluster <- function(data, degree = 1, type = "continuous", min_cluster = 1, dendrogram = FALSE) {
+NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1, dendrogram = FALSE) {
   clusters <- list()
   iteration <- 1
   
