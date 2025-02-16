@@ -51,9 +51,14 @@
 NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1, dendrogram = FALSE) {
   clusters <- list()
   iteration <- 1
+  n <- ncol(data)
+  
+  if(is.null(colnames(data))) colnames(data) <- paste0("X_",1:ncol(data))
+  original_names <- colnames(data)
   
   # Ensure the input data is a matrix
   remaining_data <- as.matrix(data)
+  
   
   # Continue clustering until the number of remaining columns is less than or equal to min_cluster
   while (ncol(remaining_data) > min_cluster) {
@@ -97,6 +102,9 @@ NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1,
   
   # Flatten the clusters into a single vector and generate cluster labels
   all_vars <- unlist(clusters)
+  
+  
+  
   cluster_labels <- unlist(lapply(seq_along(clusters), function(i) rep(i, length(clusters[[i]]))))
   
   
@@ -104,14 +112,19 @@ NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1,
     # Ensure there are at least two variables for hierarchical clustering
     if (length(all_vars) < 2) {
       warning("Not enough variables for hierarchical clustering. Returning clusters only.")
-      return(list("Clusters" = clusters, "Dendrogram" = NULL))
+      return(list("Clusters" = clusters, "Order" = NULL))
     }
     
-    # Create a distance matrix based on cluster labels
-    dist_matrix <- as.dist(outer(cluster_labels, cluster_labels, function(a, b) abs(a - b)))
-    # For a "dist" object, assign labels using the Labels attribute instead of rownames.
+    # Use the extraction order inherent in all_vars as a tie-breaker.
+    extraction_order <- seq_along(all_vars)
+
+    epsilon <- 1e-3  # small tie-breaker weight
+    dist_matrix <- as.dist(
+      outer(cluster_labels, cluster_labels, function(a, b) n * abs(a - b)) +
+        epsilon * outer(extraction_order, extraction_order, function(i, j) abs(i - j))
+    )
     attr(dist_matrix, "Labels") <- all_vars
-    
+
     # Perform hierarchical clustering
     hc <- hclust(dist_matrix, method = "complete")
     
@@ -121,7 +134,8 @@ NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1,
          ylab = "SD Distance",
          sub = ""
     )
-    
+
+    hc$order <- match(hc$labels, original_names)
     
     return(list("Clusters" = clusters, "Dendrogram" = hc))
   } else return(list("Clusters" = clusters))
