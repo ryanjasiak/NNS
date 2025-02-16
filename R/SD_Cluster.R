@@ -118,7 +118,7 @@ NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1,
     # Use the extraction order inherent in all_vars as a tie-breaker.
     extraction_order <- seq_along(all_vars)
 
-    epsilon <- 1e-3  # small tie-breaker weight
+    if(length(clusters)==1) epsilon <- 0 else epsilon <- 1e-3  # small tie-breaker weight
     dist_matrix <- as.dist(
       outer(cluster_labels, cluster_labels, function(a, b) n * abs(a - b)) +
         epsilon * outer(extraction_order, extraction_order, function(i, j) abs(i - j))
