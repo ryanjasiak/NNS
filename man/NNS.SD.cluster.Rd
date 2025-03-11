@@ -54,7 +54,6 @@ print(results$Clusters)
 
 # Produce a dendrogram as well
 results_with_dendro <- NNS.SD.cluster(data = A, degree = 1, min_cluster = 2, dendrogram = TRUE)
-plot(results_with_dendro$Dendrogram)
 }
 
 }
