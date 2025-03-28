@@ -21,12 +21,12 @@ NNS.rescale(x, a, b, method = "minmax", T = NULL, type = "Terminal")
 
 \item{T}{numeric; time to maturity in years (required for \code{method = "riskneutral"}, ignored otherwise; e.g., 1). Default is NULL.}
 
-\item{type}{character; for \code{method = "riskneutral"}: \code{"Terminal"} (default, mean = \( S_0 e^{r T} \)) or \code{"Discounted"} (mean = \( S_0 \)).}
+\item{type}{character; for \code{method = "riskneutral"}: \code{"Terminal"} (default) or \code{"Discounted"} (mean = \( S_0 \)).}
 }
 \value{
 Returns a rescaled distribution:
   - For \code{"minmax"}: values scaled linearly to the range \code{[a, b]}.
-  - For \code{"riskneutral"}: values scaled multiplicatively to a risk-neutral mean (\( S_0 e^{r T} \) if \code{type = "Terminal"}, or \( S_0 \) if \code{type = "Discounted"}).
+  - For \code{"riskneutral"}: values scaled multiplicatively to a risk-neutral mean (\( S_0 e^(rT) \) if \code{type = "Terminal"}, or \( S_0 \) if \code{type = "Discounted"}).
 }
 \description{
 Rescale a vector using either min-max scaling or risk-neutral adjustment.
@@ -38,11 +38,11 @@ set.seed(123)
 x <- rnorm(100)
 NNS.rescale(x, a = 5, b = 10, method = "minmax")  # Scales to [5, 10]
 
-# Risk-neutral scaling (Terminal): a = S_0, b = r  # Mean ≈ 105.13
+# Risk-neutral scaling (Terminal): a = S_0, b = r  # Mean approx 105.13
 prices <- 100 * exp(cumsum(rnorm(100, 0.001, 0.02)))
 NNS.rescale(prices, a = 100, b = 0.05, method = "riskneutral", T = 1, type = "Terminal")
 
-# Risk-neutral scaling (Discounted): a = S_0, b = r  # Mean ≈ 100
+# Risk-neutral scaling (Discounted): a = S_0, b = r  # Mean approx 100
 NNS.rescale(prices, a = 100, b = 0.05, method = "riskneutral", T = 1, type = "Discounted")
 }
 }
