@@ -2,6 +2,9 @@ tests/testthat/*.pdf
 .Rproj.user
 .RData
 .Rhistory
+.RInside_dir
 NNS.Rproj
-src/*.o
-src/*.dll
+legacy/src/*.o
+legacy/src/*.dll
+build/
+.venv/
