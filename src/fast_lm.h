@@ -1,6 +1,8 @@
+#pragma once
 
 #include <vector>
 #include <numeric>
+#include <cmath>
 
 using std::sqrt;
 using std::vector;
@@ -17,15 +19,17 @@ namespace NNS
     }
     class FastLmResult
     {
+    public:
         vector<double> coef;
         vector<double> fitted_values;
         FastLmResult(vector<double> c, vector<double> f) : coef(c), fitted_values(f) {}
     };
 
     template <typename Scalar>
-    vector<double> fast_lm(const vector<Scalar> &x, const vector<Scalar> &y)
+    FastLmResult fast_lm(const vector<Scalar> &x, const vector<Scalar> &y)
     {
         double mean_x = 0.0, mean_y = 0.0;
+        int n = x.size();
         for (int i = 0; i < n; ++i)
         {
             mean_x += x[i];
@@ -67,7 +71,8 @@ namespace NNS
             double sum = A[i][i];
             for (int k = 0; k < i; ++k)
             {
-                sum -= L[i][k] * *2;
+                // sum -= L[i][k] * *2;
+                sum -= pow(L[i][k], 2);
             }
             L[i][i] = sqrt(sum > 0 ? sum : 0); // Ensure non-negative for stability
 
@@ -181,6 +186,7 @@ namespace NNS
             residuals[i] = y[i] - fitted_values[i];
         }
 
-        double y_mean = mean(y);
+        // double y_mean = mean(y);
+        return vector<double>();
     }
 }

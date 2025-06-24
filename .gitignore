@@ -8,3 +8,4 @@ legacy/src/*.o
 legacy/src/*.dll
 build/
 .venv/
+.DS_Store
