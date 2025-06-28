@@ -1,19 +1,19 @@
 ## ----setup, include=FALSE, message=FALSE--------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-library(NNS)
+library(LegacyNNS)
 library(data.table)
 data.table::setDTthreads(2L)
 options(mc.cores = 1)
 Sys.setenv("OMP_THREAD_LIMIT" = 2)
 
 ## ----setup2, message=FALSE, warning = FALSE-----------------------------------
-library(NNS)
+library(LegacyNNS)
 library(data.table)
 require(knitr)
 require(rgl)
 
 ## ----linear,fig.width=5,fig.height=3,fig.align = "center", warning=FALSE------
-nns_lin = NNS.ARMA(AirPassengers, 
+LegacyNNS_lin = LegacyNNS.ARMA(AirPassengers, 
                h = 44, 
                training.set = 100, 
                method = "lin", 
@@ -21,10 +21,10 @@ nns_lin = NNS.ARMA(AirPassengers,
                seasonal.factor = 12, 
                seasonal.plot = FALSE)
 
-sqrt(mean((nns_lin - tail(AirPassengers, 44)) ^ 2))
+sqrt(mean((LegacyNNS_lin - tail(AirPassengers, 44)) ^ 2))
 
 ## ----nonlinear,fig.width=5,fig.height=3,fig.align = "center", eval = FALSE----
-#  nns_nonlin = NNS.ARMA(AirPassengers,
+#  LegacyNNS_nonlin = LegacyNNS.ARMA(AirPassengers,
 #                 h = 44,
 #                 training.set = 100,
 #                 method = "nonlin",
@@ -32,13 +32,13 @@ sqrt(mean((nns_lin - tail(AirPassengers, 44)) ^ 2))
 #                 seasonal.factor = 12,
 #                 seasonal.plot = FALSE)
 #  
-#  sqrt(mean((nns_nonlin - tail(AirPassengers, 44)) ^ 2))
+#  sqrt(mean((LegacyNNS_nonlin - tail(AirPassengers, 44)) ^ 2))
 
 ## ----nonlinearres, eval = FALSE-----------------------------------------------
 #  [1] 20.19599
 
 ## ----seasonal test, eval=TRUE-------------------------------------------------
-seas = t(sapply(1 : 25, function(i) c(i, sqrt( mean( (NNS.ARMA(AirPassengers, h = 44, training.set = 100, method = "lin", seasonal.factor = i, plot=FALSE) - tail(AirPassengers, 44)) ^ 2) ) ) ) )
+seas = t(sapply(1 : 25, function(i) c(i, sqrt( mean( (LegacyNNS.ARMA(AirPassengers, h = 44, training.set = 100, method = "lin", seasonal.factor = i, plot=FALSE) - tail(AirPassengers, 44)) ^ 2) ) ) ) )
 
 colnames(seas) = c("Period", "RMSE")
 seas
@@ -47,44 +47,44 @@ seas
 a = seas[which.min(seas[ , 2]), 1]
 
 ## ----best nonlinear,fig.width=5,fig.height=3,fig.align = "center", eval=TRUE----
-nns = NNS.ARMA(AirPassengers, 
+LegacyNNS = LegacyNNS.ARMA(AirPassengers, 
                h = 44, 
                training.set = 100, 
                method = "nonlin", 
                seasonal.factor = a, 
                plot = TRUE, seasonal.plot = FALSE)
 
-sqrt(mean((nns - tail(AirPassengers, 44)) ^ 2))
+sqrt(mean((LegacyNNS - tail(AirPassengers, 44)) ^ 2))
 
 ## ----modulo, eval=TRUE--------------------------------------------------------
-NNS.seas(AirPassengers, modulo = 12, plot = FALSE)
+LegacyNNS.seas(AirPassengers, modulo = 12, plot = FALSE)
 
 ## ----best optim, eval=FALSE---------------------------------------------------
-#  nns.optimal = NNS.ARMA.optim(AirPassengers,
+#  LegacyNNS.optimal = LegacyNNS.ARMA.optim(AirPassengers,
 #                               training.set = 100,
 #                               seasonal.factor = seq(12, 60, 6),
 #                               obj.fn = expression( sqrt(mean((predicted - actual)^2)) ),
 #                               objective = "min",
 #                               pred.int = .95, plot = TRUE)
 #  
-#  nns.optimal
+#  LegacyNNS.optimal
 
 ## ----optimres, eval=FALSE-----------------------------------------------------
 #  [1] "CURRNET METHOD: lin"
-#  [1] "COPY LATEST PARAMETERS DIRECTLY FOR NNS.ARMA() IF ERROR:"
-#  [1] "NNS.ARMA(... method =  'lin' , seasonal.factor =  c( 12 ) ...)"
+#  [1] "COPY LATEST PARAMETERS DIRECTLY FOR LegacyNNS.ARMA() IF ERROR:"
+#  [1] "LegacyNNS.ARMA(... method =  'lin' , seasonal.factor =  c( 12 ) ...)"
 #  [1] "CURRENT lin OBJECTIVE FUNCTION = 35.3996540135277"
 #  [1] "BEST method = 'lin', seasonal.factor = c( 12 )"
 #  [1] "BEST lin OBJECTIVE FUNCTION = 35.3996540135277"
 #  [1] "CURRNET METHOD: nonlin"
-#  [1] "COPY LATEST PARAMETERS DIRECTLY FOR NNS.ARMA() IF ERROR:"
-#  [1] "NNS.ARMA(... method =  'nonlin' , seasonal.factor =  c( 12 ) ...)"
+#  [1] "COPY LATEST PARAMETERS DIRECTLY FOR LegacyNNS.ARMA() IF ERROR:"
+#  [1] "LegacyNNS.ARMA(... method =  'nonlin' , seasonal.factor =  c( 12 ) ...)"
 #  [1] "CURRENT nonlin OBJECTIVE FUNCTION = 20.1959877511828"
 #  [1] "BEST method = 'nonlin' PATH MEMBER = c( 12 )"
 #  [1] "BEST nonlin OBJECTIVE FUNCTION = 20.1959877511828"
 #  [1] "CURRNET METHOD: both"
-#  [1] "COPY LATEST PARAMETERS DIRECTLY FOR NNS.ARMA() IF ERROR:"
-#  [1] "NNS.ARMA(... method =  'both' , seasonal.factor =  c( 12 ) ...)"
+#  [1] "COPY LATEST PARAMETERS DIRECTLY FOR LegacyNNS.ARMA() IF ERROR:"
+#  [1] "LegacyNNS.ARMA(... method =  'both' , seasonal.factor =  c( 12 ) ...)"
 #  [1] "CURRENT both OBJECTIVE FUNCTION = 19.5082249052739"
 #  [1] "BEST method = 'both' PATH MEMBER = c( 12 )"
 #  [1] "BEST both OBJECTIVE FUNCTION = 19.5082249052739"
@@ -104,7 +104,7 @@ NNS.seas(AirPassengers, modulo = 12, plot = FALSE)
 #  $shrink
 #  [1] FALSE
 #  
-#  $nns.regress
+#  $LegacyNNS.regress
 #  [1] FALSE
 #  
 #  $bias.shift
@@ -136,7 +136,7 @@ NNS.seas(AirPassengers, modulo = 12, plot = FALSE)
 #  [37] 474.2976 549.6115 605.8220 591.3467 520.9717 458.2483 410.1368 457.9970
 
 ## ----extension,results='hide',fig.width=5,fig.height=3,fig.align = "center", eval=FALSE----
-#  NNS.ARMA.optim(AirPassengers,
+#  LegacyNNS.ARMA.optim(AirPassengers,
 #                  seasonal.factor = seq(12, 60, 6),
 #                  obj.fn = expression( sqrt(mean((predicted - actual)^2)) ),
 #                  objective = "min",

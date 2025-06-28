@@ -1,13 +1,13 @@
 ## ----setup, include=FALSE, message = FALSE------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-library(NNS)
+library(LegacyNNS)
 library(data.table)
 data.table::setDTthreads(2L)
 options(mc.cores = 1)
 Sys.setenv("OMP_THREAD_LIMIT" = 2)
 
 ## ----mean, message=FALSE------------------------------------------------------
-library(NNS)
+library(LegacyNNS)
 set.seed(123) ; x = rnorm(100) ; y = rnorm(100)
 
 mean(x)
@@ -36,16 +36,16 @@ sd(x)
 ((UPM(2, mean(x), x) + LPM(2, mean(x), x)) * (length(x) / (length(x) - 1))) ^ .5
 
 ## ----moments------------------------------------------------------------------
-NNS.moments(x)
+LegacyNNS.moments(x)
 
-NNS.moments(x, population = FALSE)
+LegacyNNS.moments(x, population = FALSE)
 
 ## ----mode---------------------------------------------------------------------
 # Continuous
-NNS.mode(x)
+LegacyNNS.mode(x)
 
 # Discrete and multiple modes
-NNS.mode(c(1, 2, 2, 3, 3, 4, 4, 5), discrete = TRUE, multi = TRUE)
+LegacyNNS.mode(c(1, 2, 2, 3, 3, 4, 4, 5), discrete = TRUE, multi = TRUE)
 
 ## ----covariance---------------------------------------------------------------
 cov(x, y)
@@ -96,13 +96,13 @@ u_y = LPM.ratio(0, y, y)
 Co.LPM(0, u_x, u_y, .5, .5)
 
 # Continuous CDF:
-NNS.CDF(x, 1)
+LegacyNNS.CDF(x, 1)
 
 # CDF with target:
-NNS.CDF(x, 1, target = mean(x))
+LegacyNNS.CDF(x, 1, target = mean(x))
 
 # Survival Function:
-NNS.CDF(x, 1, type = "survival")
+LegacyNNS.CDF(x, 1, type = "survival")
 
 ## ----numerical integration----------------------------------------------------
 x = seq(0, 1, .001) ; y = x ^ 2

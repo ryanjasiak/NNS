@@ -1,13 +1,13 @@
 ## ----setup, include=FALSE, message=FALSE--------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-library(NNS)
+library(LegacyNNS)
 library(data.table)
 data.table::setDTthreads(2L)
 options(mc.cores = 1)
 Sys.setenv("OMP_THREAD_LIMIT" = 2)
 
 ## ----setup2, message=FALSE, warning = FALSE-----------------------------------
-library(NNS)
+library(LegacyNNS)
 library(data.table)
 require(knitr)
 require(rgl)
@@ -139,7 +139,7 @@ legend('left', legend = c('ecdf', 'LPM.ratio'), fill=c('black','red'), border=NA
 #   10:       -0.7069835       -0.5403318
 
 ## ----fig.align='center', fig.width=8, fig.height=8, eval=FALSE----------------
-#  boots = NNS.MC(x, reps = 1, lower_rho = -1, upper_rho = 1, by = .5)$replicates
+#  boots = LegacyNNS.MC(x, reps = 1, lower_rho = -1, upper_rho = 1, by = .5)$replicates
 #  reps = do.call(cbind, boots)
 #  
 #  plot(x, type = "l", lwd = 3, ylim = c(min(reps), max(reps)))
@@ -152,7 +152,7 @@ legend('left', legend = c('ecdf', 'LPM.ratio'), fill=c('black','red'), border=NA
 #   1.0000000  0.4989619 -0.4984818 -0.9779778
 
 ## ----tgt_drift, fig.align='center', fig.width=8, fig.height=8, eval=FALSE-----
-#  boots = NNS.MC(x, reps = 1, lower_rho = -1, upper_rho = 1, by = .5, target_drift = 0.05)$replicates
+#  boots = LegacyNNS.MC(x, reps = 1, lower_rho = -1, upper_rho = 1, by = .5, target_drift = 0.05)$replicates
 #  reps = do.call(cbind, boots)
 #  
 #  plot(x, type = "l", lwd = 3, ylim = c(min(reps), max(reps)))
@@ -175,8 +175,8 @@ legend('left', legend = c('ecdf', 'LPM.ratio'), fill=c('black','red'), border=NA
 #  new.dep.data <- sapply(1:ncol(original.data), function(x) LPM.VaR(percentile = dep.structure[,x], degree = 1, x = new.data[,x]))
 
 ## ----comparison, warning=FALSE, eval=FALSE------------------------------------
-#  NNS.copula(original.data)
-#  NNS.copula(new.dep.data)
+#  LegacyNNS.copula(original.data)
+#  LegacyNNS.copula(new.dep.data)
 #  
 #  [1] 0.4353849
 #  [1] 0.4357026
@@ -202,7 +202,7 @@ legend('left', legend = c('ecdf', 'LPM.ratio'), fill=c('black','red'), border=NA
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # Apply bootstrap to each variable
-#  new.boot.dep.data = apply(original.data, 2, function(r) NNS.meboot(r, reps = 1, rho = .95))
+#  new.boot.dep.data = apply(original.data, 2, function(r) LegacyNNS.meboot(r, reps = 1, rho = .95))
 #  
 #  # Reformat into vectors
 #  boot.ensemble.vectors = lapply(new.boot.dep.data, function(z) unlist(z["ensemble",]))
@@ -219,8 +219,8 @@ legend('left', legend = c('ecdf', 'LPM.ratio'), fill=c('black','red'), border=NA
 #  [1] 0.9423242
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  NNS.copula(original.data)
-#  NNS.copula(new.boot.dep.matrix)
+#  LegacyNNS.copula(original.data)
+#  LegacyNNS.copula(new.boot.dep.matrix)
 #  
 #  [1] 0.4353849
 #  [1] 0.4263725
