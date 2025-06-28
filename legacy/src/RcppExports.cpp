@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // fast_lm
 List fast_lm(NumericVector x, NumericVector y);
-RcppExport SEXP _NNS_fast_lm(SEXP xSEXP, SEXP ySEXP) {
+RcppExport SEXP _LegacyNNS_fast_lm(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,7 +24,7 @@ END_RCPP
 }
 // fast_lm_mult
 List fast_lm_mult(NumericMatrix x, NumericVector y);
-RcppExport SEXP _NNS_fast_lm_mult(SEXP xSEXP, SEXP ySEXP) {
+RcppExport SEXP _LegacyNNS_fast_lm_mult(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,7 +36,7 @@ END_RCPP
 }
 // LPM_RCPP
 NumericVector LPM_RCPP(const double& degree, const RObject& target, const RObject& variable);
-RcppExport SEXP _NNS_LPM_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
+RcppExport SEXP _LegacyNNS_LPM_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree(degreeSEXP);
@@ -48,7 +48,7 @@ END_RCPP
 }
 // UPM_RCPP
 NumericVector UPM_RCPP(const double& degree, const RObject& target, const RObject& variable);
-RcppExport SEXP _NNS_UPM_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
+RcppExport SEXP _LegacyNNS_UPM_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree(degreeSEXP);
@@ -60,7 +60,7 @@ END_RCPP
 }
 // LPM_ratio_RCPP
 NumericVector LPM_ratio_RCPP(const double& degree, const RObject& target, const RObject& variable);
-RcppExport SEXP _NNS_LPM_ratio_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
+RcppExport SEXP _LegacyNNS_LPM_ratio_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree(degreeSEXP);
@@ -72,7 +72,7 @@ END_RCPP
 }
 // UPM_ratio_RCPP
 NumericVector UPM_ratio_RCPP(const double& degree, const RObject& target, const RObject& variable);
-RcppExport SEXP _NNS_UPM_ratio_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
+RcppExport SEXP _LegacyNNS_UPM_ratio_RCPP(SEXP degreeSEXP, SEXP targetSEXP, SEXP variableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree(degreeSEXP);
@@ -84,7 +84,7 @@ END_RCPP
 }
 // CoLPM_RCPP
 NumericVector CoLPM_RCPP(const double& degree_lpm, const RObject& x, const RObject& y, const RObject& target_x, const RObject& target_y);
-RcppExport SEXP _NNS_CoLPM_RCPP(SEXP degree_lpmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
+RcppExport SEXP _LegacyNNS_CoLPM_RCPP(SEXP degree_lpmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree_lpm(degree_lpmSEXP);
@@ -98,7 +98,7 @@ END_RCPP
 }
 // CoUPM_RCPP
 NumericVector CoUPM_RCPP(const double& degree_upm, const RObject& x, const RObject& y, const RObject& target_x, const RObject& target_y);
-RcppExport SEXP _NNS_CoUPM_RCPP(SEXP degree_upmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
+RcppExport SEXP _LegacyNNS_CoUPM_RCPP(SEXP degree_upmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree_upm(degree_upmSEXP);
@@ -112,7 +112,7 @@ END_RCPP
 }
 // DLPM_RCPP
 NumericVector DLPM_RCPP(const double& degree_lpm, const double& degree_upm, const RObject& x, const RObject& y, const RObject& target_x, const RObject& target_y);
-RcppExport SEXP _NNS_DLPM_RCPP(SEXP degree_lpmSEXP, SEXP degree_upmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
+RcppExport SEXP _LegacyNNS_DLPM_RCPP(SEXP degree_lpmSEXP, SEXP degree_upmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree_lpm(degree_lpmSEXP);
@@ -127,7 +127,7 @@ END_RCPP
 }
 // DUPM_RCPP
 NumericVector DUPM_RCPP(const double& degree_lpm, const double& degree_upm, const RObject& x, const RObject& y, const RObject& target_x, const RObject& target_y);
-RcppExport SEXP _NNS_DUPM_RCPP(SEXP degree_lpmSEXP, SEXP degree_upmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
+RcppExport SEXP _LegacyNNS_DUPM_RCPP(SEXP degree_lpmSEXP, SEXP degree_upmSEXP, SEXP xSEXP, SEXP ySEXP, SEXP target_xSEXP, SEXP target_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type degree_lpm(degree_lpmSEXP);
@@ -142,7 +142,7 @@ END_RCPP
 }
 // PMMatrix_RCPP
 List PMMatrix_RCPP(const double& LPM_degree, const double& UPM_degree, const RObject& target, const RObject& variable, const bool pop_adj);
-RcppExport SEXP _NNS_PMMatrix_RCPP(SEXP LPM_degreeSEXP, SEXP UPM_degreeSEXP, SEXP targetSEXP, SEXP variableSEXP, SEXP pop_adjSEXP) {
+RcppExport SEXP _LegacyNNS_PMMatrix_RCPP(SEXP LPM_degreeSEXP, SEXP UPM_degreeSEXP, SEXP targetSEXP, SEXP variableSEXP, SEXP pop_adjSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const double& >::type LPM_degree(LPM_degreeSEXP);
@@ -154,9 +154,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// NNS_bin
-List NNS_bin(NumericVector x, double width, double origin, bool missinglast);
-RcppExport SEXP _NNS_NNS_bin(SEXP xSEXP, SEXP widthSEXP, SEXP originSEXP, SEXP missinglastSEXP) {
+// LegacyNNS_bin
+List LegacyNNS_bin(NumericVector x, double width, double origin, bool missinglast);
+RcppExport SEXP _LegacyNNS_LegacyNNS_bin(SEXP xSEXP, SEXP widthSEXP, SEXP originSEXP, SEXP missinglastSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -164,28 +164,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type width(widthSEXP);
     Rcpp::traits::input_parameter< double >::type origin(originSEXP);
     Rcpp::traits::input_parameter< bool >::type missinglast(missinglastSEXP);
-    rcpp_result_gen = Rcpp::wrap(NNS_bin(x, width, origin, missinglast));
+    rcpp_result_gen = Rcpp::wrap(LegacyNNS_bin(x, width, origin, missinglast));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_NNS_fast_lm", (DL_FUNC) &_NNS_fast_lm, 2},
-    {"_NNS_fast_lm_mult", (DL_FUNC) &_NNS_fast_lm_mult, 2},
-    {"_NNS_LPM_RCPP", (DL_FUNC) &_NNS_LPM_RCPP, 3},
-    {"_NNS_UPM_RCPP", (DL_FUNC) &_NNS_UPM_RCPP, 3},
-    {"_NNS_LPM_ratio_RCPP", (DL_FUNC) &_NNS_LPM_ratio_RCPP, 3},
-    {"_NNS_UPM_ratio_RCPP", (DL_FUNC) &_NNS_UPM_ratio_RCPP, 3},
-    {"_NNS_CoLPM_RCPP", (DL_FUNC) &_NNS_CoLPM_RCPP, 5},
-    {"_NNS_CoUPM_RCPP", (DL_FUNC) &_NNS_CoUPM_RCPP, 5},
-    {"_NNS_DLPM_RCPP", (DL_FUNC) &_NNS_DLPM_RCPP, 6},
-    {"_NNS_DUPM_RCPP", (DL_FUNC) &_NNS_DUPM_RCPP, 6},
-    {"_NNS_PMMatrix_RCPP", (DL_FUNC) &_NNS_PMMatrix_RCPP, 5},
-    {"_NNS_NNS_bin", (DL_FUNC) &_NNS_NNS_bin, 4},
+    {"_LegacyNNS_fast_lm", (DL_FUNC) &_LegacyNNS_fast_lm, 2},
+    {"_LegacyNNS_fast_lm_mult", (DL_FUNC) &_LegacyNNS_fast_lm_mult, 2},
+    {"_LegacyNNS_LPM_RCPP", (DL_FUNC) &_LegacyNNS_LPM_RCPP, 3},
+    {"_LegacyNNS_UPM_RCPP", (DL_FUNC) &_LegacyNNS_UPM_RCPP, 3},
+    {"_LegacyNNS_LPM_ratio_RCPP", (DL_FUNC) &_LegacyNNS_LPM_ratio_RCPP, 3},
+    {"_LegacyNNS_UPM_ratio_RCPP", (DL_FUNC) &_LegacyNNS_UPM_ratio_RCPP, 3},
+    {"_LegacyNNS_CoLPM_RCPP", (DL_FUNC) &_LegacyNNS_CoLPM_RCPP, 5},
+    {"_LegacyNNS_CoUPM_RCPP", (DL_FUNC) &_LegacyNNS_CoUPM_RCPP, 5},
+    {"_LegacyNNS_DLPM_RCPP", (DL_FUNC) &_LegacyNNS_DLPM_RCPP, 6},
+    {"_LegacyNNS_DUPM_RCPP", (DL_FUNC) &_LegacyNNS_DUPM_RCPP, 6},
+    {"_LegacyNNS_PMMatrix_RCPP", (DL_FUNC) &_LegacyNNS_PMMatrix_RCPP, 5},
+    {"_LegacyNNS_LegacyNNS_bin", (DL_FUNC) &_LegacyNNS_LegacyNNS_bin, 4},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_NNS(DllInfo *dll) {
+RcppExport void R_init_LegacyNNS(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

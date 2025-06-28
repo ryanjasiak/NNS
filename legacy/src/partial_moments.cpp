@@ -88,17 +88,17 @@ double UPM_C(const double &degree, const double &target, const RVector<double> &
 }
 
 // parallelFor
-#define NNS_LPM_UPM_PARALLEL_FOR_FUNC(WORKER_CLASS)      \
+#define LegacyNNS_LPM_UPM_PARALLEL_FOR_FUNC(WORKER_CLASS)      \
 size_t target_size=target.size();                        \
 NumericVector output = NumericVector(target_size);       \
 WORKER_CLASS tmp_func(degree, target, variable, output); \
 parallelFor(0, target_size, tmp_func);                   \
 return(output);
 NumericVector LPM_CPv(const double &degree, const NumericVector &target, const NumericVector &variable) {
-  NNS_LPM_UPM_PARALLEL_FOR_FUNC(LPM_Worker);
+  LegacyNNS_LPM_UPM_PARALLEL_FOR_FUNC(LPM_Worker);
 }
 NumericVector UPM_CPv(const double &degree, const NumericVector &target, const NumericVector &variable) {
-  NNS_LPM_UPM_PARALLEL_FOR_FUNC(UPM_Worker);
+  LegacyNNS_LPM_UPM_PARALLEL_FOR_FUNC(UPM_Worker);
 }
 
 NumericVector LPM_ratio_CPv(const double &degree, const NumericVector &target, const NumericVector &variable) {
@@ -291,7 +291,7 @@ double DUPM_C(
 }
 
 // parallelFor
-#define NNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(WORKER_CLASS, LPM_DEGREE_VARIABLE, UPM_DEGREE_VARIABLE) \
+#define LegacyNNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(WORKER_CLASS, LPM_DEGREE_VARIABLE, UPM_DEGREE_VARIABLE) \
 size_t target_x_size=target_x.size();                                                               \
 size_t target_y_size=target_y.size();                                                               \
 size_t max_target_size=(target_x_size>target_y_size?target_x_size:target_y_size);                   \
@@ -304,28 +304,28 @@ NumericVector CoLPM_CPv(
     const NumericVector &x, const NumericVector &y, 
     const NumericVector &target_x, const NumericVector &target_y
 ) {
-  NNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(CoLPM_Worker, degree_lpm, degree_lpm);
+  LegacyNNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(CoLPM_Worker, degree_lpm, degree_lpm);
 }
 NumericVector CoUPM_CPv(
     const double &degree_upm, 
     const NumericVector &x, const NumericVector &y, 
     const NumericVector &target_x, const NumericVector &target_y 
 ) {
-  NNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(CoUPM_Worker, degree_upm, degree_upm);
+  LegacyNNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(CoUPM_Worker, degree_upm, degree_upm);
 }
 NumericVector DLPM_CPv(
     const double &degree_lpm, const double &degree_upm, 
     const NumericVector &x, const NumericVector &y, 
     const NumericVector &target_x, const NumericVector &target_y
 ) {
-  NNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(DLPM_Worker, degree_lpm, degree_upm);
+  LegacyNNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(DLPM_Worker, degree_lpm, degree_upm);
 }
 NumericVector DUPM_CPv(
     const double &degree_lpm, const double &degree_upm, 
     const NumericVector &x, const NumericVector &y, 
     const NumericVector &target_x, const NumericVector &target_y
 ) {
-  NNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(DUPM_Worker, degree_lpm, degree_upm);
+  LegacyNNS_CO_DE_LPM_UPM_PARALLEL_FOR_FUNC(DUPM_Worker, degree_lpm, degree_upm);
 }
 
 

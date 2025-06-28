@@ -1,5 +1,5 @@
-#ifndef NNS_partial_moments_RCPP_H
-#define NNS_partial_moments_RCPP_H
+#ifndef LegacyNNS_partial_moments_RCPP_H
+#define LegacyNNS_partial_moments_RCPP_H
 
 #include <Rcpp.h>
 using namespace Rcpp;
@@ -14,5 +14,5 @@ NumericVector DLPM_RCPP(const double &degree_lpm, const double &degree_upm, cons
 NumericVector DUPM_RCPP(const double &degree_lpm, const double &degree_upm, const RObject &x, const RObject &y, const RObject &target_x, const RObject &target_y);
 List PMMatrix_RCPP(const double &LPM_degree, const double &UPM_degree,const RObject &target, const RObject &variable,const bool pop_adj=false);
 
-#endif // NNS_partial_moments_RCPP_H
+#endif // LegacyNNS_partial_moments_RCPP_H
 

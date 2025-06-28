@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // Declare the functions without default values
-double NNS_gravity_cpp(NumericVector x, bool discrete);
-NumericVector NNS_mode_cpp(NumericVector x, bool discrete, bool multi);
+double LegacyNNS_gravity_cpp(NumericVector x, bool discrete);
+NumericVector LegacyNNS_mode_cpp(NumericVector x, bool discrete, bool multi);
 
 #endif
 

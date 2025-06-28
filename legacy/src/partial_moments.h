@@ -1,5 +1,5 @@
-#ifndef NNS_partial_moments_H
-#define NNS_partial_moments_H
+#ifndef LegacyNNS_partial_moments_H
+#define LegacyNNS_partial_moments_H
 
 // [[Rcpp::depends(RcppParallel)]]
 #include <Rcpp.h>
@@ -14,7 +14,7 @@ using namespace RcppParallel;
 double LPM_C(const double &degree, const double &target, const RVector<double> &variable);
 double UPM_C(const double &degree, const double &target, const RVector<double> &variable);
 // parallelFor
-#define NNS_PM_SINGLE_VARIABLE_WORKER(NAME, FUNC) \
+#define LegacyNNS_PM_SINGLE_VARIABLE_WORKER(NAME, FUNC) \
   struct NAME : public Worker\
   {\
     const double degree;\
@@ -32,8 +32,8 @@ double UPM_C(const double &degree, const double &target, const RVector<double> &
         output[i] = FUNC(degree, target[i], variable); \
     }\
   }
-NNS_PM_SINGLE_VARIABLE_WORKER(LPM_Worker, LPM_C);
-NNS_PM_SINGLE_VARIABLE_WORKER(UPM_Worker, UPM_C);
+LegacyNNS_PM_SINGLE_VARIABLE_WORKER(LPM_Worker, LPM_C);
+LegacyNNS_PM_SINGLE_VARIABLE_WORKER(UPM_Worker, UPM_C);
 NumericVector LPM_CPv(const double &degree, const NumericVector &target, const NumericVector &variable);
 NumericVector UPM_CPv(const double &degree, const NumericVector &target, const NumericVector &variable);
 NumericVector LPM_ratio_CPv(const double &degree, const NumericVector &target, const NumericVector &variable);
@@ -65,7 +65,7 @@ double DUPM_C(
 );
 
 // parallelFor
-#define NNS_PM_TWO_VARIABLES_WORKER(NAME, FUNC) \
+#define LegacyNNS_PM_TWO_VARIABLES_WORKER(NAME, FUNC) \
   struct NAME : public Worker\
   {\
     const double degree_lpm;\
@@ -95,10 +95,10 @@ double DUPM_C(
     }\
   }
   
-NNS_PM_TWO_VARIABLES_WORKER(CoLPM_Worker, CoLPM_C);
-NNS_PM_TWO_VARIABLES_WORKER(CoUPM_Worker, CoUPM_C);
-NNS_PM_TWO_VARIABLES_WORKER(DLPM_Worker, DLPM_C);
-NNS_PM_TWO_VARIABLES_WORKER(DUPM_Worker, DUPM_C);
+LegacyNNS_PM_TWO_VARIABLES_WORKER(CoLPM_Worker, CoLPM_C);
+LegacyNNS_PM_TWO_VARIABLES_WORKER(CoUPM_Worker, CoUPM_C);
+LegacyNNS_PM_TWO_VARIABLES_WORKER(DLPM_Worker, DLPM_C);
+LegacyNNS_PM_TWO_VARIABLES_WORKER(DUPM_Worker, DUPM_C);
 NumericVector CoLPM_CPv(
     const double &degree_lpm, 
     const NumericVector &x, const NumericVector &y, 
@@ -209,5 +209,5 @@ List PMMatrix_CPv(
     const NumericMatrix &variable,
     const bool &pop_adj
 );
-#endif  //NNS_partial_moments_H
+#endif  //LegacyNNS_partial_moments_H
 

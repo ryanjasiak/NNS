@@ -1,7 +1,7 @@
 #include <vector>
 
 #include <unordered_map>
-namespace NNS
+namespace LegacyNNS
 {
 
     template <typename T>
@@ -64,4 +64,4 @@ namespace NNS
 
     }
 
-} // namespace NNS
+} // namespace LegacyNNS

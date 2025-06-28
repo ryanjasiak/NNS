@@ -81,7 +81,7 @@ NumericVector UPM_RCPP(const double &degree, const RObject &target, const RObjec
 //' @return Standardized LPM of variable
 //' @author Fred Viole, OVVO Financial Systems
 //' @references Viole, F. and Nawrocki, D. (2013) "Nonlinear Nonparametric Statistics: Using Partial Moments" (ISBN: 1490523995)
-//' @references Viole, F. (2017) "Continuous CDFs and ANOVA with NNS" \doi{10.2139/ssrn.3007373}
+//' @references Viole, F. (2017) "Continuous CDFs and ANOVA with LegacyNNS" \doi{10.2139/ssrn.3007373}
 //' @examples
 //' set.seed(123)
 //' x <- rnorm(100)
@@ -437,7 +437,7 @@ List PMMatrix_RCPP(
 
 
  // [[Rcpp::export]]
- List NNS_bin(NumericVector x, double width, double origin = 0, bool missinglast = false) {
+ List LegacyNNS_bin(NumericVector x, double width, double origin = 0, bool missinglast = false) {
    int bin, nmissing = 0;
    std::vector<int> out;
    
