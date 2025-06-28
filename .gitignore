@@ -6,6 +6,7 @@ tests/testthat/*.pdf
 NNS.Rproj
 legacy/src/*.o
 legacy/src/*.dll
+legacy/src/*.so
 build/
 .venv/
 .DS_Store
