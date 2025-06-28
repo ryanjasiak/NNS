@@ -1,4 +1,4 @@
-#' NNS ARMA
+#' LegacyNNS ARMA
 #'
 #' Autoregressive model incorporating nonlinear regressions of component series.
 #'
@@ -10,7 +10,7 @@
 #' @param seasonal.factor logical or integer(s); \code{TRUE} (default) Automatically selects the best seasonal lag from the seasonality test.  To use weighted average of all seasonal lags set to \code{(seasonal.factor = FALSE)}.  Otherwise, directly input known frequency integer lag to use, i.e. \code{(seasonal.factor = 12)} for monthly data.  Multiple frequency integers can also be used, i.e. \code{(seasonal.factor = c(12, 24, 36))}
 #' @param modulo integer(s); NULL (default) Used to find the nearest multiple(s) in the reported seasonal period.
 #' @param mod.only logical; \code{TRUE} (default) Limits the number of seasonal periods returned to the specified \code{modulo}.
-#' @param weights numeric or \code{"equal"}; \code{NULL} (default) sets the weights of the \code{seasonal.factor} vector when specified as integers.  If \code{(weights = NULL)} each \code{seasonal.factor} is weighted on its \link{NNS.seas} result and number of observations it contains, else an \code{"equal"} weight is used.
+#' @param weights numeric or \code{"equal"}; \code{NULL} (default) sets the weights of the \code{seasonal.factor} vector when specified as integers.  If \code{(weights = NULL)} each \code{seasonal.factor} is weighted on its \link{LegacyNNS.seas} result and number of observations it contains, else an \code{"equal"} weight is used.
 #' @param best.periods integer; [2] (default) used in conjunction with \code{(seasonal.factor = FALSE)}, uses the \code{best.periods} number of detected seasonal lags instead of \code{ALL} lags when
 #' \code{(seasonal.factor = FALSE, best.periods = NULL)}.
 #' @param negative.values logical; \code{FALSE} (default) If the variable can be negative, set to
@@ -21,7 +21,7 @@
 #' @param shrink logical; \code{FALSE} (default) Ensembles forecasts with \code{method = "means"}.
 #' @param plot logical; \code{TRUE} (default) Returns the plot of all periods exhibiting seasonality and the \code{variable} level reference in upper panel.  Lower panel returns original data and forecast.
 #' @param seasonal.plot logical; \code{TRUE} (default) Adds the seasonality plot above the forecast.  Will be set to \code{FALSE} if no seasonality is detected or \code{seasonal.factor} is set to an integer value.
-#' @param pred.int numeric [0, 1]; \code{NULL} (default) Plots and returns the associated prediction intervals for the final estimate.  Constructed using the maximum entropy bootstrap \link{NNS.meboot} on the final estimates.
+#' @param pred.int numeric [0, 1]; \code{NULL} (default) Plots and returns the associated prediction intervals for the final estimate.  Constructed using the maximum entropy bootstrap \link{LegacyNNS.meboot} on the final estimates.
 #' @return Returns a vector of forecasts of length \code{(h)} if no \code{pred.int} specified.  Else, returns a \code{data.table} with the forecasts as well as lower and upper prediction intervals per forecast point.
 #' @note
 #' For monthly data series, increased accuracy may be realized from forcing seasonal factors to multiples of 12.  For example, if the best periods reported are: \{37, 47, 71, 73\}  use
@@ -32,26 +32,26 @@
 #' @author Fred Viole, OVVO Financial Systems
 #' @references Viole, F. and Nawrocki, D. (2013) "Nonlinear Nonparametric Statistics: Using Partial Moments" (ISBN: 1490523995)
 #'
-#' Viole, F. (2019) "Forecasting Using NNS"  \doi{10.2139/ssrn.3382300}
+#' Viole, F. (2019) "Forecasting Using LegacyNNS"  \doi{10.2139/ssrn.3382300}
 #'
 #' @examples
 #'
-#' ## Nonlinear NNS.ARMA using AirPassengers monthly data and 12 period lag
+#' ## Nonlinear LegacyNNS.ARMA using AirPassengers monthly data and 12 period lag
 #' \dontrun{
-#' NNS.ARMA(AirPassengers, h = 45, training.set = 100, seasonal.factor = 12, method = "nonlin")
+#' LegacyNNS.ARMA(AirPassengers, h = 45, training.set = 100, seasonal.factor = 12, method = "nonlin")
 #'
-#' ## Linear NNS.ARMA using AirPassengers monthly data and 12, 24, and 36 period lags
-#' NNS.ARMA(AirPassengers, h = 45, training.set = 120, seasonal.factor = c(12, 24, 36), method = "lin")
+#' ## Linear LegacyNNS.ARMA using AirPassengers monthly data and 12, 24, and 36 period lags
+#' LegacyNNS.ARMA(AirPassengers, h = 45, training.set = 120, seasonal.factor = c(12, 24, 36), method = "lin")
 #'
-#' ## Nonlinear NNS.ARMA using AirPassengers monthly data and 2 best periods lag
-#' NNS.ARMA(AirPassengers, h = 45, training.set = 120, seasonal.factor = FALSE, best.periods = 2)
+#' ## Nonlinear LegacyNNS.ARMA using AirPassengers monthly data and 2 best periods lag
+#' LegacyNNS.ARMA(AirPassengers, h = 45, training.set = 120, seasonal.factor = FALSE, best.periods = 2)
 #' }
 #' @export
 
 
 
 # Autoregressive Model
-NNS.ARMA <- function(variable,
+LegacyNNS.ARMA <- function(variable,
                      h = 1,
                      training.set = NULL,
                      seasonal.factor = TRUE,
@@ -122,7 +122,7 @@ NNS.ARMA <- function(variable,
     }
     
   } else {
-    M <- NNS.seas(variable, plot=FALSE, modulo = modulo, mod.only = mod.only)
+    M <- LegacyNNS.seas(variable, plot=FALSE, modulo = modulo, mod.only = mod.only)
     if(!is.list(M)){
       M <- t(1)
     } else {
@@ -187,7 +187,7 @@ NNS.ARMA <- function(variable,
     for (j in 1:h) {
       # Regenerate seasonal.factor if dynamic
       if (dynamic) {
-        seas.matrix <- NNS.seas(variable, plot = FALSE)
+        seas.matrix <- LegacyNNS.seas(variable, plot = FALSE)
         if (!is.list(seas.matrix)) {
           M <- t(1)
         } else {
@@ -221,7 +221,7 @@ NNS.ARMA <- function(variable,
           
           last.y <- tail(y, 1)
           
-          reg.points <- NNS.reg(x, y, return.values = FALSE, plot = FALSE, multivariate.call = TRUE)
+          reg.points <- LegacyNNS.reg(x, y, return.values = FALSE, plot = FALSE, multivariate.call = TRUE)
           reg.points <- reg.points[complete.cases(reg.points), ]
           
           xs <- tail(reg.points$x, 1) - reg.points$x
@@ -270,7 +270,7 @@ NNS.ARMA <- function(variable,
   
   if(!is.null(pred.int)){
     if (method != "means") lin.resid <- mean(abs(Lin.Regression.Estimates - mean(Lin.Regression.Estimates)))
-    PIs <- do.call(cbind, NNS.MC(Estimates, lower_rho = 0, upper_rho = 1, by = .2, exp = 2)$replicates)
+    PIs <- do.call(cbind, LegacyNNS.MC(Estimates, lower_rho = 0, upper_rho = 1, by = .2, exp = 2)$replicates)
     lin.resid <- mean(unlist(lin.resid))
     lin.resid[is.na(lin.resid)] <- 0
     
@@ -302,7 +302,7 @@ NNS.ARMA <- function(variable,
     
     
     if(!is.null(pred.int)){
-      plot(OV, type = 'l', lwd = 2, main = "NNS.ARMA Forecast", col = 'steelblue',
+      plot(OV, type = 'l', lwd = 2, main = "LegacyNNS.ARMA Forecast", col = 'steelblue',
            xlim = c(1, max((training.set + h), length(OV))),
            ylab = label, ylim = c(min(Estimates, OV,  unlist(PIs) ), max(OV, Estimates, unlist(PIs) )) )
       
@@ -319,7 +319,7 @@ NNS.ARMA <- function(variable,
       segments(training.set, FV[training.set], training.set + 1, Estimates[1],lwd = 2,lty = 1,col = 'red')
       legend('topleft', bty = 'n', legend = c("Original", paste0("Forecast ", h, " period(s)")), lty = c(1, 1), col = c('steelblue', 'red'), lwd = 2)
     } else {
-      plot(OV, type = 'l', lwd = 2, main = "NNS.ARMA Forecast", col = 'steelblue',
+      plot(OV, type = 'l', lwd = 2, main = "LegacyNNS.ARMA Forecast", col = 'steelblue',
            xlim = c(1, max((training.set + h), length(OV))),
            ylab = label, ylim = c(min(Estimates, OV), max(OV, Estimates)))
       

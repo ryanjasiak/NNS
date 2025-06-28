@@ -1,4 +1,4 @@
-NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, n.best = NULL, type = NULL, point.est = NULL, point.only = FALSE,
+LegacyNNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, n.best = NULL, type = NULL, point.est = NULL, point.only = FALSE,
                        plot = FALSE, residual.plot = TRUE, location = NULL, noise.reduction = 'off', dist = "L2",
                        return.values = FALSE, plot.regions = FALSE, ncores = NULL, confidence.interval = NULL){
   
@@ -34,13 +34,13 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
   
   
   original.matrix <- cbind.data.frame(original.DV, original.IVs)
-  norm.matrix <- apply(original.matrix, 2, function(z) NNS.rescale(z, 0, 1))
+  norm.matrix <- apply(original.matrix, 2, function(z) LegacyNNS.rescale(z, 0, 1))
   
   minimums <- apply(original.IVs, 2, min)
   maximums <- apply(original.IVs, 2, max)
   
-  dep_a <- tryCatch(NNS.copula(original.matrix), error = function(e) .5^n)
-  dep_b <- tryCatch(NNS.copula(norm.matrix), error = function(e) .5^n)
+  dep_a <- tryCatch(LegacyNNS.copula(original.matrix), error = function(e) .5^n)
+  dep_b <- tryCatch(LegacyNNS.copula(norm.matrix), error = function(e) .5^n)
   dep_c <- tryCatch(mean(unlist(cor(original.matrix)[-1,1])), error = function(e) .5^n)
 
   dependence <- stats::fivenum(c(dep_a, dep_b, dep_c))[4]
@@ -49,7 +49,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
 
   ###  Regression Point Matrix
   if(is.numeric(order)){
-    reg.points <- lapply(1:ncol(original.IVs), function(b) NNS.reg(original.IVs[, b], original.DV, factor.2.dummy = factor.2.dummy, order = order, stn = stn, type = type, noise.reduction = noise.reduction, plot = FALSE, multivariate.call = TRUE, ncores = 1)$x)
+    reg.points <- lapply(1:ncol(original.IVs), function(b) LegacyNNS.reg(original.IVs[, b], original.DV, factor.2.dummy = factor.2.dummy, order = order, stn = stn, type = type, noise.reduction = noise.reduction, plot = FALSE, multivariate.call = TRUE, ncores = 1)$x)
     
     if(length(unique(sapply(reg.points, length))) != 1){
       reg.points.matrix <- do.call(cbind, lapply(reg.points, `length<-`, max(lengths(reg.points))))
@@ -64,13 +64,13 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
   ### If regression points are error (not likely)...
   if(length(reg.points.matrix[ , 1]) == 0  || is.null(reg.points.matrix)){
     for(i in 1 : n){
-      part.map <- NNS.part(original.IVs[ , i], original.DV, order = order, type = type, noise.reduction = noise.reduction, obs.req = 0)
-      dep <- NNS.dep(original.IVs[ , i], original.DV)$Dependence
+      part.map <- LegacyNNS.part(original.IVs[ , i], original.DV, order = order, type = type, noise.reduction = noise.reduction, obs.req = 0)
+      dep <- LegacyNNS.dep(original.IVs[ , i], original.DV)$Dependence
       char_length_order <- dep * max(nchar(part.map$df$quadrant))
       if(dep > stn){
-        reg.points[[i]] <- NNS.part(original.IVs[ , i], original.DV, order = ifelse(char_length_order%%1 < .5, floor(char_length_order), ceiling(char_length_order)), type = type, noise.reduction = 'off', obs.req = 0)$regression.points$x
+        reg.points[[i]] <- LegacyNNS.part(original.IVs[ , i], original.DV, order = ifelse(char_length_order%%1 < .5, floor(char_length_order), ceiling(char_length_order)), type = type, noise.reduction = 'off', obs.req = 0)$regression.points$x
       } else {
-        reg.points[[i]] <- NNS.part(original.IVs[ , i], original.DV, order = ifelse(char_length_order%%1 < .5, floor(char_length_order), ceiling(char_length_order)), noise.reduction = noise.reduction, type = "XONLY", obs.req = 1)$regression.points$x
+        reg.points[[i]] <- LegacyNNS.part(original.IVs[ , i], original.DV, order = ifelse(char_length_order%%1 < .5, floor(char_length_order), ceiling(char_length_order)), noise.reduction = noise.reduction, type = "XONLY", obs.req = 1)$regression.points$x
       }
     }
     reg.points.matrix <- do.call('cbind', lapply(reg.points, `length<-`, max(lengths(reg.points))))
@@ -104,39 +104,39 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
     invisible(data.table::setDTthreads(0, throttle = NULL))
   }
 
-  NNS.ID <- lapply(1:n, function(j) findInterval(original.IVs[ , j], vec = na.omit(sort(reg.points.matrix[ , j])), left.open = FALSE))
+  LegacyNNS.ID <- lapply(1:n, function(j) findInterval(original.IVs[ , j], vec = na.omit(sort(reg.points.matrix[ , j])), left.open = FALSE))
 
-  NNS.ID <- do.call(cbind, NNS.ID)
+  LegacyNNS.ID <- do.call(cbind, LegacyNNS.ID)
   
   ### Create unique identifier of each observation's interval
-  NNS.ID <- gsub(do.call(paste, as.data.frame(NNS.ID)), pattern = " ", replacement = ".")
+  LegacyNNS.ID <- gsub(do.call(paste, as.data.frame(LegacyNNS.ID)), pattern = " ", replacement = ".")
   
   
   ### Match y to unique identifier
   obs <- c(1 : length(Y))
   
-  mean.by.id.matrix <- data.table::data.table(original.IVs, original.DV, NNS.ID, obs)
+  mean.by.id.matrix <- data.table::data.table(original.IVs, original.DV, LegacyNNS.ID, obs)
   
-  data.table::setkey(mean.by.id.matrix, 'NNS.ID', 'obs')
+  data.table::setkey(mean.by.id.matrix, 'LegacyNNS.ID', 'obs')
   
   if(is.numeric(order) || is.null(order)){
     if(noise.reduction == 'off'){
-      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) gravity(as.numeric(z))), .SDcols = seq_len(n+1) ,by = 'NNS.ID']
+      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) gravity(as.numeric(z))), .SDcols = seq_len(n+1) ,by = 'LegacyNNS.ID']
     }
     if(noise.reduction == 'mean'){
-      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) mean(as.numeric(z))), .SDcols = seq_len(n+1), by = 'NNS.ID']
+      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) mean(as.numeric(z))), .SDcols = seq_len(n+1), by = 'LegacyNNS.ID']
     }
     if(noise.reduction == 'median'){
-      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) median(as.numeric(z))), .SDcols = seq_len(n+1), by = 'NNS.ID']
+      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) median(as.numeric(z))), .SDcols = seq_len(n+1), by = 'LegacyNNS.ID']
     }
     if(noise.reduction == 'mode'){
-      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) mode(as.numeric(z))), .SDcols = seq_len(n+1), by = 'NNS.ID']
+      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) mode(as.numeric(z))), .SDcols = seq_len(n+1), by = 'LegacyNNS.ID']
     }
     if(noise.reduction == 'mode_class'){
-      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) mode_class(as.numeric(z))), .SDcols = seq_len(n+1), by = 'NNS.ID']
+      mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := lapply(.SD, function(z) mode_class(as.numeric(z))), .SDcols = seq_len(n+1), by = 'LegacyNNS.ID']
     }
   } else {
-    mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := .SD , .SDcols = seq_len(n+1), by = 'NNS.ID']
+    mean.by.id.matrix <- mean.by.id.matrix[ , c(paste("RPM", 1:n), "y.hat") := .SD , .SDcols = seq_len(n+1), by = 'LegacyNNS.ID']
   }
   
   
@@ -151,18 +151,18 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
 
   
   
-  fitted.matrix <- data.table::data.table(original.IVs, y = original.DV, y.hat, mean.by.id.matrix[ , .(NNS.ID)])
+  fitted.matrix <- data.table::data.table(original.IVs, y = original.DV, y.hat, mean.by.id.matrix[ , .(LegacyNNS.ID)])
   
   fitted.matrix$residuals <- fitted.matrix$y - fitted.matrix$y.hat
-  fitted.matrix[, bias := gravity(residuals),  by = NNS.ID]
+  fitted.matrix[, bias := gravity(residuals),  by = LegacyNNS.ID]
   fitted.matrix$y.hat <- fitted.matrix$y.hat - fitted.matrix$bias
   fitted.matrix$bias <- NULL
   
   
-  data.table::setkey(mean.by.id.matrix, 'NNS.ID')
+  data.table::setkey(mean.by.id.matrix, 'LegacyNNS.ID')
   REGRESSION.POINT.MATRIX <- mean.by.id.matrix[ , c("obs") := NULL]
   
-  REGRESSION.POINT.MATRIX <- REGRESSION.POINT.MATRIX[, .SD[1], by = NNS.ID]
+  REGRESSION.POINT.MATRIX <- REGRESSION.POINT.MATRIX[, .SD[1], by = LegacyNNS.ID]
   
   
   REGRESSION.POINT.MATRIX <- REGRESSION.POINT.MATRIX[, .SD, .SDcols = colnames(mean.by.id.matrix)%in%c(paste("RPM", 1:n), "y.hat")]
@@ -173,11 +173,11 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
 
   if(n.best > 1 && !point.only){
     if(num_cores > 1){
-      fitted.matrix$y.hat <- parallel::parApply(cl, original.IVs, 1, function(z) NNS.distance(rpm = REGRESSION.POINT.MATRIX,  dist.estimate = z, k = n.best, class = type)[1])
+      fitted.matrix$y.hat <- parallel::parApply(cl, original.IVs, 1, function(z) LegacyNNS.distance(rpm = REGRESSION.POINT.MATRIX,  dist.estimate = z, k = n.best, class = type)[1])
     } else {
       fits <- data.table::data.table(original.IVs)
       
-      fits <- fits[, DISTANCES :=  NNS.distance(rpm = REGRESSION.POINT.MATRIX,  dist.estimate = .SD,  k = n.best, class = type)[1], by = 1:nrow(original.IVs)]
+      fits <- fits[, DISTANCES :=  LegacyNNS.distance(rpm = REGRESSION.POINT.MATRIX,  dist.estimate = .SD,  k = n.best, class = type)[1], by = 1:nrow(original.IVs)]
       
       fitted.matrix$y.hat <- as.numeric(unlist(fits$DISTANCES))
     }
@@ -202,7 +202,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
     # Single point estimation
     if (is.null(np)) {
       if (!any(outsiders)) {
-        predict.fit <- NNS::NNS.distance(
+        predict.fit <- LegacyNNS::LegacyNNS.distance(
           rpm = REGRESSION.POINT.MATRIX, 
           dist.estimate = point.est, 
           k = n.best, 
@@ -219,7 +219,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
           sqrt(sum((boundary.points - mid.points_2) ^ 2))
         )
         
-        boundary.estimates <- NNS::NNS.distance(
+        boundary.estimates <- LegacyNNS::LegacyNNS.distance(
           rpm = REGRESSION.POINT.MATRIX, 
           dist.estimate = boundary.points, 
           k = n.best, 
@@ -228,7 +228,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
         
         gradients <- sapply(1:3, function(i) {
           compare.points <- list(central.points, mid.points, mid.points_2)[[i]]
-          (boundary.estimates - NNS::NNS.distance(
+          (boundary.estimates - LegacyNNS::LegacyNNS.distance(
             rpm = REGRESSION.POINT.MATRIX, 
             dist.estimate = compare.points, 
             k = n.best, 
@@ -253,7 +253,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
           cl, 
           distances, 
           1, 
-          function(z) NNS.distance(
+          function(z) LegacyNNS.distance(
             rpm = REGRESSION.POINT.MATRIX, 
             dist.estimate = z, 
             k = n.best, 
@@ -261,7 +261,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
           )[1]
         )
       } else {
-        distances <- distances[, DISTANCES := NNS.distance(
+        distances <- distances[, DISTANCES := LegacyNNS.distance(
           rpm = REGRESSION.POINT.MATRIX, 
           dist.estimate = .SD, 
           k = n.best, 
@@ -291,7 +291,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
                 sqrt(sum((boundary.points - mid.points_2) ^ 2))
               )
               
-              boundary.estimates <- NNS::NNS.distance(
+              boundary.estimates <- LegacyNNS::LegacyNNS.distance(
                 rpm = REGRESSION.POINT.MATRIX, 
                 dist.estimate = boundary.points, 
                 k = n.best, 
@@ -300,7 +300,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
               
               gradients <- sapply(1:3, function(i) {
                 compare.points <- list(central.points, mid.points, mid.points_2)[[i]]
-                (boundary.estimates - NNS::NNS.distance(
+                (boundary.estimates - LegacyNNS::LegacyNNS.distance(
                   rpm = REGRESSION.POINT.MATRIX, 
                   dist.estimate = compare.points, 
                   k = n.best, 
@@ -329,7 +329,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
                 sqrt(sum((boundary.points - mid.points_2) ^ 2))
               )
               
-              boundary.estimates <- NNS::NNS.distance(
+              boundary.estimates <- LegacyNNS::LegacyNNS.distance(
                 rpm = REGRESSION.POINT.MATRIX, 
                 dist.estimate = boundary.points, 
                 k = n.best, 
@@ -338,7 +338,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
               
               gradients <- sapply(1:3, function(i) {
                 compare.points <- list(central.points, mid.points, mid.points_2)[[i]]
-                (boundary.estimates - NNS::NNS.distance(
+                (boundary.estimates - LegacyNNS::LegacyNNS.distance(
                   rpm = REGRESSION.POINT.MATRIX, 
                   dist.estimate = compare.points, 
                   k = n.best, 
@@ -417,23 +417,23 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
     rgl::plot3d(x = original.IVs[ , 1], y = original.IVs[ , 2], z = original.DV, box = FALSE, size = 3, col='steelblue', xlab = colnames(reg.points.matrix)[1], ylab = colnames(reg.points.matrix)[2], zlab = y.label )
     
     if(plot.regions){
-      region.matrix <- data.table::data.table(original.IVs, original.DV, NNS.ID)
-      region.matrix[ , `:=` (min.x1 = min(.SD), max.x1 = max(.SD)), by = NNS.ID, .SDcols = 1]
-      region.matrix[ , `:=` (min.x2 = min(.SD), max.x2 = max(.SD)), by = NNS.ID, .SDcols = 2]
+      region.matrix <- data.table::data.table(original.IVs, original.DV, LegacyNNS.ID)
+      region.matrix[ , `:=` (min.x1 = min(.SD), max.x1 = max(.SD)), by = LegacyNNS.ID, .SDcols = 1]
+      region.matrix[ , `:=` (min.x2 = min(.SD), max.x2 = max(.SD)), by = LegacyNNS.ID, .SDcols = 2]
       if(noise.reduction == 'off'){
-        region.matrix[ , `:=` (y.hat = gravity(original.DV)), by = NNS.ID]
+        region.matrix[ , `:=` (y.hat = gravity(original.DV)), by = LegacyNNS.ID]
       }
       if(noise.reduction =="mean"){
-        region.matrix[ , `:=` (y.hat = mean(original.DV)), by = NNS.ID]
+        region.matrix[ , `:=` (y.hat = mean(original.DV)), by = LegacyNNS.ID]
       }
       if(noise.reduction =="median"){
-        region.matrix[ , `:=` (y.hat = median(original.DV)), by = NNS.ID]
+        region.matrix[ , `:=` (y.hat = median(original.DV)), by = LegacyNNS.ID]
       }
       if(noise.reduction=="mode"|| noise.reduction=="mode_class"){
-        region.matrix[ , `:=` (y.hat = mode(original.DV)), by = NNS.ID]
+        region.matrix[ , `:=` (y.hat = mode(original.DV)), by = LegacyNNS.ID]
       }
       
-      data.table::setkey(region.matrix, NNS.ID, min.x1, max.x1, min.x2, max.x2)
+      data.table::setkey(region.matrix, LegacyNNS.ID, min.x1, max.x1, min.x2, max.x2)
       region.matrix[ ,{
         rgl::quads3d(x = .(min.x1[1], min.x1[1], max.x1[1], max.x1[1]),
                      y = .(min.x2[1], max.x2[1], max.x2[1], min.x2[1]),
@@ -444,7 +444,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
                           z = .(y.hat[1], y.hat[1]), col = "pink", alpha = 1)
         }
       }
-      , by = NNS.ID]
+      , by = LegacyNNS.ID]
     }#plot.regions = T
     
     
@@ -472,7 +472,7 @@ NNS.M.reg <- function (X_n, Y, factor.2.dummy = TRUE, order = NULL, stn = NULL, 
               border = NA)
     }
     
-    title(main = paste0("NNS Order = multiple"), cex.main = 2)
+    title(main = paste0("LegacyNNS Order = multiple"), cex.main = 2)
     legend(location, legend = r2.leg, bty = 'n')
   }
   

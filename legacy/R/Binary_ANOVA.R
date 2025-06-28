@@ -1,4 +1,4 @@
-NNS.ANOVA.bin <- function(control, treatment,
+LegacyNNS.ANOVA.bin <- function(control, treatment,
                          means.only = FALSE,
                          medians = FALSE,
                          mean.of.means = NULL,
@@ -53,9 +53,9 @@ NNS.ANOVA.bin <- function(control, treatment,
 
 
   #Certainty associated with samples
-        if(means.only) NNS.ANOVA.rho <- ((.5 - MAD.CDF)^2) / .25 
+        if(means.only) LegacyNNS.ANOVA.rho <- ((.5 - MAD.CDF)^2) / .25 
         else {
-        NNS.ANOVA.rho <- sum(c( ((.5 - MAD.CDF)^2) / .25,
+        LegacyNNS.ANOVA.rho <- sum(c( ((.5 - MAD.CDF)^2) / .25,
                                 .5 * (( (.25 - upper.25.CDF)^2) / .25^2),
                                 .5 * (( (.25 - lower.25.CDF)^2) / .25^2),
                                 .25 * (( (.125 - upper.125.CDF)^2) / .125^2),
@@ -71,7 +71,7 @@ NNS.ANOVA.bin <- function(control, treatment,
         if(plot){
             if(is.null(par)) original.par <- par(no.readonly = TRUE) else original.par <- par
 
-            boxplot(list(control, treatment), las = 2, names = c("Control", "Treatment"), horizontal = TRUE, main = "NNS ANOVA and Effect Size", col = c("grey", "white"), cex.axis = 0.75)
+            boxplot(list(control, treatment), las = 2, names = c("Control", "Treatment"), horizontal = TRUE, main = "LegacyNNS ANOVA and Effect Size", col = c("grey", "white"), cex.axis = 0.75)
 
             #For ANOVA Visualization
             abline(v = mean.of.means, col = "red", lwd = 4)
@@ -86,14 +86,14 @@ NNS.ANOVA.bin <- function(control, treatment,
                     "Grand Median" = mean.of.means,
                     "Control CDF" = LPM_ratio.1,
                     "Treatment CDF" = LPM_ratio.2,
-                    "Certainty" = min(1, NNS.ANOVA.rho * pop.adjustment)))
+                    "Certainty" = min(1, LegacyNNS.ANOVA.rho * pop.adjustment)))
       } else {
           return(list("Control Mean" = mean(control),
                 "Treatment Mean" = mean(treatment),
                 "Grand Mean" = mean.of.means,
                 "Control CDF" = LPM_ratio.1,
                 "Treatment CDF" = LPM_ratio.2,
-                "Certainty" = min(1, NNS.ANOVA.rho * pop.adjustment)))
+                "Certainty" = min(1, LegacyNNS.ANOVA.rho * pop.adjustment)))
       }
     } else {
 
@@ -154,7 +154,7 @@ NNS.ANOVA.bin <- function(control, treatment,
                           "Grand Median" = mean.of.means,
                           "Control CDF" = LPM_ratio.1,
                           "Treatment CDF" = LPM_ratio.2,
-                          "Certainty" = min(1, NNS.ANOVA.rho * pop.adjustment),
+                          "Certainty" = min(1, LegacyNNS.ANOVA.rho * pop.adjustment),
                           "Lower Bound Effect" = Lower.Bound.Effect,
                           "Upper Bound Effect" = Upper.Bound.Effect))
             } else {
@@ -163,7 +163,7 @@ NNS.ANOVA.bin <- function(control, treatment,
                           "Grand Mean" = mean.of.means,
                           "Control CDF" = LPM_ratio.1,
                           "Treatment CDF" = LPM_ratio.2,
-                          "Certainty" = min(1, NNS.ANOVA.rho * pop.adjustment),
+                          "Certainty" = min(1, LegacyNNS.ANOVA.rho * pop.adjustment),
                           "Lower Bound Effect" = Lower.Bound.Effect,
                           "Upper Bound Effect" = Upper.Bound.Effect))      
               

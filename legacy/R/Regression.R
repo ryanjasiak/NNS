@@ -1,4 +1,4 @@
-#' NNS Regression
+#' LegacyNNS Regression
 #'
 #' Generates a nonlinear regression based on partial moment quadrant means.
 #'
@@ -6,9 +6,9 @@
 #' @param y a numeric or factor vector with compatible dimensions to \code{x}.
 #' @param factor.2.dummy logical; \code{TRUE} (default) Automatically augments variable matrix with numerical dummy variables based on the levels of factors.
 #' @param order integer; Controls the number of partial moment quadrant means.  Users are encouraged to try different \code{(order = ...)} integer settings with \code{(noise.reduction = "off")}.  \code{(order = "max")} will force a limit condition perfect fit.
-#' @param stn numeric [0, 1]; Signal to noise parameter, sets the threshold of \code{(NNS.dep)} which reduces \code{("order")} when \code{(order = NULL)}.  Defaults to 0.95 to ensure high dependence for higher \code{("order")} and endpoint determination.
-#' @param dim.red.method options: ("cor", "NNS.dep", "NNS.caus", "all", "equal", \code{numeric vector}, NULL) method for determining synthetic X* coefficients.  Selection of a method automatically engages the dimension reduction regression.  The default is \code{NULL} for full multivariate regression.  \code{(dim.red.method = "NNS.dep")} uses \link{NNS.dep} for nonlinear dependence weights, while \code{(dim.red.method = "NNS.caus")} uses \link{NNS.caus} for causal weights.  \code{(dim.red.method = "cor")} uses standard linear correlation for weights.  \code{(dim.red.method = "all")} averages all methods for further feature engineering.  \code{(dim.red.method = "equal")} uses unit weights.  Alternatively, user can specify a numeric vector of coefficients.
-#' @param tau options("ts", NULL); \code{NULL}(default) To be used in conjunction with \code{(dim.red.method = "NNS.caus")} or \code{(dim.red.method = "all")}.  If the regression is using time-series data, set \code{(tau = "ts")} for more accurate causal analysis.
+#' @param stn numeric [0, 1]; Signal to noise parameter, sets the threshold of \code{(LegacyNNS.dep)} which reduces \code{("order")} when \code{(order = NULL)}.  Defaults to 0.95 to ensure high dependence for higher \code{("order")} and endpoint determination.
+#' @param dim.red.method options: ("cor", "LegacyNNS.dep", "LegacyNNS.caus", "all", "equal", \code{numeric vector}, NULL) method for determining synthetic X* coefficients.  Selection of a method automatically engages the dimension reduction regression.  The default is \code{NULL} for full multivariate regression.  \code{(dim.red.method = "LegacyNNS.dep")} uses \link{LegacyNNS.dep} for nonlinear dependence weights, while \code{(dim.red.method = "LegacyNNS.caus")} uses \link{LegacyNNS.caus} for causal weights.  \code{(dim.red.method = "cor")} uses standard linear correlation for weights.  \code{(dim.red.method = "all")} averages all methods for further feature engineering.  \code{(dim.red.method = "equal")} uses unit weights.  Alternatively, user can specify a numeric vector of coefficients.
+#' @param tau options("ts", NULL); \code{NULL}(default) To be used in conjunction with \code{(dim.red.method = "LegacyNNS.caus")} or \code{(dim.red.method = "all")}.  If the regression is using time-series data, set \code{(tau = "ts")} for more accurate causal analysis.
 #' @param type \code{NULL} (default).  To perform a classification, set to \code{(type = "CLASS")}.  Like a logistic regression, it is not necessary for target variable of two classes e.g. [0, 1].
 #' @param point.est a numeric or factor vector with compatible dimensions to \code{x}.  Returns the fitted value \code{y.hat} for any value of \code{x}.
 #' @param location Sets the legend location within the plot, per the \code{x} and \code{y} co-ordinates used in base graphics \link{legend}.
@@ -19,8 +19,8 @@
 #' @param confidence.interval numeric [0, 1]; \code{NULL} (default) Plots the associated confidence interval with the estimate and reports the standard error for each individual segment.  Also applies the same level for the prediction intervals.
 #' @param threshold  numeric [0, 1]; \code{(threshold = 0)} (default) Sets the threshold for dimension reduction of independent variables when \code{(dim.red.method)} is not \code{NULL}.
 #' @param n.best integer; \code{NULL} (default) Sets the number of nearest regression points to use in weighting for multivariate regression at \code{sqrt(# of regressors)}.  \code{(n.best = "all")} will select and weight all generated regression points.  Analogous to \code{k} in a
-#' \code{k Nearest Neighbors} algorithm.  Different values of \code{n.best} are tested using cross-validation in \link{NNS.stack}.
-#' @param noise.reduction the method of determining regression points options: ("mean", "median", "mode", "off"); In low signal:noise situations,\code{(noise.reduction = "mean")}  uses means for \link{NNS.dep} restricted partitions, \code{(noise.reduction = "median")} uses medians instead of means for \link{NNS.dep} restricted partitions, while \code{(noise.reduction = "mode")}  uses modes instead of means for \link{NNS.dep} restricted partitions.  \code{(noise.reduction = "off")} uses an overall central tendency measure for partitions.
+#' \code{k Nearest Neighbors} algorithm.  Different values of \code{n.best} are tested using cross-validation in \link{LegacyNNS.stack}.
+#' @param noise.reduction the method of determining regression points options: ("mean", "median", "mode", "off"); In low signal:noise situations,\code{(noise.reduction = "mean")}  uses means for \link{LegacyNNS.dep} restricted partitions, \code{(noise.reduction = "median")} uses medians instead of means for \link{LegacyNNS.dep} restricted partitions, while \code{(noise.reduction = "mode")}  uses modes instead of means for \link{LegacyNNS.dep} restricted partitions.  \code{(noise.reduction = "off")} uses an overall central tendency measure for partitions.
 #' @param dist options:("L1", "L2", "FACTOR") the method of distance calculation; Selects the distance calculation used. \code{dist = "L2"} (default) selects the Euclidean distance and \code{(dist = "L1")} selects the Manhattan distance; \code{(dist = "FACTOR")} uses a frequency.
 #' @param ncores integer; value specifying the number of cores to be used in the parallelized  procedure. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
 #' @param multivariate.call Internal argument for multivariate regressions.
@@ -41,7 +41,7 @@
 #'  
 #'  \item{\code{"regression.points"}} provides the points used in the regression equation for the given order of partitions;
 #'
-#'  \item{\code{"Fitted.xy"}} returns a \code{data.table} of \code{x}, \code{y}, \code{y.hat}, \code{resid}, \code{NNS.ID}, \code{gradient};
+#'  \item{\code{"Fitted.xy"}} returns a \code{data.table} of \code{x}, \code{y}, \code{y.hat}, \code{resid}, \code{LegacyNNS.ID}, \code{gradient};
 #' }
 #'
 #'
@@ -61,7 +61,7 @@
 #'  
 #'  \item{\code{"pred.int"}} lower and upper prediction intervals for the \code{"Point.est"} returned using the \code{"confidence.interval"} provided;
 #'
-#'  \item{\code{"Fitted.xy"}} returns a \code{data.table} of \code{x},\code{y}, \code{y.hat}, \code{gradient}, and \code{NNS.ID}.
+#'  \item{\code{"Fitted.xy"}} returns a \code{data.table} of \code{x},\code{y}, \code{y.hat}, \code{gradient}, and \code{LegacyNNS.ID}.
 #' }
 #'
 #' @note
@@ -70,7 +70,7 @@
 #'
 #'  \item Like a logistic regression, the \code{(type = "CLASS")} setting is not necessary for target variable of two classes e.g. [0, 1].  The response variable base category should be 1 for classification problems.
 #'
-#'  \item For low signal:noise instances, increasing the dimension may yield better results using \code{NNS.stack(cbind(x,x), y, method = 1, ...)}.
+#'  \item For low signal:noise instances, increasing the dimension may yield better results using \code{LegacyNNS.stack(cbind(x,x), y, method = 1, ...)}.
 #' }
 #'
 #' @author Fred Viole, OVVO Financial Systems
@@ -86,49 +86,49 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.reg(x, y)
+#' LegacyNNS.reg(x, y)
 #'
 #' ## Manual {order} selection
-#' NNS.reg(x, y, order = 2)
+#' LegacyNNS.reg(x, y, order = 2)
 #'
 #' ## Maximum {order} selection
-#' NNS.reg(x, y, order = "max")
+#' LegacyNNS.reg(x, y, order = "max")
 #'
 #' ## x-only paritioning (Univariate only)
-#' NNS.reg(x, y, type = "XONLY")
+#' LegacyNNS.reg(x, y, type = "XONLY")
 #'
 #' ## For Multiple Regression:
 #' x <- cbind(rnorm(100), rnorm(100), rnorm(100)) ; y <- rnorm(100)
-#' NNS.reg(x, y, point.est = c(.25, .5, .75))
+#' LegacyNNS.reg(x, y, point.est = c(.25, .5, .75))
 #'
 #' ## For Multiple Regression based on Synthetic X* (Dimension Reduction):
 #' x <- cbind(rnorm(100), rnorm(100), rnorm(100)) ; y <- rnorm(100)
-#' NNS.reg(x, y, point.est = c(.25, .5, .75), dim.red.method = "cor", ncores = 1)
+#' LegacyNNS.reg(x, y, point.est = c(.25, .5, .75), dim.red.method = "cor", ncores = 1)
 #'
 #' ## IRIS dataset examples:
 #' # Dimension Reduction:
-#' NNS.reg(iris[,1:4], iris[,5], dim.red.method = "cor", order = 5, ncores = 1)
+#' LegacyNNS.reg(iris[,1:4], iris[,5], dim.red.method = "cor", order = 5, ncores = 1)
 #'
 #' # Dimension Reduction using causal weights:
-#' NNS.reg(iris[,1:4], iris[,5], dim.red.method = "NNS.caus", order = 5, ncores = 1)
+#' LegacyNNS.reg(iris[,1:4], iris[,5], dim.red.method = "LegacyNNS.caus", order = 5, ncores = 1)
 #'
 #' # Multiple Regression:
-#' NNS.reg(iris[,1:4], iris[,5], order = 2, noise.reduction = "off")
+#' LegacyNNS.reg(iris[,1:4], iris[,5], order = 2, noise.reduction = "off")
 #'
 #' # Classification:
-#' NNS.reg(iris[,1:4], iris[,5], point.est = iris[1:10, 1:4], type = "CLASS")$Point.est
+#' LegacyNNS.reg(iris[,1:4], iris[,5], point.est = iris[1:10, 1:4], type = "CLASS")$Point.est
 #'
 #' ## To call fitted values:
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.reg(x, y)$Fitted
+#' LegacyNNS.reg(x, y)$Fitted
 #'
 #' ## To call partial derivative (univariate regression only):
-#' NNS.reg(x, y)$derivative
+#' LegacyNNS.reg(x, y)$derivative
 #' }
 #' @export
 
 
-NNS.reg = function (x, y,
+LegacyNNS.reg = function (x, y,
                     factor.2.dummy = TRUE, order = NULL,
                     stn = .95,
                     dim.red.method = NULL, tau = NULL,
@@ -292,7 +292,7 @@ NNS.reg = function (x, y,
         if(is.null(colnames(x))) colnames(x) <- rep("x", ncol(x))        
         colnames(x) <- make.unique(colnames(x), sep = "_")
 
-        return(NNS.M.reg(x, y, factor.2.dummy = factor.2.dummy, point.est = point.est, plot = plot,
+        return(LegacyNNS.M.reg(x, y, factor.2.dummy = factor.2.dummy, point.est = point.est, plot = plot,
                          residual.plot = residual.plot, order = order, n.best = n.best, type = type,
                          location = location, noise.reduction = noise.reduction,
                          dist = dist, stn = stn, return.values = return.values, plot.regions = plot.regions,
@@ -315,7 +315,7 @@ NNS.reg = function (x, y,
           if(!is.numeric(dim.red.method) && dim.red.method!="cor" && dim.red.method!="equal"){
             if(!is.null(type)) fact <- TRUE else fact <- FALSE
             
-            x.star.dep <-  sapply(1:dim(x)[2], function(i) NNS.dep(x[,i], y, print.map = FALSE, asym = TRUE)$Dependence)
+            x.star.dep <-  sapply(1:dim(x)[2], function(i) LegacyNNS.dep(x[,i], y, print.map = FALSE, asym = TRUE)$Dependence)
             
             x.star.dep[is.na(x.star.dep)] <- 0
           }
@@ -324,7 +324,7 @@ NNS.reg = function (x, y,
           
           x.star.cor[is.na(x.star.cor)] <- 0
           
-          if(!is.numeric(dim.red.method) && dim.red.method == "nns.dep"){
+          if(!is.numeric(dim.red.method) && dim.red.method == "LegacyNNS.dep"){
             x.star.coef <- x.star.dep
             x.star.coef[is.na(x.star.coef)] <- 0
           }
@@ -334,7 +334,7 @@ NNS.reg = function (x, y,
             x.star.coef[is.na(x.star.coef)] <- 0
           }
           
-          if(!is.numeric(dim.red.method) && dim.red.method == "nns.caus"){
+          if(!is.numeric(dim.red.method) && dim.red.method == "LegacyNNS.caus"){
             if(is.null(tau)){
               tau <- "cs"
             }
@@ -415,9 +415,9 @@ NNS.reg = function (x, y,
           x <- Rfast::rowsums(x.star.matrix / sum( abs( x.star.coef) > 0), parallel = FALSE)
           x.star <- data.table::data.table(x)
           
-          dependence <- tryCatch(NNS.dep(x, y, print.map = FALSE, asym = TRUE)$Dependence, error = function(e) .1)
+          dependence <- tryCatch(LegacyNNS.dep(x, y, print.map = FALSE, asym = TRUE)$Dependence, error = function(e) .1)
 
-          dependence <- tryCatch(mean(c(dependence, NNS.copula(cbind(apply(cbind(x, x, y), 2, function(z) NNS.rescale(z, 0, 1)))))), error = function(e) dependence)
+          dependence <- tryCatch(mean(c(dependence, LegacyNNS.copula(cbind(apply(cbind(x, x, y), 2, function(z) LegacyNNS.rescale(z, 0, 1)))))), error = function(e) dependence)
           
           dependence[is.na(dependence)] <- 0.1
           
@@ -439,9 +439,9 @@ NNS.reg = function (x, y,
   x.label <- names(x)
   if(is.null(x.label)) x.label <- "x"
   
-  dependence <- tryCatch(NNS.dep(x, y, print.map = FALSE, asym = TRUE)$Dependence, error = function(e) .1)
+  dependence <- tryCatch(LegacyNNS.dep(x, y, print.map = FALSE, asym = TRUE)$Dependence, error = function(e) .1)
   
-  dependence <- tryCatch(mean(c(dependence, NNS.copula(cbind(apply(cbind(x, x, y), 2, function(z) NNS.rescale(z, 0, 1)))))), error = function(e) dependence)
+  dependence <- tryCatch(mean(c(dependence, LegacyNNS.copula(cbind(apply(cbind(x, x, y), 2, function(z) LegacyNNS.rescale(z, 0, 1)))))), error = function(e) dependence)
   
   dependence[is.na(dependence)] <- 0.1
  
@@ -460,7 +460,7 @@ NNS.reg = function (x, y,
   
   if(dependence == 1 || dep.reduced.order == "max"){
     if(is.null(order)) dep.reduced.order <- "max"
-    part.map <- NNS.part(x, y, order = dep.reduced.order, obs.req = 0)
+    part.map <- LegacyNNS.part(x, y, order = dep.reduced.order, obs.req = 0)
   } else {
     if(is.null(type)){
       noise.reduction2 <- ifelse(noise.reduction=="mean", "off", noise.reduction)
@@ -469,17 +469,17 @@ NNS.reg = function (x, y,
     }
     
     if(dep.reduced.order == "max"){
-      part.map <- NNS.part(x, y, order = dep.reduced.order, obs.req = 0)
+      part.map <- LegacyNNS.part(x, y, order = dep.reduced.order, obs.req = 0)
     } else {
-      part.map <- NNS.part(x, y, noise.reduction = noise.reduction2, order = dep.reduced.order, type = "XONLY", obs.req = 0)
+      part.map <- LegacyNNS.part(x, y, noise.reduction = noise.reduction2, order = dep.reduced.order, type = "XONLY", obs.req = 0)
       if(length(part.map$regression.points$x) == 0){
-        part.map <- NNS.part(x, y, type =  "XONLY", noise.reduction = noise.reduction2, order = min( nchar(part.map$dt$quadrant)), obs.req = 0)
+        part.map <- LegacyNNS.part(x, y, type =  "XONLY", noise.reduction = noise.reduction2, order = min( nchar(part.map$dt$quadrant)), obs.req = 0)
       }
     }
    
   }
   
-  nns.ids <- part.map$dt$quadrant
+  LegacyNNS.ids <- part.map$dt$quadrant
   
   if(length(part.map$dt$y) > length(y)){
     part.map$dt$x <- pmax(min(x), pmin(part.map$dt$x, max(x)))
@@ -713,7 +713,7 @@ NNS.reg = function (x, y,
   fitted <- data.table::data.table(x = x,
                                    y = original.y,
                                    y.hat = estimate,
-                                   NNS.ID = nns.ids)
+                                   LegacyNNS.ID = LegacyNNS.ids)
   
   colnames(fitted) <- gsub("y.hat.V1", "y.hat", colnames(fitted))
   
@@ -869,7 +869,7 @@ NNS.reg = function (x, y,
     if(is.numeric(confidence.interval)){
       plot(x, y, xlim = c(xmin, xmax), pch = 1, lwd = 2,
            ylim = c(min(c(fitted$conf.int.neg, ymin)), max(c(fitted$conf.int.pos,ymax))),
-           col ='steelblue', main = paste(paste0("NNS Order = ", plot.order), sep = "\n"),
+           col ='steelblue', main = paste(paste0("LegacyNNS Order = ", plot.order), sep = "\n"),
            xlab = if(!is.null(original.columns)){
              if(original.columns > 1){
                "Synthetic X*"
@@ -885,7 +885,7 @@ NNS.reg = function (x, y,
               col = rgb(1, 192/255, 203/255, alpha = 0.375), 
               border = NA)
     } else {
-      plot(x, y, pch = 1, lwd = 2, xlim = c(xmin, xmax), ylim = c(ymin, ymax),col = 'steelblue', main = paste(paste0("NNS Order = ", plot.order), sep = "\n"),
+      plot(x, y, pch = 1, lwd = 2, xlim = c(xmin, xmax), ylim = c(ymin, ymax),col = 'steelblue', main = paste(paste0("LegacyNNS Order = ", plot.order), sep = "\n"),
            xlab = if(!is.null(original.columns)){
              if(original.columns > 1){
                "Synthetic X*"

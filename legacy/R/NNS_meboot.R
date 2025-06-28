@@ -1,11 +1,11 @@
-#' NNS meboot
+#' LegacyNNS meboot
 #'
 #' Adapted maximum entropy bootstrap routine from \code{meboot} \url{https://cran.r-project.org/package=meboot}.
 #'
 #' @param x vector of data.
 #' @param reps numeric; number of replicates to generate.
 #' @param rho numeric [-1,1] (vectorized); A \code{rho} must be provided, otherwise a blank list will be returned.
-#' @param type options("spearman", "pearson", "NNScor", "NNSdep"); \code{type = "spearman"}(default) dependence metric desired.
+#' @param type options("spearman", "pearson", "LegacyNNScor", "LegacyNNSdep"); \code{type = "spearman"}(default) dependence metric desired.
 #' @param drift logical; \code{drift = TRUE} (default) preserves the drift of the original series.
 #' @param target_drift numerical; \code{target_drift = NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.
 #' @param target_drift_scale numerical; instead of calculating a \code{target_drift}, provide a scalar to the existing drift when \code{drift = TRUE}.
@@ -60,7 +60,7 @@
 #' @examples
 #' \dontrun{
 #' # To generate an orthogonal rank correlated time-series to AirPassengers
-#' boots <- NNS.meboot(AirPassengers, reps = 100, rho = 0, xmin = 0)
+#' boots <- LegacyNNS.meboot(AirPassengers, reps = 100, rho = 0, xmin = 0)
 #'
 #' # Verify correlation of replicates ensemble to original
 #' cor(boots["ensemble",]$ensemble, AirPassengers, method = "spearman")
@@ -73,23 +73,23 @@
 #' 
 #' 
 #' ### Vectorized drift with a single rho
-#' boots <- NNS.meboot(AirPassengers, reps = 10, rho = 0, xmin = 0, target_drift = c(1,7))
+#' boots <- LegacyNNS.meboot(AirPassengers, reps = 10, rho = 0, xmin = 0, target_drift = c(1,7))
 #' matplot(do.call(cbind, boots["replicates", ]), type = "l")
 #' lines(1:length(AirPassengers), AirPassengers, lwd = 3, col = "red")
 #' 
 #' ### Vectorized rho with a single target drift
-#' boots <- NNS.meboot(AirPassengers, reps = 10, rho = c(0, .5, 1), xmin = 0, target_drift = 3)
+#' boots <- LegacyNNS.meboot(AirPassengers, reps = 10, rho = c(0, .5, 1), xmin = 0, target_drift = 3)
 #' matplot(do.call(cbind, boots["replicates", ]), type = "l")
 #' lines(1:length(AirPassengers), AirPassengers, lwd = 3, col = "red")
 #' 
 #' ### Vectorized rho with a single target drift scale
-#' boots <- NNS.meboot(AirPassengers, reps = 10, rho = c(0, .5, 1), xmin = 0, target_drift_scale = 0.5)
+#' boots <- LegacyNNS.meboot(AirPassengers, reps = 10, rho = c(0, .5, 1), xmin = 0, target_drift_scale = 0.5)
 #' matplot(do.call(cbind, boots["replicates", ]), type = "l")
 #' lines(1:length(AirPassengers), AirPassengers, lwd = 3, col = "red") 
 #' }
 #' @export
 
-NNS.meboot <- function(x,
+LegacyNNS.meboot <- function(x,
                        reps = 999,
                        rho = NULL,
                        type = "spearman",
@@ -200,7 +200,7 @@ NNS.meboot <- function(x,
   # Generate random numbers from the [0,1] uniform interval.
   
   ensemble <- matrix(x, nrow=n, ncol=reps)
-  ensemble <- apply(ensemble, 2, NNS.meboot.part,
+  ensemble <- apply(ensemble, 2, LegacyNNS.meboot.part,
                     n, z, xmin, xmax, desintxb, reachbnd)
   
   # So far the object 'ensemble' contains the quantiles.
@@ -234,10 +234,10 @@ NNS.meboot <- function(x,
     # Check correlation or dependence structure
     if (ty == "spearman" || ty == "pearson") {
       error <- abs(cor(combined, e, method = ty) - rho)
-    } else if (ty == "nnsdep") {
-      error <- abs(NNS.dep(combined, e)$Dependence - rho)
+    } else if (ty == "LegacyNNSdep") {
+      error <- abs(LegacyNNS.dep(combined, e)$Dependence - rho)
     } else {
-      error <- abs(NNS.dep(combined, e)$Correlation - rho)
+      error <- abs(LegacyNNS.dep(combined, e)$Correlation - rho)
     }
     
     return(error)
@@ -273,7 +273,7 @@ NNS.meboot <- function(x,
   }
   
   
-  if(expand.sd) ensemble <- NNS.meboot.expand.sd(x=x, ensemble=ensemble, ...)
+  if(expand.sd) ensemble <- LegacyNNS.meboot.expand.sd(x=x, ensemble=ensemble, ...)
   
   if(force.clt && reps > 1) ensemble <- force.clt(x=x, ensemble=ensemble)
   
@@ -319,4 +319,4 @@ NNS.meboot <- function(x,
   return(final)
 }
 
-NNS.meboot <- Vectorize(NNS.meboot, vectorize.args = c("rho", "target_drift", "target_drift_scale"))
+LegacyNNS.meboot <- Vectorize(LegacyNNS.meboot, vectorize.args = c("rho", "target_drift", "target_drift_scale"))

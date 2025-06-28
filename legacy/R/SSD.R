@@ -1,4 +1,4 @@
-#' NNS SSD Test
+#' LegacyNNS SSD Test
 #'
 #' Bi-directional test of second degree stochastic dominance using lower partial moments.
 #'
@@ -12,12 +12,12 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.SSD(x, y)
+#' LegacyNNS.SSD(x, y)
 #' }
 #' @export
 
 
-NNS.SSD <- function(x, y, plot = TRUE){
+LegacyNNS.SSD <- function(x, y, plot = TRUE){
 
     if(any(class(x)%in%c("tbl","data.table"))) x <- as.vector(unlist(x))
     if(any(class(y)%in%c("tbl","data.table"))) y <- as.vector(unlist(y))

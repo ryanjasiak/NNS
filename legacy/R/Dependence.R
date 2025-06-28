@@ -1,4 +1,4 @@
-#' NNS Dependence
+#' LegacyNNS Dependence
 #'
 #' Returns the dependence and nonlinear correlation between two variables based on higher order partial moment matrices measured by frequency or area.
 #'
@@ -18,16 +18,16 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.dep(x, y)
+#' LegacyNNS.dep(x, y)
 #'
 #' ## Correlation / Dependence Matrix
 #' x <- rnorm(100) ; y <- rnorm(100) ; z <- rnorm(100)
 #' B <- cbind(x, y, z)
-#' NNS.dep(B)
+#' LegacyNNS.dep(B)
 #' }
 #' @export
 
-NNS.dep = function(x,
+LegacyNNS.dep = function(x,
                    y = NULL,
                    asym = FALSE,
                    p.value = FALSE,
@@ -54,9 +54,9 @@ NNS.dep = function(x,
     obs <- max(10, l/5)
     
     # Define segments
-    if(print.map) PART_xy <- suppressWarnings(NNS.part(x, y, order = NULL, obs.req = obs, min.obs.stop = TRUE, type = "XONLY", Voronoi = TRUE)) else PART_xy <- suppressWarnings(NNS.part(x, y, order = NULL, obs.req = obs, min.obs.stop = TRUE, type = "XONLY", Voronoi = FALSE))
+    if(print.map) PART_xy <- suppressWarnings(LegacyNNS.part(x, y, order = NULL, obs.req = obs, min.obs.stop = TRUE, type = "XONLY", Voronoi = TRUE)) else PART_xy <- suppressWarnings(LegacyNNS.part(x, y, order = NULL, obs.req = obs, min.obs.stop = TRUE, type = "XONLY", Voronoi = FALSE))
     
-    PART_yx <- suppressWarnings(NNS.part(y, x, order = NULL, obs.req = obs, min.obs.stop = TRUE, type = "XONLY", Voronoi = FALSE))
+    PART_yx <- suppressWarnings(LegacyNNS.part(y, x, order = NULL, obs.req = obs, min.obs.stop = TRUE, type = "XONLY", Voronoi = FALSE))
     
     if(dim(PART_xy$regression.points)[1]==0) return(list("Correlation" = 0, "Dependence" = 0))
     
@@ -77,7 +77,7 @@ NNS.dep = function(x,
     
     
     dep_fn = function(x, y){
-      NNS::NNS.copula(cbind(x, y)) * sign(cov(x,y))
+      LegacyNNS::LegacyNNS.copula(cbind(x, y)) * sign(cov(x,y))
     }
     
     
@@ -113,7 +113,7 @@ NNS.dep = function(x,
                                              warning = function(w) dependence,
                                              error = function(e) dependence))
       
-      dependence <- gravity(c(dependence, NNS.copula(cbind(x, y), plot = FALSE), poly_base))
+      dependence <- gravity(c(dependence, LegacyNNS.copula(cbind(x, y), plot = FALSE), poly_base))
     }
     
     if(asym){
@@ -129,11 +129,11 @@ NNS.dep = function(x,
     if(p.value){
       original.par <- par(no.readonly = TRUE)
 
-      nns.mc <- apply(x, 2, function(g) NNS.dep(x[,1], g))
+      LegacyNNS.mc <- apply(x, 2, function(g) LegacyNNS.dep(x[,1], g))
 
       ## Store results
-      cors <- unlist(lapply(nns.mc, "[[", 1))
-      deps <- unlist(lapply(nns.mc, "[[", 2))
+      cors <- unlist(lapply(LegacyNNS.mc, "[[", 1))
+      deps <- unlist(lapply(LegacyNNS.mc, "[[", 2))
 
 
       cor_lower_CI <- LPM.VaR(.025, 0, cors[-c(1,2)])
@@ -143,12 +143,12 @@ NNS.dep = function(x,
       
       if(print.map){
         par(mfrow = c(1, 2))
-        hist(cors[-c(1,2)], main = "NNS Correlation", xlab = NULL, xlim = c(min(cors), max(cors[-1])))
+        hist(cors[-c(1,2)], main = "LegacyNNS Correlation", xlab = NULL, xlim = c(min(cors), max(cors[-1])))
         abline(v = cors[2], col = "red", lwd = 2)
         mtext("Result", side = 3, col = "red", at = cors[2])
         abline(v =  cor_lower_CI, col = "red", lwd = 2, lty = 3)
         abline(v =  cor_upper_CI , col = "red", lwd = 2, lty = 3)
-        hist(deps[-c(1,2)], main = "NNS Dependence", xlab = NULL, xlim = c(min(deps), max(deps[-1])))
+        hist(deps[-c(1,2)], main = "LegacyNNS Dependence", xlab = NULL, xlim = c(min(deps), max(deps[-1])))
         abline(v = deps[2], col = "red", lwd = 2)
         mtext("Result", side = 3, col = "red", at = deps[2])
         abline(v =  dep_lower_CI , col = "red", lwd = 2, lty = 3)
@@ -164,7 +164,7 @@ NNS.dep = function(x,
                   "Dependence p.value" = min(LPM(0, deps[2], deps[-c(1,2)]),
                                              UPM(0, deps[2], deps[-c(1,2)])),
                   "Dependence 95% CIs" = c(dep_lower_CI, dep_upper_CI)))
-    } else return(NNS.dep.matrix(x, asym = asym))
+    } else return(LegacyNNS.dep.matrix(x, asym = asym))
   }
 
 }

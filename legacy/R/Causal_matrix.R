@@ -1,4 +1,4 @@
-NNS.caus.matrix <- function(x, tau = tau){
+LegacyNNS.caus.matrix <- function(x, tau = tau){
 
 n <- ncol(x)
     if(is.null(n)){
@@ -8,7 +8,7 @@ n <- ncol(x)
     indiv.causes <- list()
 
     for(i in 1 : (n - 1)){
-        indiv.causes[[i]] <- sapply((i + 1) : n, function(b) NNS.caus(x[ , i], x[ , b], plot = FALSE, tau = tau))
+        indiv.causes[[i]] <- sapply((i + 1) : n, function(b) LegacyNNS.caus(x[ , i], x[ , b], plot = FALSE, tau = tau))
         indiv.causes[[i]] <- (abs(indiv.causes[[i]][2, ]) - abs(indiv.causes[[i]][1, ]))
     }
 

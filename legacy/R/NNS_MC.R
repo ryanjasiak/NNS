@@ -1,6 +1,6 @@
-#' NNS Monte Carlo Sampling
+#' LegacyNNS Monte Carlo Sampling
 #'
-#' Monte Carlo sampling from the maximum entropy bootstrap routine \link{NNS.meboot}, ensuring the replicates are sampled from the full [-1,1] correlation space.
+#' Monte Carlo sampling from the maximum entropy bootstrap routine \link{LegacyNNS.meboot}, ensuring the replicates are sampled from the full [-1,1] correlation space.
 #'
 #' @param x vector of data.
 #' @param reps numeric; number of replicates to generate, \code{30} default.
@@ -8,13 +8,13 @@
 #' @param upper_rho numeric \code{[-1,1]}; \code{.01} default will set the \code{to} argument in \code{seq(from, to, by)}.
 #' @param by numeric; \code{.01} default will set the \code{by} argument in \code{seq(-1, 1, step)}.
 #' @param exp numeric; \code{1} default will exponentially weight maximum rho value if \code{exp > 1}.  Shrinks values towards \code{upper_rho}.
-#' @param type options("spearman", "pearson", "NNScor", "NNSdep"); \code{type = "spearman"}(default) dependence metric desired.
+#' @param type options("spearman", "pearson", "LegacyNNScor", "LegacyNNSdep"); \code{type = "spearman"}(default) dependence metric desired.
 #' @param drift logical; \code{drift = TRUE} (default) preserves the drift of the original series.
 #' @param target_drift numerical; \code{target_drift = NULL} (default) Specifies the desired drift when \code{drift = TRUE}, i.e. a risk-free rate of return.
 #' @param target_drift_scale numerical; instead of calculating a \code{target_drift}, provide a scalar to the existing drift when \code{drift = TRUE}.
 #' @param xmin numeric; the lower limit for the left tail.
 #' @param xmax numeric; the upper limit for the right tail.
-#' @param ... possible additional arguments to be passed to \link{NNS.meboot}.
+#' @param ... possible additional arguments to be passed to \link{LegacyNNS.meboot}.
 #'
 #' @return
 #' \itemize{
@@ -27,12 +27,12 @@
 #' @examples
 #' \dontrun{
 #' # To generate a set of MC sampled time-series to AirPassengers
-#' MC_samples <- NNS.MC(AirPassengers, reps = 10, lower_rho = -1, upper_rho = 1, by = .5, xmin = 0)
+#' MC_samples <- LegacyNNS.MC(AirPassengers, reps = 10, lower_rho = -1, upper_rho = 1, by = .5, xmin = 0)
 #' }
 #' @export
 
 
-NNS.MC <- function(x,
+LegacyNNS.MC <- function(x,
                    reps = 30,
                    lower_rho = -1,
                    upper_rho = 1,
@@ -56,15 +56,15 @@ NNS.MC <- function(x,
 
   if(is.null(target_drift)){
     if(!is.null(target_drift_scale)){
-      replicates <- NNS.meboot(x = x, reps = reps, rho = exp_rhos, type = type, drift = TRUE,
+      replicates <- LegacyNNS.meboot(x = x, reps = reps, rho = exp_rhos, type = type, drift = TRUE,
                                target_drift_scale = target_drift_scale, 
                                xmin = xmin, xmax = xmax, ...)["replicates",]
     } else {
-      replicates <- NNS.meboot(x = x, reps = reps, rho = exp_rhos, type = type, drift = drift,
+      replicates <- LegacyNNS.meboot(x = x, reps = reps, rho = exp_rhos, type = type, drift = drift,
                                xmin = xmin, xmax = xmax, ...)["replicates",]
     } 
   } else {
-    replicates <- NNS.meboot(x = x, reps = reps, rho = exp_rhos, type = type, drift = TRUE,
+    replicates <- LegacyNNS.meboot(x = x, reps = reps, rho = exp_rhos, type = type, drift = TRUE,
                              target_drift = target_drift,
                              xmin = xmin, xmax = xmax, ...)["replicates",]
   }

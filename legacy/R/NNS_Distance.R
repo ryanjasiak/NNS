@@ -1,9 +1,9 @@
-#' NNS Distance
+#' LegacyNNS Distance
 #'
-#' Internal kernel function for NNS multivariate regression \link{NNS.reg} parallel instances.
-#' @param rpm REGRESSION.POINT.MATRIX from \link{NNS.reg}
+#' Internal kernel function for LegacyNNS multivariate regression \link{LegacyNNS.reg} parallel instances.
+#' @param rpm REGRESSION.POINT.MATRIX from \link{LegacyNNS.reg}
 #' @param dist.estimate Vector to generate distances from.
-#' @param k \code{n.best} from \link{NNS.reg}
+#' @param k \code{n.best} from \link{LegacyNNS.reg}
 #' @param class if classification problem.
 #'
 #' @return Returns sum of weighted distances.
@@ -11,7 +11,7 @@
 #'
 #' @export
 
-NNS.distance <- function(rpm, dist.estimate, k, class){
+LegacyNNS.distance <- function(rpm, dist.estimate, k, class){
   l <- nrow(rpm)
   if(k=="all") k <- l
   y.hat <- rpm$y.hat
@@ -22,7 +22,7 @@ NNS.distance <- function(rpm, dist.estimate, k, class){
 
   
   rpm <- rbind(as.list(t(dist.estimate)), rpm[, .SD, .SDcols = 1:n])
-  rpm <- rpm[, names(rpm) := lapply(.SD, function(b) NNS.rescale(b, 0, 1)), .SDcols = 1:n]
+  rpm <- rpm[, names(rpm) := lapply(.SD, function(b) LegacyNNS.rescale(b, 0, 1)), .SDcols = 1:n]
   dist.estimate <- unlist(rpm[1, ])
   rpm <- rpm[-1,]
   

@@ -1,6 +1,6 @@
-#' NNS Stack
+#' LegacyNNS Stack
 #'
-#' Prediction model using the predictions of the NNS base models \link{NNS.reg} as features (i.e. meta-features) for the stacked model.
+#' Prediction model using the predictions of the LegacyNNS base models \link{LegacyNNS.reg} as features (i.e. meta-features) for the stacked model.
 #'
 #' @param IVs.train a vector, matrix or data frame of variables of numeric or factor data types.
 #' @param DV.train a numeric or factor vector with compatible dimensions to \code{(IVs.train)}.
@@ -12,38 +12,38 @@
 #' @param dist options:("L1", "L2", "DTW", "FACTOR") the method of distance calculation; Selects the distance calculation used. \code{dist = "L2"} (default) selects the Euclidean distance and \code{(dist = "L1")} selects the Manhattan distance; \code{(dist = "DTW")} selects the dynamic time warping distance; \code{(dist = "FACTOR")} uses a frequency.
 #' @param CV.size numeric [0, 1]; \code{NULL} (default) Sets the cross-validation size if \code{(IVs.test = NULL)}.  Defaults to a random value between 0.2 and 0.33 for a random sampling of the training set.
 #' @param balance logical; \code{FALSE} (default) Uses both up and down sampling to balance the classes.  \code{type="CLASS"} required.
-#' @param ts.test integer; NULL (default) Sets the length of the test set for time-series data; typically \code{2*h} parameter value from \link{NNS.ARMA} or double known periods to forecast.
+#' @param ts.test integer; NULL (default) Sets the length of the test set for time-series data; typically \code{2*h} parameter value from \link{LegacyNNS.ARMA} or double known periods to forecast.
 #' @param folds integer; \code{folds = 5} (default) Select the number of cross-validation folds.
-#' @param order options: (integer, "max", NULL); \code{NULL} (default) Sets the order for \link{NNS.reg}, where \code{(order = "max")} is the k-nearest neighbors equivalent, which is suggested for mixed continuous and discrete (unordered, ordered) data.
-#' @param norm options: ("std", "NNS", NULL); \code{NULL} (default) 3 settings offered: \code{NULL}, \code{"std"}, and \code{"NNS"}.  Selects the \code{norm} parameter in \link{NNS.reg}.
-#' @param method numeric options: (1, 2); Select the NNS method to include in stack.  \code{(method = 1)} selects \link{NNS.reg}; \code{(method = 2)} selects \link{NNS.reg} dimension reduction regression.  Defaults to \code{method = c(1, 2)}, which will reduce the dimension first, then find the optimal \code{n.best}.
+#' @param order options: (integer, "max", NULL); \code{NULL} (default) Sets the order for \link{LegacyNNS.reg}, where \code{(order = "max")} is the k-nearest neighbors equivalent, which is suggested for mixed continuous and discrete (unordered, ordered) data.
+#' @param norm options: ("std", "LegacyNNS", NULL); \code{NULL} (default) 3 settings offered: \code{NULL}, \code{"std"}, and \code{"LegacyNNS"}.  Selects the \code{norm} parameter in \link{LegacyNNS.reg}.
+#' @param method numeric options: (1, 2); Select the LegacyNNS method to include in stack.  \code{(method = 1)} selects \link{LegacyNNS.reg}; \code{(method = 2)} selects \link{LegacyNNS.reg} dimension reduction regression.  Defaults to \code{method = c(1, 2)}, which will reduce the dimension first, then find the optimal \code{n.best}.
 #' @param stack logical; \code{TRUE} (default) Uses dimension reduction output in \code{n.best} optimization, otherwise performs both analyses independently.
-#' @param dim.red.method options: ("cor", "NNS.dep", "NNS.caus", "equal", "all") method for determining synthetic X* coefficients.  \code{(dim.red.method = "cor")} uses standard linear correlation for weights.  \code{(dim.red.method = "NNS.dep")} (default) uses \link{NNS.dep} for nonlinear dependence weights, while \code{(dim.red.method = "NNS.caus")} uses \link{NNS.caus} for causal weights.  \code{(dim.red.method = "all")} averages all methods for further feature engineering.
+#' @param dim.red.method options: ("cor", "LegacyNNS.dep", "LegacyNNS.caus", "equal", "all") method for determining synthetic X* coefficients.  \code{(dim.red.method = "cor")} uses standard linear correlation for weights.  \code{(dim.red.method = "LegacyNNS.dep")} (default) uses \link{LegacyNNS.dep} for nonlinear dependence weights, while \code{(dim.red.method = "LegacyNNS.caus")} uses \link{LegacyNNS.caus} for causal weights.  \code{(dim.red.method = "all")} averages all methods for further feature engineering.
 #' @param pred.int numeric [0,1]; \code{NULL} (default) Returns the associated prediction intervals with each \code{method}.
 #' @param status logical; \code{TRUE} (default) Prints status update message in console.
-#' @param ncores integer; value specifying the number of cores to be used in the parallelized subroutine \link{NNS.reg}. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
+#' @param ncores integer; value specifying the number of cores to be used in the parallelized subroutine \link{LegacyNNS.reg}. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
 #'
 #' @return Returns a vector of fitted values for the dependent variable test set for all models.
 #' \itemize{
-#' \item{\code{"NNS.reg.n.best"}} returns the optimum \code{"n.best"} parameter for the \link{NNS.reg} multivariate regression.  \code{"SSE.reg"} returns the SSE for the \link{NNS.reg} multivariate regression.
-#' \item{\code{"OBJfn.reg"}} returns the \code{obj.fn} for the \link{NNS.reg} regression.
-#' \item{\code{"NNS.dim.red.threshold"}} returns the optimum \code{"threshold"} from the \link{NNS.reg} dimension reduction regression.
-#' \item{\code{"OBJfn.dim.red"}} returns the \code{obj.fn} for the \link{NNS.reg} dimension reduction regression.
+#' \item{\code{"LegacyNNS.reg.n.best"}} returns the optimum \code{"n.best"} parameter for the \link{LegacyNNS.reg} multivariate regression.  \code{"SSE.reg"} returns the SSE for the \link{LegacyNNS.reg} multivariate regression.
+#' \item{\code{"OBJfn.reg"}} returns the \code{obj.fn} for the \link{LegacyNNS.reg} regression.
+#' \item{\code{"LegacyNNS.dim.red.threshold"}} returns the optimum \code{"threshold"} from the \link{LegacyNNS.reg} dimension reduction regression.
+#' \item{\code{"OBJfn.dim.red"}} returns the \code{obj.fn} for the \link{LegacyNNS.reg} dimension reduction regression.
 #' \item{\code{"probability.threshold"}} returns the optimum probability threshold for classification, else 0.5 when set to \code{FALSE}.
-#' \item{\code{"reg"}} returns \link{NNS.reg} output.
+#' \item{\code{"reg"}} returns \link{LegacyNNS.reg} output.
 #' \item{\code{"reg.pred.int"}} returns the prediction intervals for the regression output.
-#' \item{\code{"dim.red"}} returns \link{NNS.reg} dimension reduction regression output.
+#' \item{\code{"dim.red"}} returns \link{LegacyNNS.reg} dimension reduction regression output.
 #' \item{\code{"dim.red.pred.int"}} returns the prediction intervals for the dimension reduction regression output.
 #' \item{\code{"stack"}} returns the output of the stacked model.
 #' \item{\code{"pred.int"}} returns the prediction intervals for the stacked model.
 #' }
 #'
 #' @author Fred Viole, OVVO Financial Systems
-#' @references Viole, F. (2016) "Classification Using NNS Clustering Analysis"  \doi{10.2139/ssrn.2864711}
+#' @references Viole, F. (2016) "Classification Using LegacyNNS Clustering Analysis"  \doi{10.2139/ssrn.2864711}
 #'
 #' @note
 #' \itemize{
-#' \item Incorporate any objective function from external packages (such as \code{Metrics::mape}) via \code{NNS.stack(..., obj.fn = expression(Metrics::mape(actual, predicted)), objective = "min")}
+#' \item Incorporate any objective function from external packages (such as \code{Metrics::mape}) via \code{LegacyNNS.stack(..., obj.fn = expression(Metrics::mape(actual, predicted)), objective = "min")}
 #' 
 #' \item Like a logistic regression, the \code{(type = "CLASS")} setting is not necessary for target variable of two classes e.g. [0, 1].  The response variable base category should be 1 for multiple class problems.
 #'
@@ -60,17 +60,17 @@
 #' @examples
 #'  ## Using 'iris' dataset where test set [IVs.test] is 'iris' rows 141:150.
 #'  \dontrun{
-#'  NNS.stack(iris[1:140, 1:4], iris[1:140, 5], IVs.test = iris[141:150, 1:4], type = "CLASS")
+#'  LegacyNNS.stack(iris[1:140, 1:4], iris[1:140, 5], IVs.test = iris[141:150, 1:4], type = "CLASS")
 #'
 #'  ## Using 'iris' dataset to determine [n.best] and [threshold] with no test set.
-#'  NNS.stack(iris[ , 1:4], iris[ , 5], type = "CLASS")
+#'  LegacyNNS.stack(iris[ , 1:4], iris[ , 5], type = "CLASS")
 #'
-#'  ## Selecting NNS.reg and dimension reduction techniques.
-#'  NNS.stack(iris[1:140, 1:4], iris[1:140, 5], iris[141:150, 1:4], method = c(1, 2), type = "CLASS")
+#'  ## Selecting LegacyNNS.reg and dimension reduction techniques.
+#'  LegacyNNS.stack(iris[1:140, 1:4], iris[1:140, 5], iris[141:150, 1:4], method = c(1, 2), type = "CLASS")
 #'  }
 #' @export
 
-NNS.stack <- function(IVs.train,
+LegacyNNS.stack <- function(IVs.train,
                       DV.train,
                       IVs.test = NULL,
                       type = NULL,
@@ -138,8 +138,8 @@ NNS.stack <- function(IVs.train,
   i_s <- numeric()
   THRESHOLDS <- vector(mode = "list", folds)
   best.k <- vector(mode = "list", folds)
-  best.nns.cv <- vector(mode = "list", folds)
-  best.nns.ord <- vector(mode = "list", folds)
+  best.LegacyNNS.cv <- vector(mode = "list", folds)
+  best.LegacyNNS.ord <- vector(mode = "list", folds)
   
   if(is.null(colnames(IVs.train))){
     colnames.list <- lapply(1 : dim(IVs.train)[2], function(i) paste0("X", i))
@@ -150,7 +150,7 @@ NNS.stack <- function(IVs.train,
     if(dim.red.method=="cor"){
       var.cutoffs_1 <- abs(round(cor(data.matrix(cbind(DV.train, IVs.train)), method = "spearman")[-1,1], digits = 2))
     } else {
-      var.cutoffs_1 <- abs(round(suppressWarnings(NNS.reg(IVs.train, DV.train, dim.red.method = dim.red.method, plot = FALSE, residual.plot = FALSE, order = order, ncores = ncores,
+      var.cutoffs_1 <- abs(round(suppressWarnings(LegacyNNS.reg(IVs.train, DV.train, dim.red.method = dim.red.method, plot = FALSE, residual.plot = FALSE, order = order, ncores = ncores,
                                                           type = type, point.only = TRUE)$equation$Coefficient[-(n+1)]), digits = 2))
     }
   }
@@ -214,7 +214,7 @@ NNS.stack <- function(IVs.train,
       if(dim.red.method=="cor"){
         var.cutoffs_2 <- abs(round(suppressWarnings(cor(data.matrix(cbind(CV.DV.train, CV.IVs.train)), method = "spearman"))[-1,1], digits = 2))
       } else {
-        var.cutoffs_2 <- abs(round(suppressWarnings(NNS.reg(CV.IVs.train, CV.DV.train, dim.red.method = dim.red.method, plot = FALSE, residual.plot = FALSE, order = order, ncores = ncores,
+        var.cutoffs_2 <- abs(round(suppressWarnings(LegacyNNS.reg(CV.IVs.train, CV.DV.train, dim.red.method = dim.red.method, plot = FALSE, residual.plot = FALSE, order = order, ncores = ncores,
                                                             type = type, point.only = TRUE)$equation$Coefficient[-(n+1)]), digits = 2))
       }
       
@@ -234,14 +234,14 @@ NNS.stack <- function(IVs.train,
       if(dim.red.method=="equal") var.cutoffs <- 0
       
       threshold_results_2 <- vector(mode = "list", length = length(var.cutoffs))
-      nns.ord <- numeric(length(var.cutoffs))
+      LegacyNNS.ord <- numeric(length(var.cutoffs))
       
       for(i in 1:length(var.cutoffs)){
         if(status){
-          message("Current NNS.reg(... , threshold = ", var.cutoffs[i] ," ) MAX Iterations Remaining = " , length(var.cutoffs)-i," ","\r",appendLF=TRUE)
+          message("Current LegacyNNS.reg(... , threshold = ", var.cutoffs[i] ," ) MAX Iterations Remaining = " , length(var.cutoffs)-i," ","\r",appendLF=TRUE)
         }
         
-        predicted <- suppressWarnings(NNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, dim.red.method = dim.red.method, threshold = var.cutoffs[i], order = order, ncores = ncores,
+        predicted <- suppressWarnings(LegacyNNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, dim.red.method = dim.red.method, threshold = var.cutoffs[i], order = order, ncores = ncores,
                                               type = NULL, dist = dist, point.only = TRUE)$Point.est)
         
         predicted[is.na(predicted)] <- gravity(na.omit(predicted))
@@ -254,7 +254,7 @@ NNS.stack <- function(IVs.train,
           predicted <- ifelse(predicted%%1 < threshold_results_2[[i]], floor(predicted), ceiling(predicted))
         }
         
-        nns.ord[i] <- eval(obj.fn)
+        LegacyNNS.ord[i] <- eval(obj.fn)
        
         i_s[i] <- i
 
@@ -262,15 +262,15 @@ NNS.stack <- function(IVs.train,
         THRESHOLDS[[b]] <- best.threshold
 
         if(objective=="min"){
-          best.nns.ord[[b]] <- min(na.omit(nns.ord))
-          if(is.na(nns.ord[1])) nns.ord[1] <- Inf
+          best.LegacyNNS.ord[[b]] <- min(na.omit(LegacyNNS.ord))
+          if(is.na(LegacyNNS.ord[1])) LegacyNNS.ord[1] <- Inf
         } else {
-          best.nns.ord[[b]] <- max(na.omit(nns.ord))
-          if(is.na(nns.ord[1])) nns.ord[1] <- -Inf
+          best.LegacyNNS.ord[[b]] <- max(na.omit(LegacyNNS.ord))
+          if(is.na(LegacyNNS.ord[1])) LegacyNNS.ord[1] <- -Inf
         }
         
-        if(i > 2 && is.na(nns.ord[i])) break
-        if(i > 2 && (nns.ord[i] >= nns.ord[i-1]) && (nns.ord[i] >= nns.ord[i-2])) break
+        if(i > 2 && is.na(LegacyNNS.ord[i])) break
+        if(i > 2 && (LegacyNNS.ord[i] >= LegacyNNS.ord[i-1]) && (LegacyNNS.ord[i] >= LegacyNNS.ord[i-2])) break
       }
       
       
@@ -280,19 +280,19 @@ NNS.stack <- function(IVs.train,
       if(b==folds){
         threshold.table <- sort(table(unlist(THRESHOLDS)), decreasing = TRUE)
         
-        nns.ord.threshold <- gravity(as.numeric(names(threshold.table[threshold.table==max(threshold.table)])))
-        if(is.na(nns.ord.threshold)) nns.ord.threshold <- 0
+        LegacyNNS.ord.threshold <- gravity(as.numeric(names(threshold.table[threshold.table==max(threshold.table)])))
+        if(is.na(LegacyNNS.ord.threshold)) LegacyNNS.ord.threshold <- 0
 
-        nns.method.2 <- (NNS.reg(IVs.train, DV.train, point.est = IVs.test, dim.red.method = dim.red.method, plot = FALSE, order = order, threshold = nns.ord.threshold, ncores = ncores,
+        LegacyNNS.method.2 <- (LegacyNNS.reg(IVs.train, DV.train, point.est = IVs.test, dim.red.method = dim.red.method, plot = FALSE, order = order, threshold = LegacyNNS.ord.threshold, ncores = ncores,
                                                  type = NULL, point.only = TRUE, confidence.interval = pred.int))
   
-        actual <- nns.method.2$Fitted.xy$y
-        predicted <- nns.method.2$Fitted.xy$y.hat
-        pred.int.2 <- nns.method.2$pred.int
+        actual <- LegacyNNS.method.2$Fitted.xy$y
+        predicted <- LegacyNNS.method.2$Fitted.xy$y.hat
+        pred.int.2 <- LegacyNNS.method.2$pred.int
         
-        best.nns.ord <- eval(obj.fn)
+        best.LegacyNNS.ord <- eval(obj.fn)
         
-        rel_vars <- nns.method.2$equation
+        rel_vars <- LegacyNNS.method.2$equation
         
         rel_vars <- which(rel_vars$Coefficient>0)
         rel_vars <- rel_vars[rel_vars <= n]
@@ -304,14 +304,14 @@ NNS.stack <- function(IVs.train,
         if(all(relevant_vars=="FALSE")) relevant_vars <- 1:n
 
         
-        if(!is.null(type) && !is.null(nns.method.2$Point.est)){
+        if(!is.null(type) && !is.null(LegacyNNS.method.2$Point.est)){
           threshold_results_2 <- mean(unlist(threshold_results_2))
           
-          nns.method.2 <- ifelse(nns.method.2$Point.est%%1 < threshold_results_2, floor(nns.method.2$Point.est), ceiling(nns.method.2$Point.est))
-          nns.method.2 <- pmin(nns.method.2, max(as.numeric(DV.train)))
-          nns.method.2 <- pmax(nns.method.2, min(as.numeric(DV.train)))
+          LegacyNNS.method.2 <- ifelse(LegacyNNS.method.2$Point.est%%1 < threshold_results_2, floor(LegacyNNS.method.2$Point.est), ceiling(LegacyNNS.method.2$Point.est))
+          LegacyNNS.method.2 <- pmin(LegacyNNS.method.2, max(as.numeric(DV.train)))
+          LegacyNNS.method.2 <- pmax(LegacyNNS.method.2, min(as.numeric(DV.train)))
         } else {
-          nns.method.2 <- nns.method.2$Point.est
+          LegacyNNS.method.2 <- LegacyNNS.method.2$Point.est
         }
         
         
@@ -320,9 +320,9 @@ NNS.stack <- function(IVs.train,
     } else {
       THRESHOLDS <- NA
       test.set.2 <- NULL
-      nns.method.2 <- NA
-      if(objective=='min'){best.nns.ord <- Inf} else {best.nns.ord <- -Inf}
-      nns.ord.threshold <- NA
+      LegacyNNS.method.2 <- NA
+      if(objective=='min'){best.LegacyNNS.ord <- Inf} else {best.LegacyNNS.ord <- -Inf}
+      LegacyNNS.ord.threshold <- NA
       threshold_results_2 <- NA
       relevant_vars <- 1:n
     } # 2 %in% method
@@ -347,30 +347,30 @@ NNS.stack <- function(IVs.train,
       if(dim(CV.IVs.test)[2]!=n) CV.IVs.test <- t(CV.IVs.test)
       
       threshold_results_1 <- vector(mode = "list", length(c(1:l, length(IVs.train[ , 1]))))
-      nns.cv.1 <- numeric()
+      LegacyNNS.cv.1 <- numeric()
       
       q <- length(IVs.train[ , 1])
       
       for(i in c(1:l, q)){
         index <- which(c(1:l, q) == i)
         if(status){
-          message("Current NNS.reg(... , n.best = ", i ," ) MAX Iterations Remaining = " ,l-index+1," ","\r",appendLF=TRUE)
+          message("Current LegacyNNS.reg(... , n.best = ", i ," ) MAX Iterations Remaining = " ,l-index+1," ","\r",appendLF=TRUE)
         }
         
         if(index==1){
-          setup <- suppressWarnings(NNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, residual.plot = FALSE, n.best = 1, order = order,
+          setup <- suppressWarnings(LegacyNNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, residual.plot = FALSE, n.best = 1, order = order,
                                             type = type, factor.2.dummy = TRUE, dist = dist, ncores = ncores, point.only = FALSE))
           
           if(is.null(dim(setup$RPM))) setup$RPM <- setup$regression.points
           
           if(is.null(dim(setup$RPM))  && is.null(setup$regression.points)){
-            setup <- suppressWarnings(NNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, residual.plot = FALSE, n.best = 1, order = "max",
+            setup <- suppressWarnings(LegacyNNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, residual.plot = FALSE, n.best = 1, order = "max",
                                               type = type, factor.2.dummy = TRUE, dist = dist, ncores = ncores, point.only = FALSE))
           }
           
           if(is.null(dim(setup$RPM))) setup$RPM <- setup$regression.points
           
-          nns.id <- setup$Fitted.xy$NNS.ID
+          LegacyNNS.id <- setup$Fitted.xy$LegacyNNS.ID
           original.DV <- setup$Fitted.xy$y
          
           predicted <- setup$Point.est
@@ -393,16 +393,16 @@ NNS.stack <- function(IVs.train,
             if(ncol(CV.IVs.train)>1){
               CV.IVs.test.new <- data.table::data.table(apply(data.frame(CV.IVs.test), 2, function(z) factor_2_dummy_FR(z)))
               
-              CV.IVs.test.new <- CV.IVs.test.new[, DISTANCES :=  NNS.distance(rpm = setup$RPM, dist.estimate = .SD, k = i, class = type)[1], by = 1:nrow(CV.IVs.test)]
+              CV.IVs.test.new <- CV.IVs.test.new[, DISTANCES :=  LegacyNNS.distance(rpm = setup$RPM, dist.estimate = .SD, k = i, class = type)[1], by = 1:nrow(CV.IVs.test)]
               
               predicted <- as.numeric(unlist(CV.IVs.test.new$DISTANCES))
               rm(CV.IVs.test.new)
             } else {
-              predicted <-  suppressWarnings(NNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, residual.plot = FALSE, n.best = i, order = order, ncores = ncores,
+              predicted <-  suppressWarnings(LegacyNNS.reg(CV.IVs.train, CV.DV.train, point.est = CV.IVs.test, plot = FALSE, residual.plot = FALSE, n.best = i, order = order, ncores = ncores,
                                                      type = type, factor.2.dummy = TRUE, dist = dist, point.only = TRUE)$Point.est)
             }
           } else {
-            predicted <-  suppressWarnings(NNS.reg(CV.IVs.train, CV.DV.train, point.est = unlist(CV.IVs.test), plot = FALSE, residual.plot = FALSE, n.best = i, order = order, ncores = ncores,
+            predicted <-  suppressWarnings(LegacyNNS.reg(CV.IVs.train, CV.DV.train, point.est = unlist(CV.IVs.test), plot = FALSE, residual.plot = FALSE, n.best = i, order = order, ncores = ncores,
                                                    type = type, factor.2.dummy = TRUE, dist = dist, point.only = TRUE)$Point.est)
           }
           
@@ -422,29 +422,29 @@ NNS.stack <- function(IVs.train,
           
         }
         
-        nns.cv.1[index] <- eval(obj.fn)
+        LegacyNNS.cv.1[index] <- eval(obj.fn)
         
-        if(length(na.omit(nns.cv.1)) > 3){
-          if(objective=="min") nns.cv.1[is.na(nns.cv.1)] <- max(na.omit(nns.cv.1)) else nns.cv.1[is.na(nns.cv.1)] <- min(na.omit(nns.cv.1))
-          if(objective=='min' && nns.cv.1[index]>=nns.cv.1[index-1] && nns.cv.1[index]>=nns.cv.1[index-2]){ break }
-          if(objective=='max' && nns.cv.1[index]<=nns.cv.1[index-1] && nns.cv.1[index]<=nns.cv.1[index-2]){ break }
+        if(length(na.omit(LegacyNNS.cv.1)) > 3){
+          if(objective=="min") LegacyNNS.cv.1[is.na(LegacyNNS.cv.1)] <- max(na.omit(LegacyNNS.cv.1)) else LegacyNNS.cv.1[is.na(LegacyNNS.cv.1)] <- min(na.omit(LegacyNNS.cv.1))
+          if(objective=='min' && LegacyNNS.cv.1[index]>=LegacyNNS.cv.1[index-1] && LegacyNNS.cv.1[index]>=LegacyNNS.cv.1[index-2]){ break }
+          if(objective=='max' && LegacyNNS.cv.1[index]<=LegacyNNS.cv.1[index-1] && LegacyNNS.cv.1[index]<=LegacyNNS.cv.1[index-2]){ break }
         }
       }
       
       
-      ks <- c(1:l, q)[!is.na(nns.cv.1)]
+      ks <- c(1:l, q)[!is.na(LegacyNNS.cv.1)]
       
       if(objective=='min'){
-        k <- ks[which.min(na.omit(nns.cv.1))]
-        nns.cv.1 <- min(na.omit(nns.cv.1))
+        k <- ks[which.min(na.omit(LegacyNNS.cv.1))]
+        LegacyNNS.cv.1 <- min(na.omit(LegacyNNS.cv.1))
       } else {
-        k <- ks[which.max(na.omit(nns.cv.1))]
-        nns.cv.1 <- max(na.omit(nns.cv.1))
+        k <- ks[which.max(na.omit(LegacyNNS.cv.1))]
+        LegacyNNS.cv.1 <- max(na.omit(LegacyNNS.cv.1))
       }
       
       
       best.k[[b]] <- k
-      best.nns.cv[[b]] <- if(!is.null(type)) min(max(nns.cv.1,0),1) else nns.cv.1
+      best.LegacyNNS.cv[[b]] <- if(!is.null(type)) min(max(LegacyNNS.cv.1,0),1) else LegacyNNS.cv.1
       
       if(b==folds){
         ks <- table(unlist(best.k))
@@ -452,26 +452,26 @@ NNS.stack <- function(IVs.train,
         best.k <-  mode_class(as.numeric(rep(names(ks), as.numeric(unlist(ks)))))
 
         if(length(relevant_vars)>1){
-            nns.method.1 <- suppressWarnings(NNS.reg(IVs.train[ , relevant_vars], DV.train, point.est = IVs.test[, relevant_vars], plot = FALSE, n.best = best.k, order = order, ncores = ncores,
+            LegacyNNS.method.1 <- suppressWarnings(LegacyNNS.reg(IVs.train[ , relevant_vars], DV.train, point.est = IVs.test[, relevant_vars], plot = FALSE, n.best = best.k, order = order, ncores = ncores,
                                                      type = NULL, point.only = FALSE, confidence.interval = pred.int))
         } else {
-            nns.method.1 <- suppressWarnings(NNS.reg(IVs.train[ , relevant_vars], DV.train, point.est = unlist(IVs.test[, relevant_vars]), plot = FALSE, n.best = best.k, order = order, ncores = ncores,
+            LegacyNNS.method.1 <- suppressWarnings(LegacyNNS.reg(IVs.train[ , relevant_vars], DV.train, point.est = unlist(IVs.test[, relevant_vars]), plot = FALSE, n.best = best.k, order = order, ncores = ncores,
                                                     type = NULL, point.only = FALSE, confidence.interval = pred.int))
         }
         
-        actual <- nns.method.1$Fitted.xy$y
-        predicted <- nns.method.1$Fitted.xy$y.hat
+        actual <- LegacyNNS.method.1$Fitted.xy$y
+        predicted <- LegacyNNS.method.1$Fitted.xy$y.hat
         
-        best.nns.cv <- eval(obj.fn)
+        best.LegacyNNS.cv <- eval(obj.fn)
         
-        pred.int.1 <- nns.method.1$pred.int
-        nns.method.1 <- nns.method.1$Point.est
+        pred.int.1 <- LegacyNNS.method.1$pred.int
+        LegacyNNS.method.1 <- LegacyNNS.method.1$Point.est
         
-        if(!is.null(type) && !is.null(nns.method.1)){
+        if(!is.null(type) && !is.null(LegacyNNS.method.1)){
           threshold_results_1 <- mean(unlist(threshold_results_1))
-          nns.method.1 <- ifelse(nns.method.1%%1 < threshold_results_1, floor(nns.method.1), ceiling(nns.method.1))
-          nns.method.1 <- pmin(nns.method.1, max(as.numeric(DV.train)))
-          nns.method.1 <- pmax(nns.method.1, min(as.numeric(DV.train)))
+          LegacyNNS.method.1 <- ifelse(LegacyNNS.method.1%%1 < threshold_results_1, floor(LegacyNNS.method.1), ceiling(LegacyNNS.method.1))
+          LegacyNNS.method.1 <- pmin(LegacyNNS.method.1, max(as.numeric(DV.train)))
+          LegacyNNS.method.1 <- pmax(LegacyNNS.method.1, min(as.numeric(DV.train)))
         }
       }
       
@@ -479,9 +479,9 @@ NNS.stack <- function(IVs.train,
     } else {
       test.set.1 <- NULL
       best.k <- NA
-      nns.method.1 <- NA
+      LegacyNNS.method.1 <- NA
       threshold_results_1 <- NA
-      if(objective=='min'){best.nns.cv <- Inf} else {best.nns.cv <- -Inf}
+      if(objective=='min'){best.LegacyNNS.cv <- Inf} else {best.LegacyNNS.cv <- -Inf}
     }# 1 %in% method
     
     
@@ -490,14 +490,14 @@ NNS.stack <- function(IVs.train,
   } # errors (b) loop
   
   
-  ### Weights for combining NNS techniques
-  best.nns.cv[best.nns.cv == 0] <- 1e-10
-  best.nns.ord[best.nns.ord == 0] <- 1e-10
+  ### Weights for combining LegacyNNS techniques
+  best.LegacyNNS.cv[best.LegacyNNS.cv == 0] <- 1e-10
+  best.LegacyNNS.ord[best.LegacyNNS.ord == 0] <- 1e-10
   
   if(objective=="min"){
-    weights <- c(max(1e-10, 1 / best.nns.cv^2), max(1e-10, 1 / best.nns.ord^2))
+    weights <- c(max(1e-10, 1 / best.LegacyNNS.cv^2), max(1e-10, 1 / best.LegacyNNS.ord^2))
   } else {
-    weights <- c(max(1e-10, best.nns.cv^2), max(1e-10, best.nns.ord^2))
+    weights <- c(max(1e-10, best.LegacyNNS.cv^2), max(1e-10, best.LegacyNNS.ord^2))
   }
   
   
@@ -511,16 +511,16 @@ NNS.stack <- function(IVs.train,
   if(!is.null(type)) probability.threshold <-  mean(c(threshold_results_1, threshold_results_2), na.rm = TRUE) else probability.threshold <- .5
   
   if(identical(sort(method),c(1,2))){
-    if(sum(is.na(nns.method.1)>0)){
-      na.1.index <- which(is.na(nns.method.1))
-      nns.method.1[na.1.index] <- nns.method.2[na.1.index]
+    if(sum(is.na(LegacyNNS.method.1)>0)){
+      na.1.index <- which(is.na(LegacyNNS.method.1))
+      LegacyNNS.method.1[na.1.index] <- LegacyNNS.method.2[na.1.index]
     }
-    if(sum(is.na(nns.method.2)>0)){
-      na.2.index <- which(is.na(nns.method.2))
-      nns.method.2[na.2.index] <- nns.method.1[na.2.index]
+    if(sum(is.na(LegacyNNS.method.2)>0)){
+      na.2.index <- which(is.na(LegacyNNS.method.2))
+      LegacyNNS.method.2[na.2.index] <- LegacyNNS.method.1[na.2.index]
     }
     
-    estimates <- (weights[1] * nns.method.1 + weights[2] * nns.method.2)
+    estimates <- (weights[1] * LegacyNNS.method.1 + weights[2] * LegacyNNS.method.2)
     if(!is.null(pred.int)) stacked.pred.int <- (weights[1] * pred.int.1 + weights[2] * pred.int.2) else stacked.pred.int <- NULL
 
     if(!is.null(type)){
@@ -532,12 +532,12 @@ NNS.stack <- function(IVs.train,
     }
   } else {
     if(method==1){
-      estimates <- nns.method.1
+      estimates <- LegacyNNS.method.1
       pred.int.2 <- NULL
       stacked.pred.int <- pred.int.1
     } else {
       if(method==2){
-        estimates <- nns.method.2
+        estimates <- LegacyNNS.method.2
         pred.int.1 <- NULL
         stacked.pred.int <- pred.int.2
       }
@@ -547,14 +547,14 @@ NNS.stack <- function(IVs.train,
   
   if(is.null(probability.threshold)) probability.threshold <- .5
   
-  return(list(OBJfn.reg = best.nns.cv,
-              NNS.reg.n.best = best.k,
+  return(list(OBJfn.reg = best.LegacyNNS.cv,
+              LegacyNNS.reg.n.best = best.k,
               probability.threshold = probability.threshold,
-              OBJfn.dim.red = best.nns.ord,
-              NNS.dim.red.threshold = nns.ord.threshold,
-              reg = nns.method.1,
+              OBJfn.dim.red = best.LegacyNNS.ord,
+              LegacyNNS.dim.red.threshold = LegacyNNS.ord.threshold,
+              reg = LegacyNNS.method.1,
               reg.pred.int = pred.int.1,
-              dim.red = nns.method.2,
+              dim.red = LegacyNNS.method.2,
               dim.red.pred.int = pred.int.2,
               stack = estimates,
               pred.int = stacked.pred.int))

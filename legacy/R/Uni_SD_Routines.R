@@ -1,4 +1,4 @@
-#' NNS FSD Test uni-directional
+#' LegacyNNS FSD Test uni-directional
 #'
 #' Uni-directional test of first degree stochastic dominance using lower partial moments used in SD Efficient Set routine.
 #'
@@ -14,11 +14,11 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.FSD.uni(x, y)
+#' LegacyNNS.FSD.uni(x, y)
 #' }
 #' @export
 
-NNS.FSD.uni <- function(x, y, type = "discrete"){
+LegacyNNS.FSD.uni <- function(x, y, type = "discrete"){
     if(any(class(x)%in%c("tbl","data.table"))) { 
       x <- as.vector(unlist(x))
     }
@@ -55,7 +55,7 @@ NNS.FSD.uni <- function(x, y, type = "discrete"){
     return(0)
 }
 
-#' NNS SSD Test uni-directional
+#' LegacyNNS SSD Test uni-directional
 #'
 #' Uni-directional test of second degree stochastic dominance using lower partial moments used in SD Efficient Set routine.
 #' @param x a numeric vector.
@@ -67,11 +67,11 @@ NNS.FSD.uni <- function(x, y, type = "discrete"){
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.SSD.uni(x, y)
+#' LegacyNNS.SSD.uni(x, y)
 #' }
 #' @export
 
-NNS.SSD.uni <- function(x, y){
+LegacyNNS.SSD.uni <- function(x, y){
     if(any(class(x) %in% c("tbl","data.table"))){
 	  x <- as.vector(unlist(x))
 	}
@@ -98,7 +98,7 @@ NNS.SSD.uni <- function(x, y){
 }
 
 
-#' NNS TSD Test uni-directional
+#' LegacyNNS TSD Test uni-directional
 #'
 #' Uni-directional test of third degree stochastic dominance using lower partial moments used in SD Efficient Set routine.
 #' @param x a numeric vector.
@@ -110,11 +110,11 @@ NNS.SSD.uni <- function(x, y){
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.TSD.uni(x, y)
+#' LegacyNNS.TSD.uni(x, y)
 #' }
 #' @export
 
-NNS.TSD.uni <- function(x, y){
+LegacyNNS.TSD.uni <- function(x, y){
     if(any(class(x)%in%c("tbl","data.table"))){
 	  x <- as.vector(unlist(x))
 	}

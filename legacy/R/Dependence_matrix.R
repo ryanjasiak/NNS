@@ -1,4 +1,4 @@
-NNS.dep.matrix <- function(x, order = NULL, degree = NULL, asym = FALSE){
+LegacyNNS.dep.matrix <- function(x, order = NULL, degree = NULL, asym = FALSE){
 
   n <- ncol(x)
   if(is.null(n)){
@@ -12,9 +12,9 @@ NNS.dep.matrix <- function(x, order = NULL, degree = NULL, asym = FALSE){
   if(nrow(x) < 20 ) order <- 2
 
   upper_lower <- function(x, y, asym){
-    basic_dep <- NNS.dep(x, y, print.map = FALSE, asym = asym)
+    basic_dep <- LegacyNNS.dep(x, y, print.map = FALSE, asym = asym)
     if(asym){
-      asym_dep <- NNS.dep(y, x, print.map = FALSE, asym = asym)
+      asym_dep <- LegacyNNS.dep(y, x, print.map = FALSE, asym = asym)
       return(list("Upper_cor" = basic_dep$Correlation,
                   "Upper_dep" = basic_dep$Dependence,
                   "Lower_cor" = asym_dep$Correlation,

@@ -1,4 +1,4 @@
-#' NNS CDF
+#' LegacyNNS CDF
 #'
 #' This function generates an empirical CDF using partial moment ratios \link{LPM.ratio}, and resulting survival, hazard and cumulative hazard functions.
 #'
@@ -15,33 +15,33 @@
 #' @author Fred Viole, OVVO Financial Systems
 #' @references Viole, F. and Nawrocki, D. (2013) "Nonlinear Nonparametric Statistics: Using Partial Moments" (ISBN: 1490523995)
 #'
-#' Viole, F. (2017) "Continuous CDFs and ANOVA with NNS"  \doi{10.2139/ssrn.3007373}
+#' Viole, F. (2017) "Continuous CDFs and ANOVA with LegacyNNS"  \doi{10.2139/ssrn.3007373}
 #' 
 #' @examples
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100)
-#' NNS.CDF(x)
+#' LegacyNNS.CDF(x)
 #'
 #' ## Empirical CDF (degree = 0)
-#' NNS.CDF(x)
+#' LegacyNNS.CDF(x)
 #'
 #' ## Continuous CDF (degree = 1)
-#' NNS.CDF(x, 1)
+#' LegacyNNS.CDF(x, 1)
 #'
 #' ## Joint CDF
 #' x <- rnorm(5000) ; y <- rnorm(5000)
 #' A <- cbind(x,y)
 #'
-#' NNS.CDF(A, 0)
+#' LegacyNNS.CDF(A, 0)
 #'
 #' ## Joint CDF with target
-#' NNS.CDF(A, 0, target = c(0,0))
+#' LegacyNNS.CDF(A, 0, target = c(0,0))
 #' }
 #' @export
 
 
-NNS.CDF <- function(variable, degree = 0, target = NULL, type = "CDF", plot = TRUE){
+LegacyNNS.CDF <- function(variable, degree = 0, target = NULL, type = "CDF", plot = TRUE){
   if(any(class(variable) %in% c("tbl", "data.table")) && dim(variable)[2] == 1){ 
     variable <- as.vector(unlist(variable))
   }
@@ -97,7 +97,7 @@ NNS.CDF <- function(variable, degree = 0, target = NULL, type = "CDF", plot = TR
         f_proxy[i] <- (CDF[end] - CDF[start]) / dx
       }
       f_proxy <- pmax(f_proxy, 1e-10)
-      reg_fit <- NNS.reg(x, f_proxy, order = NULL, n.best = 1, point.est = if(!is.null(target)) target else NULL, plot = FALSE)
+      reg_fit <- LegacyNNS.reg(x, f_proxy, order = NULL, n.best = 1, point.est = if(!is.null(target)) target else NULL, plot = FALSE)
       dens <- pmax(reg_fit$Fitted$y.hat, 1e-10)
       S <- pmax(1e-10, 1 - CDF)
       CDF <- dens / S
@@ -115,7 +115,7 @@ NNS.CDF <- function(variable, degree = 0, target = NULL, type = "CDF", plot = TR
       CDF <- -log(S)
       CDF <- pmax(0, CDF)
       if(!is.null(target)){
-        reg_fit <- NNS.reg(x, CDF, order = NULL, n.best = 1, point.est = target, plot = FALSE)
+        reg_fit <- LegacyNNS.reg(x, CDF, order = NULL, n.best = 1, point.est = target, plot = FALSE)
         P <- reg_fit$Point.est
       }
       ylabel <- "H(x)"
@@ -172,7 +172,7 @@ NNS.CDF <- function(variable, degree = 0, target = NULL, type = "CDF", plot = TR
     } else if(type == "hazard"){
       data_points <- data.frame(x = sorted_x, y = sorted_y)
       dens_proxy <- pmax(joint_cdf[sorted_indices], 1e-10)
-      reg_fit <- NNS.reg(data_points, dens_proxy, order = "max", 
+      reg_fit <- LegacyNNS.reg(data_points, dens_proxy, order = "max", 
                          point.est = if(!is.null(target)) data.frame(x = target[1], y = target[2]) else NULL, 
                          plot = FALSE)
       dens <- pmax(reg_fit$Fitted$y.hat, 1e-10)
@@ -256,7 +256,7 @@ NNS.CDF <- function(variable, degree = 0, target = NULL, type = "CDF", plot = TR
 
 
 
-#' NNS moments
+#' LegacyNNS moments
 #'
 #' This function returns the first 4 moments of the distribution.
 #'
@@ -276,11 +276,11 @@ NNS.CDF <- function(variable, degree = 0, target = NULL, type = "CDF", plot = TR
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100)
-#' NNS.moments(x)
+#' LegacyNNS.moments(x)
 #' }
 #' @export
 
-NNS.moments <- function(x, population = TRUE){
+LegacyNNS.moments <- function(x, population = TRUE){
   n <- length(x)
   mean <- UPM(1, 0, x) - LPM(1, 0, x)
   variance <- (UPM(2, mean(x), x) + LPM(2, mean(x), x))

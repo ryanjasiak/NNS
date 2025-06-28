@@ -1,18 +1,18 @@
-#' NNS ARMA Optimizer
+#' LegacyNNS ARMA Optimizer
 #'
-#' Wrapper function for optimizing any combination of a given \code{seasonal.factor} vector in \link{NNS.ARMA}.  Minimum sum of squared errors (forecast-actual) is used to determine optimum across all \link{NNS.ARMA} methods.
+#' Wrapper function for optimizing any combination of a given \code{seasonal.factor} vector in \link{LegacyNNS.ARMA}.  Minimum sum of squared errors (forecast-actual) is used to determine optimum across all \link{LegacyNNS.ARMA} methods.
 #'
 #' @param variable a numeric vector.
 #' @param h integer; \code{NULL} (default) Number of periods to forecast out of sample.  If \code{NULL}, \code{h = length(variable) - training.set}.
 #' @param training.set integer; \code{NULL} (default) Sets the number of variable observations as the training set.  See \code{Note} below for recommended uses.
-#' @param seasonal.factor integers; Multiple frequency integers considered for \link{NNS.ARMA} model, i.e. \code{(seasonal.factor = c(12, 24, 36))}
+#' @param seasonal.factor integers; Multiple frequency integers considered for \link{LegacyNNS.ARMA} model, i.e. \code{(seasonal.factor = c(12, 24, 36))}
 #' @param negative.values logical; \code{FALSE} (default) If the variable can be negative, set to
 #' \code{(negative.values = TRUE)}.  It will automatically select \code{(negative.values = TRUE)} if the minimum value of the \code{variable} is negative.
 #' @param obj.fn expression;
 #' \code{expression(cor(predicted, actual, method = "spearman") / sum((predicted - actual)^2))} (default) Rank correlation / sum of squared errors is the default objective function.  Any \code{expression(...)} using the specific terms \code{predicted} and \code{actual} can be used.
 #' @param objective options: ("min", "max") \code{"max"} (default) Select whether to minimize or maximize the objective function \code{obj.fn}.
-#' @param linear.approximation logical; \code{TRUE} (default) Uses the best linear output from \code{NNS.reg} to generate a nonlinear and mixture regression for comparison.  \code{FALSE} is a more exhaustive search over the objective space.
-#' @param pred.int numeric [0, 1]; 0.95 (default) Returns the associated prediction intervals for the final estimate.  Constructed using the maximum entropy bootstrap \link{NNS.meboot} on the final estimates.
+#' @param linear.approximation logical; \code{TRUE} (default) Uses the best linear output from \code{LegacyNNS.reg} to generate a nonlinear and mixture regression for comparison.  \code{FALSE} is a more exhaustive search over the objective space.
+#' @param pred.int numeric [0, 1]; 0.95 (default) Returns the associated prediction intervals for the final estimate.  Constructed using the maximum entropy bootstrap \link{LegacyNNS.meboot} on the final estimates.
 #' @param print.trace logical; \code{TRUE} (default) Prints current iteration information.  Suggested as backup in case of error, best parameters to that point still known and copyable!
 #' @param ncores integer; value specifying the number of cores to be used in the parallelized  procedure. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
 #' @param plot logical; \code{FALSE} (default)
@@ -22,10 +22,10 @@
 #' \item{\code{$period}} a vector of optimal seasonal periods
 #' \item{\code{$weights}} the optimal weights of each seasonal period between an equal weight or NULL weighting
 #' \item{\code{$obj.fn}} the objective function value
-#' \item{\code{$method}} the method identifying which \link{NNS.ARMA} method was used.
-#' \item{\code{$shrink}} whether to use the \code{shrink} parameter in \link{NNS.ARMA}.
-#' \item{\code{$nns.regress}} whether to smooth the variable via \link{NNS.reg} before forecasting.
-#' \item{\code{$bias.shift}} a numerical result of the overall bias of the optimum objective function result.  To be added to the final result when using the \link{NNS.ARMA} with the derived parameters.
+#' \item{\code{$method}} the method identifying which \link{LegacyNNS.ARMA} method was used.
+#' \item{\code{$shrink}} whether to use the \code{shrink} parameter in \link{LegacyNNS.ARMA}.
+#' \item{\code{$LegacyNNS.regress}} whether to smooth the variable via \link{LegacyNNS.reg} before forecasting.
+#' \item{\code{$bias.shift}} a numerical result of the overall bias of the optimum objective function result.  To be added to the final result when using the \link{LegacyNNS.ARMA} with the derived parameters.
 #' \item{\code{$errors}} a vector of model errors from internal calibration.
 #' \item{\code{$results}} a vector of length \code{h}.
 #' \item{\code{$lower.pred.int}} a vector of lower prediction intervals per forecast point.
@@ -47,27 +47,27 @@
 #' 
 #' @examples
 #'
-#' ## Nonlinear NNS.ARMA period optimization using 2 yearly lags on AirPassengers monthly data
+#' ## Nonlinear LegacyNNS.ARMA period optimization using 2 yearly lags on AirPassengers monthly data
 #' \dontrun{
-#' nns.optims <- NNS.ARMA.optim(AirPassengers[1:132], training.set = 120,
+#' LegacyNNS.optims <- LegacyNNS.ARMA.optim(AirPassengers[1:132], training.set = 120,
 #' seasonal.factor = seq(12, 24, 6))
 #'
 #' ## To predict out of sample using best parameters:
-#' NNS.ARMA.optim(AirPassengers[1:132], h = 12, seasonal.factor = seq(12, 24, 6))
+#' LegacyNNS.ARMA.optim(AirPassengers[1:132], h = 12, seasonal.factor = seq(12, 24, 6))
 #' 
 #' ## Incorporate any objective function from external packages (such as \code{Metrics::mape})
-#' NNS.ARMA.optim(AirPassengers[1:132], h = 12, seasonal.factor = seq(12, 24, 6),
+#' LegacyNNS.ARMA.optim(AirPassengers[1:132], h = 12, seasonal.factor = seq(12, 24, 6),
 #' obj.fn = expression(Metrics::mape(actual, predicted)), objective = "min")
 #' }
 #'
 #' @export
 
-NNS.ARMA.optim <- function(variable,
+LegacyNNS.ARMA.optim <- function(variable,
                            h = NULL,
                            training.set = NULL,
                            seasonal.factor,
                            negative.values = FALSE,
-                           obj.fn =  expression( mean((predicted - actual)^2) / (NNS::Co.LPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) + NNS::Co.UPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) )  ),
+                           obj.fn =  expression( mean((predicted - actual)^2) / (LegacyNNS::Co.LPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) + LegacyNNS::Co.UPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) )  ),
                            objective = "min",
                            linear.approximation = TRUE,
                            ncores = NULL,
@@ -110,12 +110,12 @@ NNS.ARMA.optim <- function(variable,
   seasonal.factor <- seasonal.factor[seasonal.factor <= (training.set/denominator)]
   seasonal.factor <- unique(seasonal.factor)
   
-  if(length(seasonal.factor)==0) stop(paste0('Please ensure [seasonal.factor] contains elements less than ', training.set/denominator, ", otherwise use cross-validation of seasonal factors as demonstrated in the vignette >>> Getting Started with NNS: Forecasting"))
+  if(length(seasonal.factor)==0) stop(paste0('Please ensure [seasonal.factor] contains elements less than ', training.set/denominator, ", otherwise use cross-validation of seasonal factors as demonstrated in the vignette >>> Getting Started with LegacyNNS: Forecasting"))
   
   oldw <- getOption("warn")
   options(warn = -1)
   
-  seasonal.combs <- nns.estimates <- vector(mode = "list")
+  seasonal.combs <- LegacyNNS.estimates <- vector(mode = "list")
   
   previous.seasonals <- previous.estimates <- overall.estimates <- overall.seasonals <- vector(mode = "list")
   
@@ -177,15 +177,15 @@ NNS.ARMA.optim <- function(variable,
       
       if (j == "lin") {
         # Parallel or sequential computation based on num_cores
-        nns.estimates.indiv <- if (num_cores > 1) {
+        LegacyNNS.estimates.indiv <- if (num_cores > 1) {
           parallel::clusterExport(
             cl,
-            varlist = c("variable", "h_eval", "training.set", "seasonal.combs", "i", "obj.fn", "negative.values", "NNS.ARMA", "print.trace"),
+            varlist = c("variable", "h_eval", "training.set", "seasonal.combs", "i", "obj.fn", "negative.values", "LegacyNNS.ARMA", "print.trace"),
             envir = environment()
           )
           parallel::parLapply(cl, 1:ncol(seasonal.combs[[i]]), function(k) {
             actual <- tail(variable, h_eval)
-            predicted <- NNS.ARMA(
+            predicted <- LegacyNNS.ARMA(
               variable,
               training.set = training.set,
               h = h_eval,
@@ -198,7 +198,7 @@ NNS.ARMA.optim <- function(variable,
         } else {
           lapply(1:ncol(seasonal.combs[[i]]), function(k) {
             actual <- tail(variable, h_eval)
-            predicted <- NNS.ARMA(
+            predicted <- LegacyNNS.ARMA(
               variable,
               training.set = training.set,
               h = h_eval,
@@ -211,40 +211,40 @@ NNS.ARMA.optim <- function(variable,
         }
         
         # Ensure output is unlisted
-        nns.estimates.indiv <- unlist(nns.estimates.indiv)
+        LegacyNNS.estimates.indiv <- unlist(LegacyNNS.estimates.indiv)
       }
       
       if(j=="nonlin" && linear.approximation){
         # Find the min (obj.fn) for a given seasonals sequence
         actual <- tail(variable, h_eval)
         
-        predicted <- NNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = unlist(overall.seasonals[[1]]), method = j, plot = FALSE, negative.values = negative.values)
+        predicted <- LegacyNNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = unlist(overall.seasonals[[1]]), method = j, plot = FALSE, negative.values = negative.values)
         nonlin.predicted <- predicted
         
-        nns.estimates.indiv <- eval(obj.fn)
+        LegacyNNS.estimates.indiv <- eval(obj.fn)
       }
       
       if(j=="both" && linear.approximation){
         # Find the min (obj.fn) for a given seasonals sequence
         actual <- tail(variable, h_eval)
         
-        lin.predicted <- NNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = unlist(overall.seasonals[[1]]), method = "lin", plot = FALSE, negative.values = negative.values)
+        lin.predicted <- LegacyNNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = unlist(overall.seasonals[[1]]), method = "lin", plot = FALSE, negative.values = negative.values)
         predicted <- both.predicted <- (lin.predicted + nonlin.predicted) / 2
         
-        nns.estimates.indiv <- eval(obj.fn)
+        LegacyNNS.estimates.indiv <- eval(obj.fn)
       }
       
       
-      nns.estimates.indiv <- unlist(nns.estimates.indiv)
+      LegacyNNS.estimates.indiv <- unlist(LegacyNNS.estimates.indiv)
       
-      if(objective=='min') nns.estimates.indiv[is.na(nns.estimates.indiv)] <- Inf else nns.estimates.indiv[is.na(nns.estimates.indiv)] <- -Inf
+      if(objective=='min') LegacyNNS.estimates.indiv[is.na(LegacyNNS.estimates.indiv)] <- Inf else LegacyNNS.estimates.indiv[is.na(LegacyNNS.estimates.indiv)] <- -Inf
       
-      nns.estimates[[i]] <- nns.estimates.indiv
-      nns.estimates.indiv <- numeric()
+      LegacyNNS.estimates[[i]] <- LegacyNNS.estimates.indiv
+      LegacyNNS.estimates.indiv <- numeric()
       
       if(objective=='min'){
-        current.seasonals[[i]] <- seasonal.combs[[i]][,which.min(nns.estimates[[i]])]
-        current.estimate[i] <- min(nns.estimates[[i]])
+        current.seasonals[[i]] <- seasonal.combs[[i]][,which.min(LegacyNNS.estimates[[i]])]
+        current.estimate[i] <- min(LegacyNNS.estimates[[i]])
         
         if(i > 1 && current.estimate[i] > current.estimate[i-1]){
           current.seasonals <- current.seasonals[-length(current.estimate)]
@@ -252,8 +252,8 @@ NNS.ARMA.optim <- function(variable,
           break
         }
       } else {
-        current.seasonals[[i]] <- seasonal.combs[[i]][,which.max(nns.estimates[[i]])]
-        current.estimate[i] <- max(nns.estimates[[i]])
+        current.seasonals[[i]] <- seasonal.combs[[i]][,which.max(LegacyNNS.estimates[[i]])]
+        current.estimate[i] <- max(LegacyNNS.estimates[[i]])
         if(i > 1 && current.estimate[i] < current.estimate[i-1]){
           current.seasonals <- current.seasonals[-length(current.estimate)]
           current.estimate <- current.estimate[-length(current.estimate)]
@@ -265,9 +265,9 @@ NNS.ARMA.optim <- function(variable,
       if(print.trace){
         if(i == 1){
           print(paste0("CURRNET METHOD: ",j))
-          print("COPY LATEST PARAMETERS DIRECTLY FOR NNS.ARMA() IF ERROR:")
+          print("COPY LATEST PARAMETERS DIRECTLY FOR LegacyNNS.ARMA() IF ERROR:")
         }
-        print(paste("NNS.ARMA(... method = ", paste0("'",j,"'"), ", seasonal.factor = ", paste("c(", paste(unlist(current.seasonals[[i]]), collapse = ", ")),") ...)"))
+        print(paste("LegacyNNS.ARMA(... method = ", paste0("'",j,"'"), ", seasonal.factor = ", paste("c(", paste(unlist(current.seasonals[[i]]), collapse = ", ")),") ...)"))
         print(paste0("CURRENT ", j, " OBJECTIVE FUNCTION = ", current.estimate[i]))
       }
       
@@ -318,17 +318,17 @@ NNS.ARMA.optim <- function(variable,
   
   
   if(objective == "min"){
-    nns.periods <- unlist(overall.seasonals[[which.min(unlist(overall.estimates))]])
-    nns.method <- c("lin","nonlin","both")[which.min(unlist(overall.estimates))]
-    nns.SSE <- min(unlist(overall.estimates))
+    LegacyNNS.periods <- unlist(overall.seasonals[[which.min(unlist(overall.estimates))]])
+    LegacyNNS.method <- c("lin","nonlin","both")[which.min(unlist(overall.estimates))]
+    LegacyNNS.SSE <- min(unlist(overall.estimates))
     
-    if(length(nns.periods)>1){
-      predicted <- NNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = nns.periods, method = nns.method, plot = FALSE, negative.values = negative.values, weights = rep((1/length(nns.periods)),length(nns.periods)))
+    if(length(LegacyNNS.periods)>1){
+      predicted <- LegacyNNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = LegacyNNS.periods, method = LegacyNNS.method, plot = FALSE, negative.values = negative.values, weights = rep((1/length(LegacyNNS.periods)),length(LegacyNNS.periods)))
       
       weight.SSE <- eval(obj.fn)
       
-      if(weight.SSE < nns.SSE){
-        nns.weights <- rep((1/length(nns.periods)),length(nns.periods))
+      if(weight.SSE < LegacyNNS.SSE){
+        LegacyNNS.weights <- rep((1/length(LegacyNNS.periods)),length(LegacyNNS.periods))
         
         errors <- predicted - actual
         bias <- gravity(na.omit(errors))
@@ -338,7 +338,7 @@ NNS.ARMA.optim <- function(variable,
         
         if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE > weight.SSE) bias <- 0
       } else {
-        nns.weights <- NULL
+        LegacyNNS.weights <- NULL
         
         errors <- predicted - actual
         bias <- gravity(na.omit(errors))
@@ -346,10 +346,10 @@ NNS.ARMA.optim <- function(variable,
         predicted <- predicted - bias
         bias.SSE <- eval(obj.fn)
         
-        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE >= nns.SSE) bias <- 0
+        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE >= LegacyNNS.SSE) bias <- 0
       }
     } else {
-      nns.weights <- NULL
+      LegacyNNS.weights <- NULL
       
       errors <- predicted - actual
       bias <- gravity(na.omit(errors))
@@ -357,21 +357,21 @@ NNS.ARMA.optim <- function(variable,
       predicted <- predicted - bias
       bias.SSE <- eval(obj.fn)
       
-      if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE >= nns.SSE) bias <- 0
+      if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE >= LegacyNNS.SSE) bias <- 0
     }
     
   } else {
-    nns.periods <- unlist(overall.seasonals[[which.max(unlist(overall.estimates))]])
-    nns.method <- c("lin","nonlin","both")[which.max(unlist(overall.estimates))]
-    nns.SSE <- max(unlist(overall.estimates))
+    LegacyNNS.periods <- unlist(overall.seasonals[[which.max(unlist(overall.estimates))]])
+    LegacyNNS.method <- c("lin","nonlin","both")[which.max(unlist(overall.estimates))]
+    LegacyNNS.SSE <- max(unlist(overall.estimates))
     
-    if(length(nns.periods) > 1){
-      predicted <- NNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = nns.periods, method = nns.method, plot = FALSE, negative.values = negative.values, weights = rep((1/length(nns.periods)),length(nns.periods)))
+    if(length(LegacyNNS.periods) > 1){
+      predicted <- LegacyNNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = LegacyNNS.periods, method = LegacyNNS.method, plot = FALSE, negative.values = negative.values, weights = rep((1/length(LegacyNNS.periods)),length(LegacyNNS.periods)))
       
       weight.SSE <- eval(obj.fn)
       
-      if(weight.SSE > nns.SSE){
-        nns.weights <- rep((1/length(nns.periods)),length(nns.periods))
+      if(weight.SSE > LegacyNNS.SSE){
+        LegacyNNS.weights <- rep((1/length(LegacyNNS.periods)),length(LegacyNNS.periods))
         
         errors <- predicted - actual
         bias <- gravity(na.omit(errors))
@@ -382,7 +382,7 @@ NNS.ARMA.optim <- function(variable,
         if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE <= weight.SSE) bias <- 0
         
       } else {
-        nns.weights <- NULL
+        LegacyNNS.weights <- NULL
         
         errors <- predicted - actual
         bias <- gravity(na.omit(errors))
@@ -390,11 +390,11 @@ NNS.ARMA.optim <- function(variable,
         predicted <- predicted - bias
         bias.SSE <- eval(obj.fn)
         
-        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE <= nns.SSE) bias <- 0
+        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE <= LegacyNNS.SSE) bias <- 0
       }
     } else {
-      nns.weights <- NULL
-      predicted <- NNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = nns.periods, method = nns.method, plot = FALSE, negative.values = negative.values)
+      LegacyNNS.weights <- NULL
+      predicted <- LegacyNNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = LegacyNNS.periods, method = LegacyNNS.method, plot = FALSE, negative.values = negative.values)
       
       errors <- predicted - actual
       bias <- gravity(na.omit(errors))
@@ -402,50 +402,50 @@ NNS.ARMA.optim <- function(variable,
       predicted <- predicted - bias
       bias.SSE <- eval(obj.fn)
       if(objective=="min"){
-        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE >= nns.SSE) bias <- 0
+        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE >= LegacyNNS.SSE) bias <- 0
       } else {
-        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE <= nns.SSE) bias <- 0
+        if(is.na(bias.SSE)) bias <- 0 else if(bias.SSE <= LegacyNNS.SSE) bias <- 0
       }
     }
   }
   
   final.predicted <- predicted
   
-  predicted <- NNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = nns.periods, method = nns.method, plot = FALSE, negative.values = negative.values, weights = nns.weights, shrink = TRUE)
+  predicted <- LegacyNNS.ARMA(variable, training.set = training.set, h = h_eval, seasonal.factor = LegacyNNS.periods, method = LegacyNNS.method, plot = FALSE, negative.values = negative.values, weights = LegacyNNS.weights, shrink = TRUE)
   
   if(objective == "min"){
-    if(eval(obj.fn) < nns.SSE){
-      nns.shrink = TRUE
+    if(eval(obj.fn) < LegacyNNS.SSE){
+      LegacyNNS.shrink = TRUE
       final.predicted <- predicted
-    }  else nns.shrink = FALSE
+    }  else LegacyNNS.shrink = FALSE
   }
   
   if(objective == "max"){
-    if(eval(obj.fn) > nns.SSE){
-      nns.shrink = TRUE
+    if(eval(obj.fn) > LegacyNNS.SSE){
+      LegacyNNS.shrink = TRUE
       final.predicted <- predicted
-    }  else nns.shrink = FALSE
+    }  else LegacyNNS.shrink = FALSE
   }
   
   
-  regressed_variable <- NNS.reg(1:length(variable), variable, plot = FALSE)$Fitted.xy$y.hat
+  regressed_variable <- LegacyNNS.reg(1:length(variable), variable, plot = FALSE)$Fitted.xy$y.hat
   
-  predicted <- NNS.ARMA(regressed_variable, training.set = training.set, h = h_eval, seasonal.factor = nns.periods, method = nns.method, plot = FALSE, negative.values = negative.values, weights = nns.weights, shrink = TRUE)
+  predicted <- LegacyNNS.ARMA(regressed_variable, training.set = training.set, h = h_eval, seasonal.factor = LegacyNNS.periods, method = LegacyNNS.method, plot = FALSE, negative.values = negative.values, weights = LegacyNNS.weights, shrink = TRUE)
   
-  nns.regress <- FALSE
+  LegacyNNS.regress <- FALSE
   
   if(objective == "min"){
-    if(eval(obj.fn) < nns.SSE){
+    if(eval(obj.fn) < LegacyNNS.SSE){
       variable <- regressed_variable
-      nns.regress <- TRUE
+      LegacyNNS.regress <- TRUE
       final.predicted <- predicted
     }
   }
   
   if(objective == "max"){
-    if(eval(obj.fn) > nns.SSE){
+    if(eval(obj.fn) > LegacyNNS.SSE){
       variable <- regressed_variable
-      nns.regress <- TRUE
+      LegacyNNS.regress <- TRUE
       final.predicted <- predicted
     }
   }
@@ -458,10 +458,10 @@ NNS.ARMA.optim <- function(variable,
   
   if(is.null(h_oos)){
     if(is.null(h)) h <- h_eval
-    model.results <- NNS.ARMA(OV, training.set = training.set, h = h_eval, seasonal.factor = nns.periods, method = nns.method, plot = FALSE, negative.values = negative.values, weights = nns.weights, shrink = nns.shrink) - bias
+    model.results <- LegacyNNS.ARMA(OV, training.set = training.set, h = h_eval, seasonal.factor = LegacyNNS.periods, method = LegacyNNS.method, plot = FALSE, negative.values = negative.values, weights = LegacyNNS.weights, shrink = LegacyNNS.shrink) - bias
   } else {
     if(is.null(h)) h <- h_oos
-    model.results <- NNS.ARMA(OV, h = h_oos, seasonal.factor = nns.periods, method = nns.method, plot = FALSE, negative.values = negative.values, weights = nns.weights, shrink = nns.shrink) - bias
+    model.results <- LegacyNNS.ARMA(OV, h = h_oos, seasonal.factor = LegacyNNS.periods, method = LegacyNNS.method, plot = FALSE, negative.values = negative.values, weights = LegacyNNS.weights, shrink = LegacyNNS.shrink) - bias
   }
   
   
@@ -480,7 +480,7 @@ NNS.ARMA.optim <- function(variable,
   if(plot){
     if(is.null(h_oos)) xlim <- c(1, max((training.set + h))) else xlim <- c(1, max((n + h)))
     
-    plot(OV, type = 'l', lwd = 2, main = "NNS.ARMA Forecast", col = 'steelblue',
+    plot(OV, type = 'l', lwd = 2, main = "LegacyNNS.ARMA Forecast", col = 'steelblue',
          xlim = xlim,
          ylab =  "Variable",
          ylim = c(min(model.results, variable,  unlist(lower_PIs), unlist(upper_PIs) ), 
@@ -521,12 +521,12 @@ NNS.ARMA.optim <- function(variable,
   }
   
   
-  return(list(periods = nns.periods,
-              weights = nns.weights,
-              obj.fn = nns.SSE,
-              method = nns.method,
-              shrink = nns.shrink,
-              nns.regress = nns.regress,
+  return(list(periods = LegacyNNS.periods,
+              weights = LegacyNNS.weights,
+              obj.fn = LegacyNNS.SSE,
+              method = LegacyNNS.method,
+              shrink = LegacyNNS.shrink,
+              LegacyNNS.regress = LegacyNNS.regress,
               bias.shift = -bias,
               errors = errors,
               results = model.results,

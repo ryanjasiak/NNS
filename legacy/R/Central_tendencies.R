@@ -1,4 +1,4 @@
-#' NNS mode
+#' LegacyNNS mode
 #'
 #' Mode of a distribution, either continuous or discrete.
 #'
@@ -11,12 +11,12 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100)
-#' NNS.mode(x)
+#' LegacyNNS.mode(x)
 #' }
 #' @export
 
 
-NNS.mode <- function (x, discrete = FALSE, multi = TRUE)
+LegacyNNS.mode <- function (x, discrete = FALSE, multi = TRUE)
 {
   x <- as.numeric(x)
   l <- length(x)
@@ -28,7 +28,7 @@ NNS.mode <- function (x, discrete = FALSE, multi = TRUE)
   range <- abs(x_s[l] - x_s[1])
   if (range == 0)
     return(x[1])
-  z <- NNS_bin(x_s, range/128, origin = x_s[1], missinglast = FALSE)
+  z <- LegacyNNS_bin(x_s, range/128, origin = x_s[1], missinglast = FALSE)
   lz <- length(z$counts)
   max_z <- z$counts == max(z$counts)
   z_names <- seq(x_s[1], x_s[l], z$width)
@@ -58,7 +58,7 @@ NNS.mode <- function (x, discrete = FALSE, multi = TRUE)
 
 
 
-#' NNS gravity
+#' LegacyNNS gravity
 #'
 #' Alternative central tendency measure more robust to outliers.
 #'
@@ -70,11 +70,11 @@ NNS.mode <- function (x, discrete = FALSE, multi = TRUE)
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100)
-#' NNS.gravity(x)
+#' LegacyNNS.gravity(x)
 #' }
 #' @export
 
-NNS.gravity <- function (x, discrete = FALSE)
+LegacyNNS.gravity <- function (x, discrete = FALSE)
 {
   l <- length(x)
   if (l <= 3) return(median(x))
@@ -102,7 +102,7 @@ NNS.gravity <- function (x, discrete = FALSE)
     q3 <- sum(x_s[f_l_75]+((l_75)%%1 * (x_s[ceiling(l_75)] - x_s[f_l_75])))
   }
 
-  z <- NNS_bin(x_s, range/128, origin = x_s[1], missinglast = FALSE)
+  z <- LegacyNNS_bin(x_s, range/128, origin = x_s[1], missinglast = FALSE)
   lz <- length(z$counts)
   max_z <- z$counts == max(z$counts)
   if (sum(max_z) > 1) {
@@ -126,7 +126,7 @@ NNS.gravity <- function (x, discrete = FALSE)
 
 
 
-#' NNS rescale
+#' LegacyNNS rescale
 #'
 #' Rescale a vector using either min-max scaling or risk-neutral adjustment.
 #'
@@ -149,18 +149,18 @@ NNS.gravity <- function (x, discrete = FALSE)
 #' set.seed(123)
 #' # Min-max scaling: a = lower limit, b = upper limit
 #' x <- rnorm(100)
-#' NNS.rescale(x, a = 5, b = 10, method = "minmax")  # Scales to [5, 10]
+#' LegacyNNS.rescale(x, a = 5, b = 10, method = "minmax")  # Scales to [5, 10]
 #' 
 #' # Risk-neutral scaling (Terminal): a = S_0, b = r  # Mean approx 105.13
 #' prices <- 100 * exp(cumsum(rnorm(100, 0.001, 0.02)))
-#' NNS.rescale(prices, a = 100, b = 0.05, method = "riskneutral", T = 1, type = "Terminal")
+#' LegacyNNS.rescale(prices, a = 100, b = 0.05, method = "riskneutral", T = 1, type = "Terminal")
 #' 
 #' # Risk-neutral scaling (Discounted): a = S_0, b = r  # Mean approx 100
-#' NNS.rescale(prices, a = 100, b = 0.05, method = "riskneutral", T = 1, type = "Discounted")
+#' LegacyNNS.rescale(prices, a = 100, b = 0.05, method = "riskneutral", T = 1, type = "Discounted")
 #' }
 #' @export
 
-NNS.rescale <- function(x, a, b, method = "minmax", T = NULL, type = "Terminal") {
+LegacyNNS.rescale <- function(x, a, b, method = "minmax", T = NULL, type = "Terminal") {
   x <- as.numeric(x)
   method <- tolower(method)
   type <- tolower(type)

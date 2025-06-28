@@ -1,4 +1,4 @@
-#' NNS Numerical Differentiation
+#' LegacyNNS Numerical Differentiation
 #'
 #' Determines numerical derivative of a given univariate function using projected secant lines on the y-axis.  These projected points infer finite steps \code{h}, in the finite step method.
 #'
@@ -14,12 +14,12 @@
 #' @examples
 #' \dontrun{
 #' f <- function(x) sin(x) / x
-#' NNS.diff(f, 4.1)
+#' LegacyNNS.diff(f, 4.1)
 #' }
 #' @export
 
 
-NNS.diff <- function(f, point, h = 0.1, tol = 1e-10, digits = 12, print.trace = FALSE){
+LegacyNNS.diff <- function(f, point, h = 0.1, tol = 1e-10, digits = 12, print.trace = FALSE){
 
 
   Finite.step <- function(f, point, h){

@@ -14,11 +14,11 @@
 #' @rawNamespace import(Rcpp, except = LdFlags)
 #' @import RcppParallel
 #' @import rgl
-#' @useDynLib NNS, .registration = TRUE
+#' @useDynLib LegacyNNS, .registration = TRUE
 
 
 
-.onLoad <- function(libname = find.package("NNS"), pkgname = "NNS"){
+.onLoad <- function(libname = find.package("LegacyNNS"), pkgname = "LegacyNNS"){
 
   # CRAN Note avoidance
 
@@ -26,12 +26,12 @@
     c("quadrant","quadrant.new","prior.quadrant",".","tmp.x","tmp.y","min_x_seg","max_x_seg","min_y_seg","max_y_seg",
       "mean_y_seg","mean_x_seg","sub.clpm",'sub.cupm','sub.dlpm','sub.dupm','weight','mean.x','mean.y',"upm","lpm","area",
       "Coefficient","X.Lower.Range","X.Upper.Range","y.hat","interval", "DISTANCES",
-      "NNS.ID","max.x1","max.x2","min.x1","min.x2","counts",'old.counts',
+      "LegacyNNS.ID","max.x1","max.x2","min.x1","min.x2","counts",'old.counts',
       "Period","Coefficient.of.Variation","Variable.Coefficient.of.Variation", "Sum", "j","lpm","upm", "tau",
       "i.x","i.y","q_new","x.x","x.y","standard.errors",
       "detectCores","makeCluster", "makeForkCluster", "registerDoSEQ", "clusterExport", "frollmean", "shift",
       "%dopar%","foreach","stopCluster", "cl",
-      "%do%", "k", "V1", "residuals", "nns_results", "bias_l", "bias_r",
+      "%do%", "k", "V1", "residuals", "LegacyNNS_results", "bias_l", "bias_r",
       "bias", "conf.intervals", "conf.int.neg", "conf.int.pos", "pred.int", "lower.pred.int", "upper.pred.int",
       "estimates", "estimates.max", "estimates.min", "naive.first.grad", "naive.second.grad", "poly", "rise_1", "rise_2"
     ))

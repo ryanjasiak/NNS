@@ -1,4 +1,4 @@
-#' NNS ANOVA
+#' LegacyNNS ANOVA
 #'
 #' Analysis of variance (ANOVA) based on lower partial moment CDFs for multiple variables, evaluated at multiple quantiles (or means only).  Returns a degree of certainty to whether the population distributions (or sample means) are identical, not a p-value.
 #'
@@ -26,37 +26,37 @@
 #' @author Fred Viole, OVVO Financial Systems
 #' @references Viole, F. and Nawrocki, D. (2013) "Nonlinear Nonparametric Statistics: Using Partial Moments" (ISBN: 1490523995)
 #'
-#' Viole, F. (2017) "Continuous CDFs and ANOVA with NNS"  \doi{10.2139/ssrn.3007373}
+#' Viole, F. (2017) "Continuous CDFs and ANOVA with LegacyNNS"  \doi{10.2139/ssrn.3007373}
 #'
 #' @examples
 #'  \dontrun{
 #' ### Binary analysis and effect size
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.ANOVA(control = x, treatment = y)
+#' LegacyNNS.ANOVA(control = x, treatment = y)
 #'
 #' ### Two variable analysis with no control variable
 #' A <- cbind(x, y)
-#' NNS.ANOVA(A)
+#' LegacyNNS.ANOVA(A)
 #' 
 #' ### Medians test
-#' NNS.ANOVA(A, means.only = TRUE, medians = TRUE)
+#' LegacyNNS.ANOVA(A, means.only = TRUE, medians = TRUE)
 #'
 #' ### Multiple variable analysis with no control variable
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100) ; z <- rnorm(100)
 #' A <- cbind(x, y, z)
-#' NNS.ANOVA(A)
+#' LegacyNNS.ANOVA(A)
 #' 
 #' ### Different length vectors used in a list
 #' x <- rnorm(30) ; y <- rnorm(40) ; z <- rnorm(50)
 #' A <- list(x, y, z)
-#' NNS.ANOVA(A)
+#' LegacyNNS.ANOVA(A)
 #' }
 #' @export
 
 
-NNS.ANOVA <- function(
+LegacyNNS.ANOVA <- function(
     control,
     treatment,
     means.only = FALSE,
@@ -85,20 +85,20 @@ NNS.ANOVA <- function(
       control_matrix <- matrix(control[treatment_p], ncol = dim(treatment_p)[2], byrow = F)
       full_matrix <- cbind(control[treatment_p[,1]], control_matrix, treatment[treatment_p[,1]], treatment_matrix)
       
-      nns.certainties <- sapply(
+      LegacyNNS.certainties <- sapply(
         1:ncol(control_matrix), 
-        function(g) NNS.ANOVA.bin(control_matrix[,g], treatment_matrix[,g], means.only = means.only, medians = medians, plot = FALSE)$Certainty
+        function(g) LegacyNNS.ANOVA.bin(control_matrix[,g], treatment_matrix[,g], means.only = means.only, medians = medians, plot = FALSE)$Certainty
       )
       
-      cer_lower_CI <- LPM.VaR(.025, 1, nns.certainties[-1])
-      cer_upper_CI <- UPM.VaR(.025, 1, nns.certainties[-1])
+      cer_lower_CI <- LPM.VaR(.025, 1, LegacyNNS.certainties[-1])
+      cer_upper_CI <- UPM.VaR(.025, 1, LegacyNNS.certainties[-1])
       
-      robust_estimate <- gravity(nns.certainties)
+      robust_estimate <- gravity(LegacyNNS.certainties)
       
       if(plot){
         original.par <- par(no.readonly = TRUE)
         par(mfrow = c(1, 2))
-        hist(nns.certainties, main = "NNS Certainty")
+        hist(LegacyNNS.certainties, main = "LegacyNNS Certainty")
         abline(v = robust_estimate, col = 'red', lwd = 3)
         mtext("Robust Certainty Estimate", side = 3, col = "red", at = robust_estimate)
         abline(v =  cer_lower_CI, col = "red", lwd = 2, lty = 3)
@@ -106,7 +106,7 @@ NNS.ANOVA <- function(
       }
       return(
         as.list(c(unlist(
-          NNS.ANOVA.bin(
+          LegacyNNS.ANOVA.bin(
             control, 
             treatment,
             means.only = means.only,
@@ -123,7 +123,7 @@ NNS.ANOVA <- function(
       )
     } else {
       return(
-        NNS.ANOVA.bin(
+        LegacyNNS.ANOVA.bin(
           control, 
           treatment, 
           means.only = means.only,
@@ -172,7 +172,7 @@ NNS.ANOVA <- function(
     for(i in 1:(n - 1)){
       raw.certainties[[i]] <- sapply(
         (i + 1) : n, 
-        function(b) NNS.ANOVA.bin(
+        function(b) LegacyNNS.ANOVA.bin(
           na.omit(unlist(A[ , i])),
           na.omit(unlist(A[ , b])),
           means.only = means.only,
@@ -188,7 +188,7 @@ NNS.ANOVA <- function(
     }
     
     #Certainty associated with samples
-    NNS.ANOVA.rho <- mean(unlist(raw.certainties))
+    LegacyNNS.ANOVA.rho <- mean(unlist(raw.certainties))
     
     #Graphs
     if(plot){
@@ -197,21 +197,21 @@ NNS.ANOVA <- function(
         las = 2,  
         ylab = "Variable", 
         horizontal = TRUE, 
-        main = "NNS ANOVA", 
+        main = "LegacyNNS ANOVA", 
         col = c('steelblue', rainbow(n - 1))
       )
       #For ANOVA Visualization
       abline(v = mean.of.means, col = "red", lwd = 4)
       if(medians) mtext("Grand Median", side = 3,col = "red", at = mean.of.means) else mtext("Grand Mean", side = 3,col = "red", at = mean.of.means)
     }
-    return(c("Certainty" = NNS.ANOVA.rho))
+    return(c("Certainty" = LegacyNNS.ANOVA.rho))
   }
   
   raw.certainties <- list(n - 1)
   for(i in 1:(n - 1)){
     raw.certainties[[i]] <- sapply(
       (i + 1) : n, 
-      function(b) NNS.ANOVA.bin(na.omit(unlist(A[ , i])), na.omit(unlist(A[ , b])), means.only = means.only, medians = medians, plot = FALSE)$Certainty
+      function(b) LegacyNNS.ANOVA.bin(na.omit(unlist(A[ , i])), na.omit(unlist(A[ , b])), means.only = means.only, medians = medians, plot = FALSE)$Certainty
     )
   }
   

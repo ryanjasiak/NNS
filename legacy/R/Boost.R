@@ -1,18 +1,18 @@
-#' NNS Boost
+#' LegacyNNS Boost
 #'
-#' Ensemble method for classification using the NNS multivariate regression \link{NNS.reg} as the base learner instead of trees.
+#' Ensemble method for classification using the LegacyNNS multivariate regression \link{LegacyNNS.reg} as the base learner instead of trees.
 #'
 #' @param IVs.train a matrix or data frame of variables of numeric or factor data types.
 #' @param DV.train a numeric or factor vector with compatible dimensions to \code{(IVs.train)}.
 #' @param IVs.test a matrix or data frame of variables of numeric or factor data types with compatible dimensions to \code{(IVs.train)}.  If NULL, will use \code{(IVs.train)} as default.
 #' @param type \code{NULL} (default).  To perform a classification of discrete integer classes from factor target variable \code{(DV.train)} with a base category of 1, set to \code{(type = "CLASS")}, else for continuous \code{(DV.train)} set to \code{(type = NULL)}.
-#' @param depth options: (integer, NULL, "max"); \code{(depth = NULL)}(default) Specifies the \code{order} parameter in the \link{NNS.reg} routine, assigning a number of splits in the regressors, analogous to tree depth.
+#' @param depth options: (integer, NULL, "max"); \code{(depth = NULL)}(default) Specifies the \code{order} parameter in the \link{LegacyNNS.reg} routine, assigning a number of splits in the regressors, analogous to tree depth.
 #' @param learner.trials integer; 100 (default) Sets the number of trials to obtain an accuracy \code{threshold} level.  If the number of all possible feature combinations is less than selected value, the minimum of the two values will be used.
 #' @param epochs integer; \code{2*length(DV.train)} (default) Total number of feature combinations to run.
 #' @param CV.size numeric [0, 1]; \code{NULL} (default) Sets the cross-validation size.  Defaults to a random value between 0.2 and 0.33 for a random sampling of the training set.
 #' @param balance logical; \code{FALSE} (default) Uses both up and down sampling to balance the classes.  \code{type="CLASS"} required.
-#' @param ts.test integer; NULL (default) Sets the length of the test set for time-series data; typically \code{2*h} parameter value from \link{NNS.ARMA} or double known periods to forecast.
-#' @param folds integer; 5 (default) Sets the number of \code{folds} in the \link{NNS.stack} procedure for optimal \code{n.best} parameter.
+#' @param ts.test integer; NULL (default) Sets the length of the test set for time-series data; typically \code{2*h} parameter value from \link{LegacyNNS.ARMA} or double known periods to forecast.
+#' @param folds integer; 5 (default) Sets the number of \code{folds} in the \link{LegacyNNS.stack} procedure for optimal \code{n.best} parameter.
 #' @param threshold numeric; \code{NULL} (default) Sets the \code{obj.fn} threshold to keep feature combinations.
 #' @param obj.fn expression;
 #' \code{expression( sum((predicted - actual)^2) )} (default) Sum of squared errors is the default objective function.  Any \code{expression(...)} using the specific terms \code{predicted} and \code{actual} can be used.  Automatically selects an accuracy measure when \code{(type = "CLASS")}.
@@ -29,14 +29,14 @@
 #' \itemize{
 #' \item{} Like a logistic regression, the \code{(type = "CLASS")} setting is not necessary for target variable of two classes e.g. [0, 1].  The response variable base category should be 1 for classification problems.
 #'
-#' \item{} Incorporate any objective function from external packages (such as \code{Metrics::mape}) via \code{NNS.boost(..., obj.fn = expression(Metrics::mape(actual, predicted)), objective = "min")}
+#' \item{} Incorporate any objective function from external packages (such as \code{Metrics::mape}) via \code{LegacyNNS.boost(..., obj.fn = expression(Metrics::mape(actual, predicted)), objective = "min")}
 #'}
 #' @author Fred Viole, OVVO Financial Systems
-#' @references Viole, F. (2016) "Classification Using NNS Clustering Analysis"  \doi{10.2139/ssrn.2864711}
+#' @references Viole, F. (2016) "Classification Using LegacyNNS Clustering Analysis"  \doi{10.2139/ssrn.2864711}
 #' @examples
 #'  ## Using 'iris' dataset where test set [IVs.test] is 'iris' rows 141:150.
 #'  \dontrun{
-#'  a <- NNS.boost(iris[1:140, 1:4], iris[1:140, 5],
+#'  a <- LegacyNNS.boost(iris[1:140, 1:4], iris[1:140, 5],
 #'  IVs.test = iris[141:150, 1:4],
 #'  epochs = 100, learner.trials = 100,
 #'  type = "CLASS", depth = NULL)
@@ -48,7 +48,7 @@
 #' @export
 
 
-NNS.boost <- function(IVs.train,
+LegacyNNS.boost <- function(IVs.train,
                       DV.train,
                       IVs.test = NULL,
                       type = NULL,
@@ -220,7 +220,7 @@ NNS.boost <- function(IVs.train,
       learning.IVs <- new.iv.train[,.SD, .SDcols = unlist(test.features[i])]
  
       #If estimate is > threshold, store 'features'
-      predicted <- NNS.reg(learning.IVs,
+      predicted <- LegacyNNS.reg(learning.IVs,
                            new.dv.train,
                            point.est = new.iv.test[, .SD, .SDcols=unlist(test.features[[i]])],
                            dim.red.method = "equal",
@@ -338,7 +338,7 @@ NNS.boost <- function(IVs.train,
       
       
       #If estimate is > threshold, store 'features'
-      predicted <- NNS.reg(new.iv.train[, as.numeric(features)],
+      predicted <- LegacyNNS.reg(new.iv.train[, as.numeric(features)],
                            new.dv.train, point.est = point.est.values,
                            dim.red.method = "equal",
                            plot = FALSE, residual.plot = FALSE, order = depth,
@@ -404,7 +404,7 @@ NNS.boost <- function(IVs.train,
   
   if(status) message("Generating Final Estimate" ,"\r", appendLF = TRUE)
 
-  model <- NNS.stack(x[, keeper.features],
+  model <- LegacyNNS.stack(x[, keeper.features],
                      y,
                      IVs.test = z[, keeper.features],
                      order = depth, dim.red.method = "all",

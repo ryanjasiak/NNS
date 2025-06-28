@@ -1,6 +1,6 @@
-#' NNS Nowcast
+#' LegacyNNS Nowcast
 #'
-#' Wrapper function for NNS nowcasting method using the nonparametric vector autoregression \link{NNS.VAR}, and Federal Reserve Nowcasting variables.
+#' Wrapper function for LegacyNNS nowcasting method using the nonparametric vector autoregression \link{LegacyNNS.VAR}, and Federal Reserve Nowcasting variables.
 #'
 #' @param h integer; \code{(h = 1)} (default) Number of periods to forecast. \code{(h = 0)} will return just the interpolated and extrapolated values up to the current month.
 #' @param additional.regressors character; \code{NULL} (default) add more regressors to the base model.  The format must utilize the \code{\link[quantmod]{getSymbols}} format for FRED data, else specify the source.
@@ -8,9 +8,9 @@
 #' @param naive.weights logical; \code{TRUE} Equal weights applied to univariate and multivariate outputs in ensemble.  \code{FALSE} (default) will apply weights based on the number of relevant variables detected. 
 #' @param specific.regressors integer; \code{NULL} (default) Select individual regressors from the base model per Viole (2020) listed in the \code{Note} below.
 #' @param start.date character; \code{"2000-01-03"} (default) Starting date for all data series download.
-#' @param keep.data logical; \code{FALSE} (default) Keeps downloaded variables in a new environment \code{NNSdata}.
+#' @param keep.data logical; \code{FALSE} (default) Keeps downloaded variables in a new environment \code{LegacyNNSdata}.
 #' @param status logical; \code{TRUE} (default) Prints status update message in console.
-#' @param ncores integer; value specifying the number of cores to be used in the parallelized subroutine \link{NNS.ARMA.optim}. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
+#' @param ncores integer; value specifying the number of cores to be used in the parallelized subroutine \link{LegacyNNS.ARMA.optim}. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
 #'
 #' @note Specific regressors include:
 #' \enumerate{
@@ -51,12 +51,12 @@
 #' 
 #' @return Returns the following matrices of forecasted variables:
 #' \itemize{
-#'  \item{\code{"interpolated_and_extrapolated"}} Returns a \code{data.frame} of the linear interpolated and \link{NNS.ARMA} extrapolated values to replace \code{NA} values in the original \code{variables} argument.  This is required for working with variables containing different frequencies, e.g. where \code{NA} would be reported for intra-quarterly data when indexed with monthly periods.
+#'  \item{\code{"interpolated_and_extrapolated"}} Returns a \code{data.frame} of the linear interpolated and \link{LegacyNNS.ARMA} extrapolated values to replace \code{NA} values in the original \code{variables} argument.  This is required for working with variables containing different frequencies, e.g. where \code{NA} would be reported for intra-quarterly data when indexed with monthly periods.
 #'  \item{\code{"relevant_variables"}} Returns the relevant variables from the dimension reduction step.
 #'
-#'  \item{\code{"univariate"}} Returns the univariate \link{NNS.ARMA} forecasts.
+#'  \item{\code{"univariate"}} Returns the univariate \link{LegacyNNS.ARMA} forecasts.
 #'
-#'  \item{\code{"multivariate"}} Returns the multi-variate \link{NNS.reg} forecasts.
+#'  \item{\code{"multivariate"}} Returns the multi-variate \link{LegacyNNS.reg} forecasts.
 #'
 #'  \item{\code{"ensemble"}} Returns the ensemble of both \code{"univariate"} and \code{"multivariate"} forecasts.
 #'  }
@@ -65,28 +65,28 @@
 #' @author Fred Viole, OVVO Financial Systems
 #' @references Viole, F. and Nawrocki, D. (2013) "Nonlinear Nonparametric Statistics: Using Partial Moments" (ISBN: 1490523995)
 #'
-#' Viole, F. (2019) "Multi-variate Time-Series Forecasting: Nonparametric Vector Autoregression Using NNS"  \doi{10.2139/ssrn.3489550}
+#' Viole, F. (2019) "Multi-variate Time-Series Forecasting: Nonparametric Vector Autoregression Using LegacyNNS"  \doi{10.2139/ssrn.3489550}
 #'
-#' Viole, F. (2020) "NOWCASTING with NNS"  \doi{10.2139/ssrn.3589816}
+#' Viole, F. (2020) "NOWCASTING with LegacyNNS"  \doi{10.2139/ssrn.3589816}
 #'
 #'
 #' @examples
 #'
 #'  \dontrun{
 #'  ## Interpolates / Extrapolates all variables to current month
-#'  NNS.nowcast(h = 0)
+#'  LegacyNNS.nowcast(h = 0)
 #'  
 #'  ## Additional regressors and sources specified
-#'  NNS.nowcast(h = 0, additional.regressors = c("SPY", "USO"), 
+#'  LegacyNNS.nowcast(h = 0, additional.regressors = c("SPY", "USO"), 
 #'              additional.sources = c("yahoo", "yahoo"))
 #'              
 #'               
 #'  ### PREDICTION INTERVALS 
-#'  ## Store NNS.nowcast output
-#'  nns_estimates <- NNS.nowcast(h = 12)           
+#'  ## Store LegacyNNS.nowcast output
+#'  LegacyNNS_estimates <- LegacyNNS.nowcast(h = 12)           
 #'  
-#'  # Create bootstrap replicates using NNS.meboot (GDP Variable)
-#'  gdp_replicates <- NNS.meboot(nns_estimates$ensemble$GDPC1, 
+#'  # Create bootstrap replicates using LegacyNNS.meboot (GDP Variable)
+#'  gdp_replicates <- LegacyNNS.meboot(LegacyNNS_estimates$ensemble$GDPC1, 
 #'                               rho = seq(0,1,.25), 
 #'                               reps = 100)["replicates",]
 #'                               
@@ -98,13 +98,13 @@
 #'  upper_GDP_CIs <- apply(replicates, 1, function(z) UPM.VaR(0.025, 0, z))
 #'  
 #'  # View results
-#'  cbind(nns_estimates$ensemble$GDPC1, lower_GDP_CIs, upper_GDP_CIs)
+#'  cbind(LegacyNNS_estimates$ensemble$GDPC1, lower_GDP_CIs, upper_GDP_CIs)
 #'  }
 #'
 #' @export
 
 
-NNS.nowcast <- function(h = 1,
+LegacyNNS.nowcast <- function(h = 1,
                         additional.regressors = NULL,
                         additional.sources = NULL,
                         naive.weights = FALSE,
@@ -135,13 +135,13 @@ NNS.nowcast <- function(h = 1,
   symbols <- as.character(unlist(variable_list[, 1]))
   sources <- as.character(unlist(variable_list[, 2]))
   
-  NNSdata <- new.env()
+  LegacyNNSdata <- new.env()
   
   for(i in 1:length(symbols)){
-      quantmod::getSymbols(symbols[i], env = NNSdata, src = sources[i])
+      quantmod::getSymbols(symbols[i], env = LegacyNNSdata, src = sources[i])
   }
   
-  fetched_symbols <- ls(envir = NNSdata)
+  fetched_symbols <- ls(envir = LegacyNNSdata)
   
   if(length(fetched_symbols) < length(symbols)){
     missing_variables <- symbols[!symbols%in%fetched_symbols]
@@ -155,10 +155,10 @@ NNS.nowcast <- function(h = 1,
   oldw <- getOption("warn")
   options(warn = -1)
   
-  raw_econ_variables <- lapply(mget(symbols, envir = NNSdata), function(x) xts::to.monthly(x)[,4])
+  raw_econ_variables <- lapply(mget(symbols, envir = LegacyNNSdata), function(x) xts::to.monthly(x)[,4])
   
   
-  if(!keep.data) rm(list = ls(), envir = NNSdata)
+  if(!keep.data) rm(list = ls(), envir = LegacyNNSdata)
   
   econ_variables <- Reduce(function(...) merge(..., all=TRUE), raw_econ_variables)[paste0(start.date,"::")]
 
@@ -166,5 +166,5 @@ NNS.nowcast <- function(h = 1,
 
   options(warn = oldw)
   
-  NNS.VAR(econ_variables, h = h, tau = 12, status = status, ncores = ncores, nowcast = TRUE, naive.weights = naive.weights)
+  LegacyNNS.VAR(econ_variables, h = h, tau = 12, status = status, ncores = ncores, nowcast = TRUE, naive.weights = naive.weights)
 }

@@ -3,10 +3,10 @@ Uni.caus <- function(x, y, tau, plot = TRUE){
   if(tau=="cs") tau <- 0
   if(tau=="ts") tau <- 3
 
-  xy <- NNS.norm(cbind(x, y), linear = FALSE, chart.type = NULL)
+  xy <- LegacyNNS.norm(cbind(x, y), linear = FALSE, chart.type = NULL)
 
-  NNS.x <- unlist(xy[ , 1])
-  NNS.y <- unlist(xy[ , 2])
+  LegacyNNS.x <- unlist(xy[ , 1])
+  LegacyNNS.y <- unlist(xy[ , 2])
 
   min.length <- min(length(x), length(y))
 
@@ -28,10 +28,10 @@ Uni.caus <- function(x, y, tau, plot = TRUE){
       y.vectors.tau <- do.call(cbind, y.vectors)
 
       ## Normalize x to x.tau
-      x.norm.tau <- unlist(NNS.norm(x.vectors.tau)[ , 1])
+      x.norm.tau <- unlist(LegacyNNS.norm(x.vectors.tau)[ , 1])
 
       ## Normalize y to y.tau
-      y.norm.tau <- unlist(NNS.norm(y.vectors.tau)[ , 1])
+      y.norm.tau <- unlist(LegacyNNS.norm(y.vectors.tau)[ , 1])
 
   } else {
       x.norm.tau <- x
@@ -41,7 +41,7 @@ Uni.caus <- function(x, y, tau, plot = TRUE){
 
 
   ## Normalize x.norm.tau to y.norm.tau
-  x.tau.y.tau <- NNS.norm(cbind(x.norm.tau, y.norm.tau))
+  x.tau.y.tau <- LegacyNNS.norm(cbind(x.norm.tau, y.norm.tau))
   x.norm.to.y <- as.vector(unlist(x.tau.y.tau[ , 1]))
   y.norm.to.x <- as.vector(unlist(x.tau.y.tau[ , 2]))
 
@@ -51,7 +51,7 @@ Uni.caus <- function(x, y, tau, plot = TRUE){
 
 
   ## Correlation of Normalized Variables
-  dep.mtx <- NNS.dep(cbind(y.norm.to.x, x.norm.to.y), asym = TRUE)$Dependence
+  dep.mtx <- LegacyNNS.dep(cbind(y.norm.to.x, x.norm.to.y), asym = TRUE)$Dependence
   rho.x.y <- dep.mtx[1, 2]
   rho.y.x <- dep.mtx[2, 1]
 

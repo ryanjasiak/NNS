@@ -1,4 +1,4 @@
-#' NNS TSD Test
+#' LegacyNNS TSD Test
 #'
 #' Bi-directional test of third degree stochastic dominance using lower partial moments.
 #'
@@ -12,11 +12,11 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.TSD(x, y)
+#' LegacyNNS.TSD(x, y)
 #' }
 #' @export
 
-NNS.TSD <- function(x, y, plot = TRUE){
+LegacyNNS.TSD <- function(x, y, plot = TRUE){
 
     if(any(class(x)%in%c("tbl","data.table"))) x <- as.vector(unlist(x))
     if(any(class(y)%in%c("tbl","data.table"))) y <- as.vector(unlist(y))

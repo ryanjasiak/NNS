@@ -1,6 +1,6 @@
-#' NNS Partition Map
+#' LegacyNNS Partition Map
 #'
-#' Creates partitions based on partial moment quadrant centroids, iteratively assigning identifications to observations based on those quadrants (unsupervised partitional and hierarchial clustering method).  Basis for correlation, dependence \link{NNS.dep}, regression \link{NNS.reg} routines.
+#' Creates partitions based on partial moment quadrant centroids, iteratively assigning identifications to observations based on those quadrants (unsupervised partitional and hierarchial clustering method).  Basis for correlation, dependence \link{LegacyNNS.dep}, regression \link{LegacyNNS.reg} routines.
 #'
 #' @param x a numeric vector.
 #' @param y a numeric vector with compatible dimensions to \code{x}.
@@ -25,26 +25,26 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.part(x, y)
+#' LegacyNNS.part(x, y)
 #'
 #' ## Data.table of observations and partitions
-#' NNS.part(x, y, order = 1)$dt
+#' LegacyNNS.part(x, y, order = 1)$dt
 #'
 #' ## Regression points
-#' NNS.part(x, y, order = 1)$regression.points
+#' LegacyNNS.part(x, y, order = 1)$regression.points
 #'
 #' ## Voronoi style plot
-#' NNS.part(x, y, Voronoi = TRUE)
+#' LegacyNNS.part(x, y, Voronoi = TRUE)
 #'
 #' ## Examine final counts by quadrant
-#' DT <- NNS.part(x, y)$dt
+#' DT <- LegacyNNS.part(x, y)$dt
 #' DT[ , counts := .N, by = quadrant]
 #' DT
 #' }
 #' @export
 
 
-NNS.part = function (x, y, Voronoi = FALSE, type = NULL, order = NULL, obs.req = 8, 
+LegacyNNS.part = function (x, y, Voronoi = FALSE, type = NULL, order = NULL, obs.req = 8, 
                      min.obs.stop = TRUE, noise.reduction = "off") {
   
   noise.reduction <- tolower(noise.reduction)
@@ -171,7 +171,7 @@ NNS.part = function (x, y, Voronoi = FALSE, type = NULL, order = NULL, obs.req =
     if (is.discrete(x)) RP$x <- ifelse(RP$x%%1 < 0.5, floor(RP$x), ceiling(RP$x))
     
     if (Voronoi) {
-      title(main = paste0("NNS Order = ", i), cex.main = 2)
+      title(main = paste0("LegacyNNS Order = ", i), cex.main = 2)
       if (min.obs.stop) points(RP$x, RP$y, pch = 15, lwd = 2, col = "red")
     }
     

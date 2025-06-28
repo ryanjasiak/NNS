@@ -1,45 +1,45 @@
-#' NNS VAR
+#' LegacyNNS VAR
 #'
-#' Nonparametric vector autoregressive model incorporating \link{NNS.ARMA} estimates of variables into \link{NNS.reg} for a multi-variate time-series forecast.
+#' Nonparametric vector autoregressive model incorporating \link{LegacyNNS.ARMA} estimates of variables into \link{LegacyNNS.reg} for a multi-variate time-series forecast.
 #'
 #' @param variables a numeric matrix or data.frame of contemporaneous time-series to forecast.
 #' @param h integer; 1 (default) Number of periods to forecast. \code{(h = 0)} will return just the interpolated and extrapolated values.
 #' @param tau positive integer [ > 0]; 1 (default) Number of lagged observations to consider for the time-series data.  Vector for single lag for each respective variable or list for multiple lags per each variable.
-#' @param dim.red.method options: ("cor", "NNS.dep", "NNS.caus", "all") method for reducing regressors via \link{NNS.stack}.  \code{(dim.red.method = "cor")} (default) uses standard linear correlation for dimension reduction in the lagged variable matrix.  \code{(dim.red.method = "NNS.dep")} uses \link{NNS.dep} for nonlinear dependence weights, while \code{(dim.red.method = "NNS.caus")} uses \link{NNS.caus} for causal weights.  \code{(dim.red.method = "all")} averages all methods for further feature engineering.
+#' @param dim.red.method options: ("cor", "LegacyNNS.dep", "LegacyNNS.caus", "all") method for reducing regressors via \link{LegacyNNS.stack}.  \code{(dim.red.method = "cor")} (default) uses standard linear correlation for dimension reduction in the lagged variable matrix.  \code{(dim.red.method = "LegacyNNS.dep")} uses \link{LegacyNNS.dep} for nonlinear dependence weights, while \code{(dim.red.method = "LegacyNNS.caus")} uses \link{LegacyNNS.caus} for causal weights.  \code{(dim.red.method = "all")} averages all methods for further feature engineering.
 #' @param naive.weights logical; \code{TRUE} (default) Equal weights applied to univariate and multivariate outputs in ensemble.  \code{FALSE} will apply weights based on the number of relevant variables detected. 
 #' @param obj.fn expression;
-#' \code{expression(mean((predicted - actual)^2)) / (Sum of NNS Co-partial moments)} (default) MSE / co-movements is the default objective function.  Any \code{expression(...)} using the specific terms \code{predicted} and \code{actual} can be used.
+#' \code{expression(mean((predicted - actual)^2)) / (Sum of LegacyNNS Co-partial moments)} (default) MSE / co-movements is the default objective function.  Any \code{expression(...)} using the specific terms \code{predicted} and \code{actual} can be used.
 #' @param objective options: ("min", "max") \code{"min"} (default) Select whether to minimize or maximize the objective function \code{obj.fn}.
 #' @param status logical; \code{TRUE} (default) Prints status update message in console.
-#' @param ncores integer; value specifying the number of cores to be used in the parallelized subroutine \link{NNS.ARMA.optim}. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
-#' @param nowcast logical; \code{FALSE} (default) internal call for \link{NNS.nowcast}.
+#' @param ncores integer; value specifying the number of cores to be used in the parallelized subroutine \link{LegacyNNS.ARMA.optim}. If NULL (default), the number of cores to be used is equal to the number of cores of the machine - 1.
+#' @param nowcast logical; \code{FALSE} (default) internal call for \link{LegacyNNS.nowcast}.
 #'
 #' @return Returns the following matrices of forecasted variables:
 #' \itemize{
-#'  \item{\code{"interpolated_and_extrapolated"}} Returns a \code{data.frame} of the linear interpolated and \link{NNS.ARMA} extrapolated values to replace \code{NA} values in the original \code{variables} argument.  This is required for working with variables containing different frequencies, e.g. where \code{NA} would be reported for intra-quarterly data when indexed with monthly periods.
+#'  \item{\code{"interpolated_and_extrapolated"}} Returns a \code{data.frame} of the linear interpolated and \link{LegacyNNS.ARMA} extrapolated values to replace \code{NA} values in the original \code{variables} argument.  This is required for working with variables containing different frequencies, e.g. where \code{NA} would be reported for intra-quarterly data when indexed with monthly periods.
 #'  \item{\code{"relevant_variables"}} Returns the relevant variables from the dimension reduction step.
 #'
-#'  \item{\code{"univariate"}} Returns the univariate \link{NNS.ARMA} forecasts.
+#'  \item{\code{"univariate"}} Returns the univariate \link{LegacyNNS.ARMA} forecasts.
 #'
-#'  \item{\code{"multivariate"}} Returns the multi-variate \link{NNS.reg} forecasts.
+#'  \item{\code{"multivariate"}} Returns the multi-variate \link{LegacyNNS.reg} forecasts.
 #'
 #'  \item{\code{"ensemble"}} Returns the ensemble of both \code{"univariate"} and \code{"multivariate"} forecasts.
 #'  }
 #'
 #' @note
 #' \itemize{
-#' \item \code{"Error in { : task xx failed -}"} should be re-run with \code{NNS.VAR(..., ncores = 1)}.
-#' \item Not recommended for factor variables, even after transformed to numeric.  \link{NNS.reg} is better suited for factor or binary regressor extrapolation.
+#' \item \code{"Error in { : task xx failed -}"} should be re-run with \code{LegacyNNS.VAR(..., ncores = 1)}.
+#' \item Not recommended for factor variables, even after transformed to numeric.  \link{LegacyNNS.reg} is better suited for factor or binary regressor extrapolation.
 #' }
 #'
 #' @author Fred Viole, OVVO Financial Systems
 #' @references Viole, F. and Nawrocki, D. (2013) "Nonlinear Nonparametric Statistics: Using Partial Moments" (ISBN: 1490523995)
 #'
-#' Viole, F. (2019) "Multi-variate Time-Series Forecasting: Nonparametric Vector Autoregression Using NNS"  \doi{10.2139/ssrn.3489550}
+#' Viole, F. (2019) "Multi-variate Time-Series Forecasting: Nonparametric Vector Autoregression Using LegacyNNS"  \doi{10.2139/ssrn.3489550}
 #'
-#' Viole, F. (2020) "NOWCASTING with NNS"  \doi{10.2139/ssrn.3589816}
+#' Viole, F. (2020) "NOWCASTING with LegacyNNS"  \doi{10.2139/ssrn.3589816}
 #'
-#' Viole, F. (2019) "Forecasting Using NNS"  \doi{10.2139/ssrn.3382300}
+#' Viole, F. (2019) "Forecasting Using LegacyNNS"  \doi{10.2139/ssrn.3382300}
 #'
 #' Vinod, H. and Viole, F. (2017) "Nonparametric Regression Using Clusters"  \doi{10.1007/s10614-017-9713-5}
 #'
@@ -57,20 +57,20 @@
 #'  A <- cbind(x = x, y = y, z = z)
 #'
 #'  ### Using lags 1:4 for each variable
-#'  NNS.VAR(A, h = 12, tau = 4, status = TRUE)
+#'  LegacyNNS.VAR(A, h = 12, tau = 4, status = TRUE)
 #'
 #'  ### Using lag 1 for variable 1, lag 3 for variable 2 and lag 3 for variable 3
-#'  NNS.VAR(A, h = 12, tau = c(1,3,3), status = TRUE)
+#'  LegacyNNS.VAR(A, h = 12, tau = c(1,3,3), status = TRUE)
 #'
 #'  ### Using lags c(1,2,3) for variables 1 and 3, while using lags c(4,5,6) for variable 2
-#'  NNS.VAR(A, h = 12, tau = list(c(1,2,3), c(4,5,6), c(1,2,3)), status = TRUE)
+#'  LegacyNNS.VAR(A, h = 12, tau = list(c(1,2,3), c(4,5,6), c(1,2,3)), status = TRUE)
 #'
 #'  ### PREDICTION INTERVALS
-#'  # Store NNS.VAR output
-#'  nns_estimate <- NNS.VAR(A, h = 12, tau = 4, status = TRUE)
+#'  # Store LegacyNNS.VAR output
+#'  LegacyNNS_estimate <- LegacyNNS.VAR(A, h = 12, tau = 4, status = TRUE)
 #'
-#'  # Create bootstrap replicates using NNS.meboot
-#'  replicates <- NNS.meboot(nns_estimate$ensemble[,1], rho = seq(-1,1,.25))["replicates",]
+#'  # Create bootstrap replicates using LegacyNNS.meboot
+#'  replicates <- LegacyNNS.meboot(LegacyNNS_estimate$ensemble[,1], rho = seq(-1,1,.25))["replicates",]
 #'  replicates <- do.call(cbind, replicates)
 #'
 #'  # Apply UPM.VaR and LPM.VaR for desired prediction interval...95 percent illustrated
@@ -79,7 +79,7 @@
 #'  upper_CIs <- apply(replicates, 1, function(z) UPM.VaR(0.025, 0, z))
 #'
 #'  # View results
-#'  cbind(nns_estimate$ensemble[,1], lower_CIs, upper_CIs)
+#'  cbind(LegacyNNS_estimate$ensemble[,1], lower_CIs, upper_CIs)
 #'
 #'
 #'  #########################################
@@ -95,19 +95,19 @@
 #'  tail(econ_variables)
 #'
 #'
-#'  NNS.VAR(econ_variables, h = 12, tau = 12, status = TRUE)
+#'  LegacyNNS.VAR(econ_variables, h = 12, tau = 12, status = TRUE)
 #'  }
 #'
 #' @export
 
 
 
-NNS.VAR <- function(variables,
+LegacyNNS.VAR <- function(variables,
                     h,
                     tau = 1,
                     dim.red.method = "cor",
                     naive.weights = TRUE,
-                    obj.fn = expression( mean((predicted - actual)^2) / (NNS::Co.LPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) + NNS::Co.UPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) )  ),
+                    obj.fn = expression( mean((predicted - actual)^2) / (LegacyNNS::Co.LPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) + LegacyNNS::Co.UPM(1, predicted, actual, target_x = mean(predicted), target_y = mean(actual)) )  ),
                     objective = "min",
                     status = TRUE,
                     ncores = NULL,
@@ -126,7 +126,7 @@ NNS.VAR <- function(variables,
   if(any(class(variables)%in%c("tbl","data.table"))) variables <- as.data.frame(variables)
   
   dim.red.method <- tolower(dim.red.method)
-  if(sum(dim.red.method%in%c("cor","nns.dep","nns.caus","all"))==0){ stop('Please ensure the dimension reduction method is set to one of "cor", "nns.dep", "nns.caus" or "all".')}
+  if(sum(dim.red.method%in%c("cor","LegacyNNS.dep","LegacyNNS.caus","all"))==0){ stop('Please ensure the dimension reduction method is set to one of "cor", "LegacyNNS.dep", "LegacyNNS.caus" or "all".')}
   
   if(is.null(colnames(variables))){
     colnames.list <- lapply(1 : ncol(variables), function(i) paste0("x", i))
@@ -161,10 +161,10 @@ NNS.VAR <- function(variables,
   
   if(status) message("Currently generating univariate estimates...","\r", appendLF=TRUE)
   
-  nns_IVs <- variable_interpolation <- variable_interpolation_and_extrapolation <- list(ncol(variables))
+  LegacyNNS_IVs <- variable_interpolation <- variable_interpolation_and_extrapolation <- list(ncol(variables))
   
 
-  nns_IVs <- foreach(i = 1:ncol(variables), .packages = c("NNS", "data.table"))%dopar%{
+  LegacyNNS_IVs <- foreach(i = 1:ncol(variables), .packages = c("LegacyNNS", "data.table"))%dopar%{
     n <- nrow(variables)
     index <- seq_len(n)
     last_point <- n
@@ -183,21 +183,21 @@ NNS.VAR <- function(variables,
     variable_interpolation <- variables[,i]
 
     if(h_int > 0){
-      multi <- NNS.stack(cbind(selected_variable[,1], selected_variable[,1]), selected_variable[,2], order = NULL, ncores = 1, status = FALSE, folds = 5,
+      multi <- LegacyNNS.stack(cbind(selected_variable[,1], selected_variable[,1]), selected_variable[,2], order = NULL, ncores = 1, status = FALSE, folds = 5,
                          IVs.test = cbind(missing_index, missing_index), method = 1)$stack
       
       variable_interpolation[missing_index] <- multi
       
     } else {
-      variable_interpolation <- NNS.reg(selected_variable[,1], selected_variable[,2], order = "max", ncores = 1,
+      variable_interpolation <- LegacyNNS.reg(selected_variable[,1], selected_variable[,2], order = "max", ncores = 1,
                                         point.est = index, plot = FALSE, point.only = TRUE)$Point.est
     }
     
     if(h > 0){
-      periods <- NNS.seas(variable_interpolation, modulo = min(tau[[min(i, length(tau))]]),
+      periods <- LegacyNNS.seas(variable_interpolation, modulo = min(tau[[min(i, length(tau))]]),
                           mod.only = FALSE, plot = FALSE)$periods
  
-      b <- NNS.ARMA.optim(variable_interpolation, seasonal.factor = periods,
+      b <- LegacyNNS.ARMA.optim(variable_interpolation, seasonal.factor = periods,
                           obj.fn = obj.fn,
                           objective = objective,
                           print.trace = FALSE,
@@ -211,34 +211,34 @@ NNS.VAR <- function(variables,
     return(list(variable_interpolation, variable_extrapolation))
   }
   
-  interpolation_results <- lapply(nns_IVs, `[[`, 1)
+  interpolation_results <- lapply(LegacyNNS_IVs, `[[`, 1)
   
-  nns_IVs_interpolated_extrapolated <- data.frame(do.call(cbind, interpolation_results))
-  colnames(nns_IVs_interpolated_extrapolated) <- colnames(variables)
+  LegacyNNS_IVs_interpolated_extrapolated <- data.frame(do.call(cbind, interpolation_results))
+  colnames(LegacyNNS_IVs_interpolated_extrapolated) <- colnames(variables)
   
   positive_values <- apply(variables, 2, function(x) min(x, na.rm = TRUE)>0)
   
   for(i in 1:length(positive_values)){
-    if(positive_values[i]) nns_IVs_interpolated_extrapolated[,i] <- pmax(0, nns_IVs_interpolated_extrapolated[,i])
+    if(positive_values[i]) LegacyNNS_IVs_interpolated_extrapolated[,i] <- pmax(0, LegacyNNS_IVs_interpolated_extrapolated[,i])
   }
   
   
-  rownames(nns_IVs_interpolated_extrapolated) <- head(dates, nrow(variables))
-  colnames(nns_IVs_interpolated_extrapolated) <- colnames(variables)
+  rownames(LegacyNNS_IVs_interpolated_extrapolated) <- head(dates, nrow(variables))
+  colnames(LegacyNNS_IVs_interpolated_extrapolated) <- colnames(variables)
 
-  if(h == 0) return(nns_IVs_interpolated_extrapolated)
+  if(h == 0) return(LegacyNNS_IVs_interpolated_extrapolated)
   
-  extrapolation_results <- lapply(nns_IVs, `[[`, 2)
-  nns_IVs_results <- data.frame(do.call(cbind, extrapolation_results))
-  colnames(nns_IVs_results) <- colnames(variables)
+  extrapolation_results <- lapply(LegacyNNS_IVs, `[[`, 2)
+  LegacyNNS_IVs_results <- data.frame(do.call(cbind, extrapolation_results))
+  colnames(LegacyNNS_IVs_results) <- colnames(variables)
   
   # Combine interpolated / extrapolated / forecasted IVs onto training data.frame
-  new_values <- lapply(1:ncol(variables), function(i) c(nns_IVs_interpolated_extrapolated[,i], nns_IVs_results[,i]))
+  new_values <- lapply(1:ncol(variables), function(i) c(LegacyNNS_IVs_interpolated_extrapolated[,i], LegacyNNS_IVs_results[,i]))
   
   new_values <- data.frame(do.call(cbind, new_values))
   colnames(new_values) <- as.character(colnames(variables))
   
-  nns_IVs_interpolated_extrapolated <- head(new_values, nrow(variables))
+  LegacyNNS_IVs_interpolated_extrapolated <- head(new_values, nrow(variables))
   
   # Now lag new forecasted data.frame
   lagged_new_values <- lag.mtx(new_values, tau = tau)
@@ -256,7 +256,7 @@ NNS.VAR <- function(variables,
   }
   
 
-  lists <- foreach(i = 1:ncol(variables), .packages = c("NNS", "data.table"))%dopar%{                   
+  lists <- foreach(i = 1:ncol(variables), .packages = c("LegacyNNS", "data.table"))%dopar%{                   
                      if(status) message("Variable ", i, " of ", ncol(variables), appendLF = TRUE)
                      
                      IV <- lagged_new_values_train[, -i]
@@ -265,8 +265,8 @@ NNS.VAR <- function(variables,
                      ts <- 2*h
                      ts <- max(ts, .2*length(DV))
                      
-                     # Dimension reduction NNS.reg to reduce variables
-                     cor_threshold <- NNS.stack(IVs.train = IV,
+                     # Dimension reduction LegacyNNS.reg to reduce variables
+                     cor_threshold <- LegacyNNS.stack(IVs.train = IV,
                                                 DV.train = DV,
                                                 IVs.test = tail(IV, h),
                                                 ts.test = ts, 
@@ -283,23 +283,23 @@ NNS.VAR <- function(variables,
                        rel.1 <- abs(cor(cbind(DV, IV), method = "spearman"))
                      }
                      
-                     if(any(dim.red.method == "nns.dep" | dim.red.method == "all")){
-                       rel.2 <- NNS.dep(cbind(DV, IV))$Dependence
+                     if(any(dim.red.method == "LegacyNNS.dep" | dim.red.method == "all")){
+                       rel.2 <- LegacyNNS.dep(cbind(DV, IV))$Dependence
                      }
                      
-                     if(any(dim.red.method == "nns.caus" | dim.red.method == "all")){
-                       rel.3 <- NNS.caus(cbind(DV, IV))
+                     if(any(dim.red.method == "LegacyNNS.caus" | dim.red.method == "all")){
+                       rel.3 <- LegacyNNS.caus(cbind(DV, IV))
                      }
                      
                      if(dim.red.method == "cor") rel_vars <- rel.1[-1,1]
                      
-                     if(dim.red.method == "nns.dep") rel_vars <- rel.2[-1,1]
+                     if(dim.red.method == "LegacyNNS.dep") rel_vars <- rel.2[-1,1]
                      
-                     if(dim.red.method == "nns.caus") rel_vars <- rel.3[1,-1]
+                     if(dim.red.method == "LegacyNNS.caus") rel_vars <- rel.3[1,-1]
                      
                      if(dim.red.method == "all") rel_vars <- ((rel.1+rel.2+rel.3)/3)[1, -1]
                      
-                     rel_vars <- names(rel_vars[rel_vars > cor_threshold$NNS.dim.red.threshold])
+                     rel_vars <- names(rel_vars[rel_vars > cor_threshold$LegacyNNS.dim.red.threshold])
                      rel_vars <- rel_vars[rel_vars!=i]
                      rel_vars <- na.omit(rel_vars)
                      
@@ -307,10 +307,10 @@ NNS.VAR <- function(variables,
                        rel_vars <- colnames(lagged_new_values_train)
                      }
                      
-                     nns_DVs <- cor_threshold$stack
-                     nns_DVs[is.na(nns_DVs)] <- nns_IVs_results[is.na(nns_DVs),i]
+                     LegacyNNS_DVs <- cor_threshold$stack
+                     LegacyNNS_DVs[is.na(LegacyNNS_DVs)] <- LegacyNNS_IVs_results[is.na(LegacyNNS_DVs),i]
                     
-                     list(nns_DVs, rel_vars)
+                     list(LegacyNNS_DVs, rel_vars)
                    }
 
   if(num_cores > 1) {
@@ -320,16 +320,16 @@ NNS.VAR <- function(variables,
     invisible(gc(verbose = FALSE))
   }
  
-  nns_DVs <- lapply(lists, `[[`, 1)
+  LegacyNNS_DVs <- lapply(lists, `[[`, 1)
   relevant_vars <- lapply(lists, `[[`, 2)
 
   
-  nns_DVs <- data.frame(do.call(cbind, nns_DVs))
-  nns_DVs <- head(nns_DVs, h)
+  LegacyNNS_DVs <- data.frame(do.call(cbind, LegacyNNS_DVs))
+  LegacyNNS_DVs <- head(LegacyNNS_DVs, h)
   
   RV <- lapply(relevant_vars, function(x) if(length(x)==0){NA} else {x})
   
-  colnames(nns_DVs) <- colnames(variables)
+  colnames(LegacyNNS_DVs) <- colnames(variables)
   
   RV <- do.call(cbind, lapply(RV, `length<-`, max(lengths(RV))))
   colnames(RV) <- as.character(colnames(variables))
@@ -353,25 +353,25 @@ NNS.VAR <- function(variables,
   }
   
   
-  forecasts <- data.frame(Reduce(`+`,list(t(t(nns_IVs_results)*uni) , t(t(nns_DVs)*multi))))
+  forecasts <- data.frame(Reduce(`+`,list(t(t(LegacyNNS_IVs_results)*uni) , t(t(LegacyNNS_DVs)*multi))))
   colnames(forecasts) <- colnames(variables)
   
   
-  colnames(nns_IVs_results) <- colnames(variables)
-  rownames(nns_IVs_results) <- tail(dates, h)
-  colnames(nns_DVs) <- colnames(variables)
-  rownames(nns_DVs) <- tail(dates, h)
+  colnames(LegacyNNS_IVs_results) <- colnames(variables)
+  rownames(LegacyNNS_IVs_results) <- tail(dates, h)
+  colnames(LegacyNNS_DVs) <- colnames(variables)
+  rownames(LegacyNNS_DVs) <- tail(dates, h)
   colnames(forecasts) <- colnames(variables)
   rownames(forecasts) <- tail(dates, h)
-  rownames(nns_IVs_interpolated_extrapolated) <- head(dates, nrow(nns_IVs_interpolated_extrapolated))
+  rownames(LegacyNNS_IVs_interpolated_extrapolated) <- head(dates, nrow(LegacyNNS_IVs_interpolated_extrapolated))
   
   options(warn = oldw)
   
   
-  return( list("interpolated_and_extrapolated" = nns_IVs_interpolated_extrapolated,
+  return( list("interpolated_and_extrapolated" = LegacyNNS_IVs_interpolated_extrapolated,
                "relevant_variables" = data.frame(RV),
-               univariate = nns_IVs_results,
-               multivariate = nns_DVs,
+               univariate = LegacyNNS_IVs_results,
+               multivariate = LegacyNNS_DVs,
                ensemble = forecasts) )
   
 }

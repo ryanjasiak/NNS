@@ -1,15 +1,15 @@
 ### Continuous Mode of a distribution
-mode <- function(x) NNS.mode(x, discrete = FALSE, multi = FALSE)
+mode <- function(x) LegacyNNS.mode(x, discrete = FALSE, multi = FALSE)
 
 
 ### Classification Mode of a distribution
-mode_class <- function(x) NNS.mode(x, discrete = TRUE, multi = FALSE)
+mode_class <- function(x) LegacyNNS.mode(x, discrete = TRUE, multi = FALSE)
 
 
 ### Gravity of a distribution
-gravity <- function(x) NNS.gravity(x, discrete = FALSE)
+gravity <- function(x) LegacyNNS.gravity(x, discrete = FALSE)
 
-gravity_class <- function(x) NNS.gravity(x, discrete = TRUE)
+gravity_class <- function(x) LegacyNNS.gravity(x, discrete = TRUE)
 
 
 ### Factor to dummy variable
@@ -34,7 +34,7 @@ factor_2_dummy_FR <- function(x){
   output
 }
 
-### Generator for 1:length(lag) vectors in NNS.ARMA
+### Generator for 1:length(lag) vectors in LegacyNNS.ARMA
 generate.vectors <- function(x, l) {
   Component.series <- lapply(l, function(lag) {
     rev.series <- rev(x[seq(length(x) + 1, 1, -lag)])
@@ -111,7 +111,7 @@ create_recycled_list <- function(values, list_length) {
 }
 
 
-### Weight and lag function for seasonality in NNS.ARMA
+### Weight and lag function for seasonality in LegacyNNS.ARMA
 ARMA.seas.weighting <- function(sf,mat){
   M <- mat
   n <- ncol(M)
@@ -146,7 +146,7 @@ ARMA.seas.weighting <- function(sf,mat){
 }
 
 
-### Lag matrix generator for NNS.VAR
+### Lag matrix generator for LegacyNNS.VAR
 ### Vector of tau for single different tau per variables tau = c(1, 4)
 ### List of tau vectors for multiple different tau per variables tau = list(c(1,2,3), c(4,5,6))
 lag.mtx <- function(x, tau){
@@ -204,7 +204,7 @@ lag.mtx <- function(x, tau){
 
 
 ### Refactored meboot::meboot.part function
-NNS.meboot.part <- function(x, n, z, xmin, xmax, desintxb, reachbnd)
+LegacyNNS.meboot.part <- function(x, n, z, xmin, xmax, desintxb, reachbnd)
 {
   # Generate random numbers from the [0,1] uniform interval
   p <- runif(n, min=0, max=1)
@@ -237,7 +237,7 @@ NNS.meboot.part <- function(x, n, z, xmin, xmax, desintxb, reachbnd)
 }
 
 ### Refactored meboot::expand.sd function
-NNS.meboot.expand.sd <- function(x, ensemble, fiv=5){
+LegacyNNS.meboot.expand.sd <- function(x, ensemble, fiv=5){
   sdx <- if (is.null(ncol(x))) sd(x) else apply(x, 2, sd)
 
   sdf <- c(sdx, apply(ensemble, 2, sd))

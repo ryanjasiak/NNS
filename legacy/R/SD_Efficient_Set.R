@@ -1,4 +1,4 @@
-#' NNS SD Efficient Set
+#' LegacyNNS SD Efficient Set
 #'
 #' Determines the set of stochastic dominant variables for various degrees.
 #'
@@ -17,13 +17,13 @@
 #' set.seed(123)
 #' x <- rnorm(100) ; y<-rnorm(100) ; z<-rnorm(100)
 #' A <- cbind(x, y, z)
-#' NNS.SD.efficient.set(A, 1)
+#' LegacyNNS.SD.efficient.set(A, 1)
 #' }
 #' @export
 
 
 
-NNS.SD.efficient.set <- function(x, degree, type = "discrete", status = TRUE) {
+LegacyNNS.SD.efficient.set <- function(x, degree, type = "discrete", status = TRUE) {
   type <- tolower(type)
   if(!any(type %in% c("discrete", "continuous")))
     warning("type needs to be either 'discrete' or 'continuous'")
@@ -53,11 +53,11 @@ NNS.SD.efficient.set <- function(x, degree, type = "discrete", status = TRUE) {
     base <- final_ranked[ , tail(current_base, 1)]
     challenger <- final_ranked[ , i + 1]
     if(degree == 1){
-      sd.test <- NNS.FSD.uni(base, challenger, type = type)
+      sd.test <- LegacyNNS.FSD.uni(base, challenger, type = type)
     }else if(degree == 2){
-      sd.test <- NNS.SSD.uni(base, challenger)
+      sd.test <- LegacyNNS.SSD.uni(base, challenger)
     }else if(degree == 3){
-      sd.test <- NNS.TSD.uni(base, challenger)
+      sd.test <- LegacyNNS.TSD.uni(base, challenger)
     }
     if(sd.test == 1){
       Dominated_set[i] <- i + 1
@@ -66,11 +66,11 @@ NNS.SD.efficient.set <- function(x, degree, type = "discrete", status = TRUE) {
       for (j in current_base){
         base <- final_ranked[ , j]
         if(degree == 1){
-          new.base.sd.test <- NNS.FSD.uni(base, challenger, type = type)
+          new.base.sd.test <- LegacyNNS.FSD.uni(base, challenger, type = type)
         }else if(degree == 2){
-          new.base.sd.test <- NNS.SSD.uni(base, challenger)
+          new.base.sd.test <- LegacyNNS.SSD.uni(base, challenger)
         }else if(degree == 3){
-          new.base.sd.test <- NNS.TSD.uni(base, challenger)
+          new.base.sd.test <- LegacyNNS.TSD.uni(base, challenger)
         }
         if (new.base.sd.test == 0){
           I <- FALSE

@@ -1,4 +1,4 @@
-#' NNS FSD Test
+#' LegacyNNS FSD Test
 #'
 #' Bi-directional test of first degree stochastic dominance using lower partial moments.
 #'
@@ -15,13 +15,13 @@
 #' \dontrun{
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
-#' NNS.FSD(x, y)
+#' LegacyNNS.FSD(x, y)
 #' }
 #' @export
 
 
 
-NNS.FSD <- function(x, y, type = "discrete", plot = TRUE){
+LegacyNNS.FSD <- function(x, y, type = "discrete", plot = TRUE){
   type <- tolower(type)
 
   if(!any(type%in%c("discrete", "continuous"))) warning("type needs to be either 'discrete' or 'continuous'")

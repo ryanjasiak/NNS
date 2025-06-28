@@ -1,4 +1,4 @@
-#' NNS Normalization
+#' LegacyNNS Normalization
 #'
 #' Normalizes a matrix of variables based on nonlinear scaling normalization method.
 #'
@@ -16,7 +16,7 @@
 #' set.seed(123)
 #' x <- rnorm(100) ; y <- rnorm(100)
 #' A <- cbind(x, y)
-#' NNS.norm(A)
+#' LegacyNNS.norm(A)
 #' 
 #' ### Normalize list of unequal vector lengths
 #' 
@@ -25,11 +25,11 @@
 #' vec3 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3)
 #' 
 #' vec_list <- list(vec1, vec2, vec3)
-#' NNS.norm(vec_list)
+#' LegacyNNS.norm(vec_list)
 #' }
 #' @export
 
-NNS.norm <- function(X,
+LegacyNNS.norm <- function(X,
                      linear = FALSE,
                      chart.type = NULL,
                      location = "topleft"){
@@ -54,7 +54,7 @@ NNS.norm <- function(X,
     if(length(m) < 10){
       scale.factor <- abs(cor(X))
     } else {
-      scale.factor <- abs(NNS.dep(X)$Dependence)
+      scale.factor <- abs(LegacyNNS.dep(X)$Dependence)
     }
     scales <- Rfast::colmeans(RG * scale.factor)
   } else {

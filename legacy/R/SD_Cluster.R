@@ -1,4 +1,4 @@
-#' NNS SD-based Clustering
+#' LegacyNNS SD-based Clustering
 #'
 #' Clusters a set of variables by iteratively extracting Stochastic Dominance (SD)-efficient sets,
 #' subject to a minimum cluster size.
@@ -17,7 +17,7 @@
 #' }
 #'
 #' @details
-#' The function applies \code{\link{NNS.SD.efficient.set}} iteratively, peeling off the SD-efficient set at each step
+#' The function applies \code{\link{LegacyNNS.SD.efficient.set}} iteratively, peeling off the SD-efficient set at each step
 #' if it meets or exceeds \code{min_cluster} in size, until no more subsets can be extracted or all variables are exhausted.
 #' Variables in each SD-efficient set form a cluster, with any remaining variables aggregated into the final cluster if it meets
 #' the \code{min_cluster} threshold.
@@ -37,17 +37,17 @@
 #' A <- cbind(x, y, z)
 #'
 #' # Perform SD-based clustering (degree 1), requiring at least 2 elements per cluster
-#' results <- NNS.SD.cluster(data = A, degree = 1, min_cluster = 2)
+#' results <- LegacyNNS.SD.cluster(data = A, degree = 1, min_cluster = 2)
 #' print(results$Clusters)
 #'
 #' # Produce a dendrogram as well
-#' results_with_dendro <- NNS.SD.cluster(data = A, degree = 1, min_cluster = 2, dendrogram = TRUE)
+#' results_with_dendro <- LegacyNNS.SD.cluster(data = A, degree = 1, min_cluster = 2, dendrogram = TRUE)
 #' }
 #'
 #' @export
  
 
-NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1, dendrogram = FALSE) {
+LegacyNNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1, dendrogram = FALSE) {
   clusters <- list()
   iteration <- 1
   n <- ncol(data)
@@ -61,8 +61,8 @@ NNS.SD.cluster <- function(data, degree = 1, type = "discrete", min_cluster = 1,
   
   # Continue clustering until the number of remaining columns is less than or equal to min_cluster
   while (ncol(remaining_data) > min_cluster) {
-    # Use the original NNS.SD.efficient.set call as provided
-    SD_set <- NNS.SD.efficient.set(remaining_data, degree = degree, type = type, status = FALSE)
+    # Use the original LegacyNNS.SD.efficient.set call as provided
+    SD_set <- LegacyNNS.SD.efficient.set(remaining_data, degree = degree, type = type, status = FALSE)
     
     if (length(SD_set) == 0) {
       break

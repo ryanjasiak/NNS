@@ -1,6 +1,6 @@
 #' Partial Derivative dy/d_[wrt]
 #'
-#' Returns the numerical partial derivative of \code{y} with respect to [wrt] any regressor for a point of interest.  Finite difference method is used with \link{NNS.reg} estimates as \code{f(x + h)} and \code{f(x - h)} values.
+#' Returns the numerical partial derivative of \code{y} with respect to [wrt] any regressor for a point of interest.  Finite difference method is used with \link{LegacyNNS.reg} estimates as \code{f(x + h)} and \code{f(x - h)} values.
 #'
 #' @param x a numeric matrix or data frame.
 #' @param y a numeric vector with compatible dimensions to \code{x}.
@@ -74,7 +74,7 @@ dy.d_ <- function(x, y, wrt,
   l <- ncol(x)
   
   if(is.null(l)) stop("Please ensure (x) is a matrix or data.frame type object.")
-  if(l < 2) stop("Please use NNS::dy.dx(...) for univariate partial derivatives.")
+  if(l < 2) stop("Please use LegacyNNS::dy.dx(...) for univariate partial derivatives.")
   
   dummies <- list()
   for(i in 1:l){
@@ -83,7 +83,7 @@ dy.d_ <- function(x, y, wrt,
   }
   x <- do.call(cbind, dummies)
   
-  if(messages) message("Currently generating NNS.reg finite difference estimates...Regressor ", wrt,"\r", appendLF=TRUE)
+  if(messages) message("Currently generating LegacyNNS.reg finite difference estimates...Regressor ", wrt,"\r", appendLF=TRUE)
   
   
   if(is.null(colnames(x))){
@@ -121,9 +121,9 @@ dy.d_ <- function(x, y, wrt,
   original.eval.points.max <- eval.points
   original.eval.points <- eval.points
   
-  norm.matrix <- apply(x, 2, function(z) NNS.rescale(z, 0, 1))
+  norm.matrix <- apply(x, 2, function(z) LegacyNNS.rescale(z, 0, 1))
  
-  zz <- max(NNS.dep(x[,wrt], y, asym = TRUE)$Dependence, NNS.copula(cbind(x[,wrt],x[,wrt],y)), NNS.copula(cbind(norm.matrix[,wrt], norm.matrix[,wrt], y)))
+  zz <- max(LegacyNNS.dep(x[,wrt], y, asym = TRUE)$Dependence, LegacyNNS.copula(cbind(x[,wrt],x[,wrt],y)), LegacyNNS.copula(cbind(norm.matrix[,wrt], norm.matrix[,wrt], y)))
  
   h_s <- seq(2, 10, 2)
 
@@ -174,7 +174,7 @@ dy.d_ <- function(x, y, wrt,
       
       
       
-      estimates <- NNS.reg(x, y, point.est = deriv.points, dim.red.method = "equal", plot = FALSE, threshold = 0, order = NULL, point.only = TRUE, ncores = 1)$Point.est
+      estimates <- LegacyNNS.reg(x, y, point.est = deriv.points, dim.red.method = "equal", plot = FALSE, threshold = 0, order = NULL, point.only = TRUE, ncores = 1)$Point.est
       
       estimates <- data.table::data.table(cbind(estimates = estimates,
                                                 position = position,
@@ -211,10 +211,10 @@ dy.d_ <- function(x, y, wrt,
                             original.eval.points,
                             original.eval.points.max)
       
-      if(messages) message("Currently generating NNS.reg finite difference estimates...bandwidth ", index, " of ", length(h_s),"\r" ,appendLF=FALSE)
+      if(messages) message("Currently generating LegacyNNS.reg finite difference estimates...bandwidth ", index, " of ", length(h_s),"\r" ,appendLF=FALSE)
       
       
-      estimates <- NNS.reg(x, y, point.est = deriv.points, dim.red.method = "equal", plot = FALSE, threshold = 0, order = NULL, point.only = TRUE, ncores = 1)$Point.est
+      estimates <- LegacyNNS.reg(x, y, point.est = deriv.points, dim.red.method = "equal", plot = FALSE, threshold = 0, order = NULL, point.only = TRUE, ncores = 1)$Point.est
 
       lower <- head(estimates,n)
       f.x <- estimates[(n+1):(2*n)]
@@ -259,7 +259,7 @@ dy.d_ <- function(x, y, wrt,
       }
       
       
-      mixed.estimates <- NNS.reg(x, y, point.est = mixed.deriv.points, dim.red.method = "equal", plot = FALSE, threshold = 0, order = NULL, point.only = TRUE, ncores = 1)$Point.est
+      mixed.estimates <- LegacyNNS.reg(x, y, point.est = mixed.deriv.points, dim.red.method = "equal", plot = FALSE, threshold = 0, order = NULL, point.only = TRUE, ncores = 1)$Point.est
       
       
       z <- matrix(mixed.estimates, ncol=4, byrow=TRUE)

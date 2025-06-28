@@ -1,6 +1,6 @@
-#' NNS Term Matrix
+#' LegacyNNS Term Matrix
 #'
-#' Generates a term matrix for text classification use in \link{NNS.reg}.
+#' Generates a term matrix for text classification use in \link{LegacyNNS.reg}.
 #'
 #' @param x mixed data.frame; character/numeric; A two column dataset should be used.  Concatenate text from original sources to comply with format.  Also note the possibility of factors in \code{"DV"}, so \code{"as.numeric(as.character(...))"} is used to avoid issues.
 #' @param oos mixed data.frame; character/numeric; Out-of-sample text dataset to be classified.
@@ -9,12 +9,12 @@
 #' @examples
 #' \dontrun{
 #' x <- data.frame(cbind(c("sunny", "rainy"), c(1, -1)))
-#' NNS.term.matrix(x)
+#' LegacyNNS.term.matrix(x)
 #'
 #' ### Concatenate Text with space separator, cbind with "DV"
 #' x <- data.frame(cbind(c("sunny", "rainy"), c("windy", "cloudy"), c(1, -1)))
 #' x <- data.frame(cbind(paste(x[ , 1], x[ , 2], sep = " "), as.numeric(as.character(x[ , 3]))))
-#' NNS.term.matrix(x)
+#' LegacyNNS.term.matrix(x)
 #'
 #' ### NYT Example
 #' require(RTextTools)
@@ -23,12 +23,12 @@
 #' ### Concatenate Columns 3 and 4 containing text, with column 5 as DV
 #' NYT <- data.frame(cbind(paste(NYTimes[ , 3], NYTimes[ , 4], sep = " "),
 #'                      as.numeric(as.character(NYTimes[ , 5]))))
-#' NNS.term.matrix(NYT)
+#' LegacyNNS.term.matrix(NYT)
 #' }
 #' @export
 
 
-NNS.term.matrix <- function(x, oos = NULL){
+LegacyNNS.term.matrix <- function(x, oos = NULL){
 
   if(any(class(x)%in%c("tbl","data.table"))) x <- as.data.frame(x)
 
@@ -76,20 +76,20 @@ NNS.term.matrix <- function(x, oos = NULL){
       }
   }
 
-  NNS.TM <- t(sapply(1 : length(x[ , 1]), function(i) as.integer(tryCatch(as.numeric(unique.vocab%in%x[i,1]), error = function (e) 0))))
+  LegacyNNS.TM <- t(sapply(1 : length(x[ , 1]), function(i) as.integer(tryCatch(as.numeric(unique.vocab%in%x[i,1]), error = function (e) 0))))
 
-  colnames(NNS.TM) <- c(unique.vocab)
+  colnames(LegacyNNS.TM) <- c(unique.vocab)
 
   if(!is.null(oos)){
       OOS.TM <- t(sapply(1 : length(oos), function(i) as.numeric(unique.vocab%in%oos[i])))
 
       colnames(OOS.TM) <- c(unique.vocab)
 
-      return(list("IV" = NNS.TM,
+      return(list("IV" = LegacyNNS.TM,
                   "DV" = as.integer(as.character(x[ , 2])),
                   "OOS" = OOS.TM))
   } else {
-      return(list("IV" = NNS.TM,
+      return(list("IV" = LegacyNNS.TM,
                 "DV" = as.integer(as.character(x[ , 2]))))
   }
 

@@ -1,4 +1,4 @@
-#' NNS Causation
+#' LegacyNNS Causation
 #'
 #' Returns the causality from observational data between two variables.
 #'
@@ -16,17 +16,17 @@
 #' ## x causes y...
 #' set.seed(123)
 #' x <- rnorm(1000) ; y <- x ^ 2
-#' NNS.caus(x, y, tau = "cs")
+#' LegacyNNS.caus(x, y, tau = "cs")
 #'
 #' ## Causal matrix without per factor causation
-#' NNS.caus(iris, tau = 0)
+#' LegacyNNS.caus(iris, tau = 0)
 #'
 #' ## Causal matrix with per factor causation
-#' NNS.caus(iris, factor.2.dummy = TRUE, tau = 0)
+#' LegacyNNS.caus(iris, factor.2.dummy = TRUE, tau = 0)
 #' }
 #' @export
 
-NNS.caus <- function(x, y = NULL,
+LegacyNNS.caus <- function(x, y = NULL,
                      factor.2.dummy = FALSE,
                      tau = 0,
                      plot = FALSE){
@@ -138,7 +138,7 @@ NNS.caus <- function(x, y = NULL,
 
   } else {
 
-    NNS.caus.matrix(x, tau = orig.tau)
+    LegacyNNS.caus.matrix(x, tau = orig.tau)
   }
 
 
