@@ -15,7 +15,28 @@ set(R_EXECUTABLE "R")
 include(FetchContent)
 include(CTest)
 
+function(parse_lib_flags libs_var out_dirs_var out_libs_var)
+  # 1. Expand the single-string list of flags into a true CMake list
+  separate_arguments(_flags  UNIX_COMMAND  "${${libs_var}}")
 
+  # 2 & 3.  Walk each flag and classify it
+  set(_dirs   "")
+  set(_libs   "")
+  foreach(flag IN LISTS _flags)
+    if(flag MATCHES "^-L(.+)")
+      list(APPEND _dirs "${CMAKE_MATCH_1}")        # strip "-L"
+    elseif(flag MATCHES "^-l(.+)")
+      list(APPEND _libs "${CMAKE_MATCH_1}")        # strip "-l"
+    endif()
+  endforeach()
+
+  # 4.  Deduplicate directories (optional)
+  list(REMOVE_DUPLICATES _dirs)
+
+  # 5.  Return results to the caller’s scope
+  set(${out_dirs_var} "${_dirs}" PARENT_SCOPE)
+  set(${out_libs_var} "${_libs}" PARENT_SCOPE)
+endfunction()
 # ========== DOWNLOAD LIBS ==========
 
 # Download Catch2
@@ -49,21 +70,39 @@ execute_process(COMMAND ${RSCRIPT_PATH} -e "RInside:::CxxFlags()"
 separate_arguments(RINSIDE_CXXFLAGS)
 
 message(STATUS "RINSIDE_CXXFLAGS: ${RINSIDE_CXXFLAGS}")
-include_directories(/opt/homebrew/lib/R/4.5/site-library/RInside/include /opt/homebrew/lib/R/4.5/site-library/Rcpp/include /opt/homebrew/Cellar/r/4.5.0/lib/R/include)
+set(ALL_INCLUDE_DIRS)
+foreach(lib_flag IN LISTS R_CPPFLAGS RCPP_CXXFLAGS RINSIDE_CXXFLAGS)
 
-include_directories(${R_CPPFLAGS} ${RCPP_CXXFLAGS} ${RINSIDE_CXXFLAGS})
+#   string(SUBSTRING ${lib_flag} 2 -1 lib_name)
+  if(lib_flag MATCHES "^-[I].*")
+    string(SUBSTRING ${lib_flag} 2 -1 lib_name)
+  else()
+    set(lib_name ${lib_flag})
+  endif()
+  if(NOT lib_name STREQUAL "R")  # Already added
+    list(APPEND ALL_INCLUDE_DIRS ${lib_name})
+  endif()
+endforeach()
+
+message(STATUS "ALL_INCLUDE_DIRS: ${ALL_INCLUDE_DIRS}")
+include_directories(${R_CPPFLAGS} ${RCPP_CXXFLAGS} ${RINSIDE_CXXFLAGS} ${ALL_INCLUDE_DIRS})
 
 # ========== LINK DIRECTORIES AND LIBS ==========
 
 # Get R LDFLAGS
 execute_process(COMMAND ${R_EXECUTABLE} CMD config --ldflags
                 OUTPUT_VARIABLE R_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 string(REGEX MATCHALL "-L[^ ]+" R_LIB_DIRS "${R_LDFLAGS}")
 string(REGEX MATCHALL "-l[^ ]+" R_LIBS "${R_LDFLAGS}")
 
+message(STATUS "R_LDFLAGS: ${R_LDFLAGS}")
+message(STATUS "R_LIB_DIRS: ${R_LIB_DIRS}")
+message(STATUS "R_LIBS: ${R_LIBS}")
 # Get Rcpp link flags
 execute_process(COMMAND ${RSCRIPT_PATH} -e "Rcpp:::LdFlags()"
                 OUTPUT_VARIABLE RCPP_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "RCPP_LDFLAGS: ${RCPP_LDFLAGS}")
 string(REGEX MATCHALL "-L[^ ]+" RCPP_LIB_DIRS "${RCPP_LDFLAGS}")
 string(REGEX MATCHALL "-l[^ ]+" RCPP_LIBS "${RCPP_LDFLAGS}")
 
