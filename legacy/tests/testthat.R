@@ -1,4 +1,4 @@
 library(testthat)
-library(NNS)
+library(LegacyNNS)
 Sys.setenv("OMP_THREAD_LIMIT" = 2)
-test_check("NNS")
+test_check("LegacyNNS")
