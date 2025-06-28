@@ -2,43 +2,66 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include "RInsideGlobal.h"
+#include "rinside.h"
 
 #include "../src/fast_lm.h"
 
 using Catch::Approx;
 
-void show(const Rcpp::List &L)
+void print_list(Rcpp::List r_res)
 {
-    // this function is cumbersome as we haven't defined << operators
-    std::cout << "Showing list content:\n";
-    std::cout << "L[0] " << Rcpp::as<int>(L[0]) << std::endl;
-    std::cout << "L[1] " << Rcpp::as<double>(L[1]) << std::endl;
-    Rcpp::IntegerVector v = Rcpp::as<Rcpp::IntegerVector>(L[2]);
-    std::cout << "L[2][0] " << v[0] << std::endl;
-    std::cout << "L[2][1] " << v[1] << std::endl;
+    Rcpp::CharacterVector names = r_res.names();
+
+    for (int i = 0; i < r_res.size(); ++i)
+    {
+        Rcpp::Rcout << names[i] << ": ";
+
+        SEXP elem = r_res[i];
+
+        if (Rf_isNumeric(elem))
+        {
+            Rcpp::NumericVector vec(elem);
+            Rcpp::Rcout << vec << std::endl;
+        }
+        else if (Rf_isString(elem))
+        {
+            Rcpp::CharacterVector vec(elem);
+            Rcpp::Rcout << vec << std::endl;
+        }
+        else if (Rf_isLogical(elem))
+        {
+            Rcpp::LogicalVector vec(elem);
+            Rcpp::Rcout << vec << std::endl;
+        }
+        else if (Rf_isList(elem))
+        {
+            Rcpp::Rcout << "[list]" << std::endl;
+            // Optionally recurse here
+        }
+        else
+        {
+            Rcpp::Rcout << "[unprintable type]" << std::endl;
+        }
+    }
 }
 
-TEST_CASE("fast_lm_1")
+void printFastLmResult(const NNS::FastLmResult &res)
 {
-    Rcpp::List mylist(3);
-    mylist[0] = 1;
-    mylist[1] = 2.5;
-    Rcpp::IntegerVector v(2);
-    v[0] = 10;
-    v[1] = 11; // with C++0x we could assign directly
-    mylist[2] = v;
-    show(mylist);
+    Rcpp::Rcout << "coef: ";
+    for (double val : res.coef)
+    {
+        Rcpp::Rcout << val << " ";
+    }
+    Rcpp::Rcout << std::endl;
 
-    RINSIDE["myRlist"] = mylist;
-    std::string r_code =
-        "myRlist[[1]] = 42; myRlist[[2]] = 42.0; myRlist[[3]][2] = 42; myRlist";
-
-    Rcpp::List reslist = RINSIDE.parseEval(r_code);
-    show(reslist);
-    INFO("LOL1");
-    REQUIRE(1 + 1 == 2);
+    Rcpp::Rcout << "fitted.values: ";
+    for (double val : res.fitted_values)
+    {
+        Rcpp::Rcout << val << " ";
+    }
+    Rcpp::Rcout << std::endl;
 }
+
 TEST_CASE("fast_lm_2")
 {
     INFO("LOL3");
@@ -89,5 +112,44 @@ TEST_CASE("NNS::mean computes correct mean for different inputs", "[mean]")
     {
         std::vector<int> v(10, 0);
         REQUIRE(mean(v) == 0.0);
+    }
+}
+
+TEST_CASE("NNS::fast_lm output matches that of the legacy NNS R code", "[mean]")
+{
+    // Get the R inside singleton
+    auto &R = NNS_test::rinside::r();
+
+    // Create sample data for NNS-C++
+    std::vector<double> x = {0, 1, 2, 3, 4};
+    std::vector<double> y = {1, 3, 5, 7, 9};
+    // Create sample data for Legacy NNS
+    Rcpp::NumericVector r_x(x.begin(), x.end());
+    Rcpp::NumericVector r_y(y.begin(), y.end());
+    R["x"] = r_x;
+    R["y"] = r_y;
+
+    // Compute fast_lm for NNS-C++
+    NNS::FastLmResult cpp_res = NNS::fast_lm(x, y);
+    // Compute fast_lm for Legacy NNS
+    Rcpp::List r_res = R.parseEval("fast_lm(x, y);");
+    Rcpp::List r_fv = r_res["fitted.values"];
+    Rcpp::NumericVector r_coef = r_res["coef"];
+
+    //
+    // Compare NNS-C++ results with Legacy NNS results
+    REQUIRE(static_cast<std::size_t>(r_coef.size()) == cpp_res.coef.size());
+    REQUIRE(static_cast<std::size_t>(r_fv.size()) == cpp_res.fitted_values.size());
+
+    for (std::size_t i = 0; i < cpp_res.coef.size(); ++i)
+    {
+        INFO("Comparing coef at index " << i);
+        REQUIRE(Approx(r_coef[i]).margin(1e-10) == cpp_res.coef[i]);
+    }
+
+    for (std::size_t i = 0; i < cpp_res.fitted_values.size(); ++i)
+    {
+        INFO("Comparing fitted value at index " << i);
+        REQUIRE(Approx(r_fv[i]).margin(1e-10) == cpp_res.fitted_values[i]);
     }
 }
