@@ -22,6 +22,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+NumericMatrix cholesky_decomposition(NumericMatrix x);
+RcppExport SEXP _LegacyNNS_cholesky_decomposition(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cholesky_decomposition(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_lm_mult
 List fast_lm_mult(NumericMatrix x, NumericVector y);
 RcppExport SEXP _LegacyNNS_fast_lm_mult(SEXP xSEXP, SEXP ySEXP) {
@@ -171,6 +181,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_LegacyNNS_fast_lm", (DL_FUNC) &_LegacyNNS_fast_lm, 2},
+    {"_LegacyNNS_cholesky_decomposition", (DL_FUNC) &_LegacyNNS_cholesky_decomposition, 1},
     {"_LegacyNNS_fast_lm_mult", (DL_FUNC) &_LegacyNNS_fast_lm_mult, 2},
     {"_LegacyNNS_LPM_RCPP", (DL_FUNC) &_LegacyNNS_LPM_RCPP, 3},
     {"_LegacyNNS_UPM_RCPP", (DL_FUNC) &_LegacyNNS_UPM_RCPP, 3},

@@ -7,6 +7,11 @@ fast_lm <- function(x, y) {
 }
 
 #' @export
+cholesky_decomposition <- function(x) {
+    .Call(`_LegacyNNS_cholesky_decomposition`, x)
+}
+
+#' @export
 fast_lm_mult <- function(x, y) {
     .Call(`_LegacyNNS_fast_lm_mult`, x, y)
 }
