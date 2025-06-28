@@ -36,7 +36,7 @@ Returns column-wise matrix of wrt regressors:
 }
 }
 \description{
-Returns the numerical partial derivative of \code{y} with respect to [wrt] any regressor for a point of interest.  Finite difference method is used with \link{NNS.reg} estimates as \code{f(x + h)} and \code{f(x - h)} values.
+Returns the numerical partial derivative of \code{y} with respect to [wrt] any regressor for a point of interest.  Finite difference method is used with \link{LegacyNNS.reg} estimates as \code{f(x + h)} and \code{f(x - h)} values.
 }
 \note{
 For binary regressors, it is suggested to use \code{eval.points = seq(0, 1, .05)} for a better resolution around the midpoint.

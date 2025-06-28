@@ -42,7 +42,7 @@ zlab = "Probability", box = FALSE)
 \references{
 Viole, F. and Nawrocki, D. (2013) "Nonlinear Nonparametric Statistics: Using Partial Moments" (ISBN: 1490523995)
 
-Viole, F. (2017) "Continuous CDFs and ANOVA with NNS" \doi{10.2139/ssrn.3007373}
+Viole, F. (2017) "Continuous CDFs and ANOVA with LegacyNNS" \doi{10.2139/ssrn.3007373}
 }
 \author{
 Fred Viole, OVVO Financial Systems
