@@ -4,7 +4,7 @@ warnings_are_errors: false
 cache: packages
 branches:
   only:
-  - NNS-Beta-Version
+  - LegacyNNS-Beta-Version
 r_binary_packages:
   - RcppGSL 
   - RcppZiggurat 
