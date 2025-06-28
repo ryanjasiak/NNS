@@ -1,13 +1,13 @@
 ## ----setup, include=FALSE, message=FALSE--------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-library(NNS)
+library(LegacyNNS)
 library(data.table)
 data.table::setDTthreads(2L)
 options(mc.cores = 1)
 Sys.setenv("OMP_THREAD_LIMIT" = 2)
 
 ## ----setup2,message=FALSE,warning = FALSE-------------------------------------
-library(NNS)
+library(LegacyNNS)
 library(data.table)
 require(knitr)
 require(rgl)
@@ -16,7 +16,7 @@ require(rgl)
 mpg_auto_trans = mtcars[mtcars$am==1, "mpg"]
 mpg_man_trans = mtcars[mtcars$am==0, "mpg"]
 
-NNS.ANOVA(control = mpg_man_trans, treatment = mpg_auto_trans, robust = TRUE)
+LegacyNNS.ANOVA(control = mpg_man_trans, treatment = mpg_auto_trans, robust = TRUE)
 
 ## ----cars2, warning=FALSE-----------------------------------------------------
 wilcox.test(mpg ~ am, data=mtcars) 
@@ -26,7 +26,7 @@ set.seed(123)
 x = rnorm(1000, mean = 0, sd = 1)
 y = rnorm(1000, mean = 0, sd = 2)
 
-NNS.ANOVA(control = x, treatment = y,
+LegacyNNS.ANOVA(control = x, treatment = y,
           means.only = TRUE, robust = TRUE, plot = TRUE)
 
 t.test(x,y)
@@ -36,17 +36,17 @@ set.seed(123)
 x = rnorm(1000, mean = 0, sd = 1)
 y = rnorm(1000, mean = 1, sd = 1)
 
-NNS.ANOVA(control = x, treatment = y,
+LegacyNNS.ANOVA(control = x, treatment = y,
           means.only = TRUE, robust = TRUE, plot = TRUE)
 
 t.test(x,y)
 
 ## ----unequalmedians, echo=TRUE, fig.width=7, fig.align='center'---------------
-NNS.ANOVA(control = x, treatment = y,
+LegacyNNS.ANOVA(control = x, treatment = y,
           means.only = TRUE, medians = TRUE, robust = TRUE, plot = TRUE)
 
 ## ----stochdom, fig.width=7, fig.align='center'--------------------------------
-NNS.FSD(x, y)
+LegacyNNS.FSD(x, y)
 
 ## ----stochdomset, eval=TRUE---------------------------------------------------
 set.seed(123)
@@ -59,10 +59,10 @@ x6 = x5 + 1
 x7 = rnorm(1000)
 x8 = x7 + 1
 
-NNS.SD.efficient.set(cbind(x1, x2, x3, x4, x5, x6, x7, x8), degree = 1, status = FALSE)
+LegacyNNS.SD.efficient.set(cbind(x1, x2, x3, x4, x5, x6, x7, x8), degree = 1, status = FALSE)
 
 ## ----stochdomclust, eval=TRUE, fig.width=7, fig.align='center'----------------
-NNS.SD.cluster(cbind(x1, x2, x3, x4, x5, x6, x7, x8), degree = 1, dendrogram = TRUE)
+LegacyNNS.SD.cluster(cbind(x1, x2, x3, x4, x5, x6, x7, x8), degree = 1, dendrogram = TRUE)
 
 ## ----threads, echo = FALSE----------------------------------------------------
 Sys.setenv("OMP_THREAD_LIMIT" = "")
