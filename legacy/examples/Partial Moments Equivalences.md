@@ -10,7 +10,7 @@ https://www.linkedin.com/pulse/elements-variance-fred-viole
 
 ## Installation
 ```r
-require(devtools); install_github('OVVO-Financial/NNS', ref = "NNS-Beta-Version")
+require(devtools); install_github('OVVO-Financial/LegacyNNS', ref = "LegacyNNS-Beta-Version")
 ```
 
 ### Mean
@@ -46,9 +46,9 @@ A sum of the squared upside area and the squared downside area.
 [1] 0.8249005
 ```
 
-### The first 4 moments are returned with the function `NNS.moments`. For sample statistics, set `population = FALSE`.
+### The first 4 moments are returned with the function `LegacyNNS.moments`. For sample statistics, set `population = FALSE`.
 ```r
-> NNS.moments(x, population = FALSE)
+> LegacyNNS.moments(x, population = FALSE)
 $mean
 [1] 0.09040591
 
@@ -61,7 +61,7 @@ $skewness
 $kurtosis
 [1] -0.1069186
 
-> NNS.moments(x, population = TRUE)
+> LegacyNNS.moments(x, population = TRUE)
 $mean
 [1] 0.09040591
 
@@ -81,7 +81,7 @@ $kurtosis
 [1] 0.9128159
 > ((UPM(2,mean(x),x)+LPM(2,mean(x),x))*(length(x)/(length(x)-1)))^.5
 [1] 0.9128159
-> sqrt(NNS.moments(x, population = FALSE)$variance)
+> sqrt(LegacyNNS.moments(x, population = FALSE)$variance)
 [1] 0.9128159
 ```
 ### Covariance
@@ -159,7 +159,7 @@ A normalized difference between upside area and downside area.
 [1] 0.06049948
 > ((UPM(3,mean(x),x)-LPM(3,mean(x),x))/(UPM(2,mean(x),x)+LPM(2,mean(x),x))^(3/2))
 [1] 0.06049948
-> NNS.moments(x, population = TRUE)$skewness
+> LegacyNNS.moments(x, population = TRUE)$skewness
 [1] 0.06049948
 ```
 ### UPM/LPM - a more intuitive measure of skewness.  (Upside area / Downside area)
@@ -175,7 +175,7 @@ A normalized sum of upside area and downside area.
 [1] -0.161053
 > ((UPM(4,mean(x),x)+LPM(4,mean(x),x))/(UPM(2,mean(x),x)+LPM(2,mean(x),x))^2)-3
 [1] -0.161053
-> NNS.moments(x, population = TRUE)$kurtosis
+> LegacyNNS.moments(x, population = TRUE)$kurtosis
 [1] -0.161053
 ```
 ### CDFs
@@ -197,8 +197,8 @@ A normalized sum of upside area and downside area.
 > Co.LPM(0,x,y,c(0,1),c(0,1))
 [1] 0.28 0.73
 
-# Alternatively via NNS.CDF()
-> NNS.CDF(x)
+# Alternatively via LegacyNNS.CDF()
+> LegacyNNS.CDF(x)
 ```
 ### Copulas
 ```r
@@ -223,4 +223,4 @@ Co.LPM(0, u_x, u_y, .5, .5)
 ```r
 See the following example explaining Bayes' Theorem and partial moments: 
 ```
-https://github.com/OVVO-Financial/NNS/blob/NNS-Beta-Version/examples/Bayes'%20Theorem%20From%20Partial%20Moments.pdf
+https://github.com/OVVO-Financial/LegacyNNS/blob/LegacyNNS-Beta-Version/examples/Bayes'%20Theorem%20From%20Partial%20Moments.pdf
