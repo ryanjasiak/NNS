@@ -32,6 +32,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+NumericVector forward_substitution(NumericMatrix L, NumericVector b);
+RcppExport SEXP _LegacyNNS_forward_substitution(SEXP LSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type L(LSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(forward_substitution(L, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+NumericVector back_substitution(NumericMatrix L, NumericVector z);
+RcppExport SEXP _LegacyNNS_back_substitution(SEXP LSEXP, SEXP zSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type L(LSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    rcpp_result_gen = Rcpp::wrap(back_substitution(L, z));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fast_lm_mult
 List fast_lm_mult(NumericMatrix x, NumericVector y);
 RcppExport SEXP _LegacyNNS_fast_lm_mult(SEXP xSEXP, SEXP ySEXP) {
@@ -182,6 +204,8 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_LegacyNNS_fast_lm", (DL_FUNC) &_LegacyNNS_fast_lm, 2},
     {"_LegacyNNS_cholesky_decomposition", (DL_FUNC) &_LegacyNNS_cholesky_decomposition, 1},
+    {"_LegacyNNS_forward_substitution", (DL_FUNC) &_LegacyNNS_forward_substitution, 2},
+    {"_LegacyNNS_back_substitution", (DL_FUNC) &_LegacyNNS_back_substitution, 2},
     {"_LegacyNNS_fast_lm_mult", (DL_FUNC) &_LegacyNNS_fast_lm_mult, 2},
     {"_LegacyNNS_LPM_RCPP", (DL_FUNC) &_LegacyNNS_LPM_RCPP, 3},
     {"_LegacyNNS_UPM_RCPP", (DL_FUNC) &_LegacyNNS_UPM_RCPP, 3},

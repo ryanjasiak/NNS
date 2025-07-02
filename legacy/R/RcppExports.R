@@ -12,6 +12,16 @@ cholesky_decomposition <- function(x) {
 }
 
 #' @export
+forward_substitution <- function(x, y) {
+    .Call(`_LegacyNNS_forward_substitution`, x, y)
+}
+
+#' @export
+back_substitution <- function(x, y) {
+    .Call(`_LegacyNNS_back_substitution`, x, y)
+}
+
+#' @export
 fast_lm_mult <- function(x, y) {
     .Call(`_LegacyNNS_fast_lm_mult`, x, y)
 }
