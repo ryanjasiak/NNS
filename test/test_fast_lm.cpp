@@ -4,7 +4,7 @@
 
 #include "rinside.h"
 
-#include "../src/fast_lm.h"
+#include "fast_lm.h"
 
 using Catch::Approx;
 
