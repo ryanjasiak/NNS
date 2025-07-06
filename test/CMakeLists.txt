@@ -1,4 +1,4 @@
-set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB sources ${SRC_DIR}/*.cpp)
 
 message(STATUS "SRC_DIR: ${SRC_DIR}")
@@ -162,6 +162,6 @@ foreach(test_file ${sources})
   get_filename_component(test_name ${test_file} NAME_WE)
   message(STATUS "Creating test: ${test_name}")
   add_executable(${test_name} ${test_file})
-  target_link_libraries(${test_name} ${ALL_LINK_LIBS})
+  target_link_libraries(${test_name} ${ALL_LINK_LIBS} NNS)
   add_test(NAME ${test_name} COMMAND ${test_name})
 endforeach()
