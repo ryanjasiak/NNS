@@ -401,7 +401,7 @@ TEST_CASE("NNS::back_substitution output matches that of the legacy NNS R code",
         {1, 1, 3}
     };
     // Create sample data for Legacy NNS
-   
+    
     // Construct NumericMatrix for R (3x3) in column-major layout
     Rcpp::NumericMatrix r_x(3, 3);
     for (int i = 0; i < 3; ++i)
@@ -483,14 +483,14 @@ TEST_CASE("NNS::fast_lm_mult output matches that of the legacy NNS R code", "[me
     using Scalar = double;
     using Matrix = std::vector<std::vector<Scalar>>;
     Matrix x = {
-        {1, 2},
-        {2, 3},
-        {3, 4},
-        {4, 5}
+        {1, 1},
+        {2, 4},
+        {3, 9},
+        {4, 16}
     };
     // Create sample data for Legacy NNS
 
-    // Construct NumericMatrix for R (4x4) in column-major layout
+    // Construct NumericMatrix for R (4x2) in column-major layout
     Rcpp::NumericMatrix r_x(4, 2);
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 2; ++j)
@@ -509,6 +509,117 @@ TEST_CASE("NNS::fast_lm_mult output matches that of the legacy NNS R code", "[me
     std::vector<double> r_fit  = Rcpp::as<std::vector<double>>(r_res["fitted.values"]);
     std::vector<double> r_resid = Rcpp::as<std::vector<double>>(r_res["residuals"]);
     double r_r2 = Rcpp::as<double>(r_res["r.squared"]);
+
+    // Print coefficients
+    std::cout << "C++ Coefficients: ";
+    for (auto v : cpp_res.coefficients) std::cout << v << " ";
+    std::cout << "\nR Coefficients:   ";
+    for (auto v : r_coef) std::cout << v << " ";
+    std::cout << "\n";
+
+    // Print fitted values
+    std::cout << "C++ Fitted Values: ";
+    for (auto v : cpp_res.fitted_values) std::cout << v << " ";
+    std::cout << "\nR Fitted Values:   ";
+    for (auto v : r_fit) std::cout << v << " ";
+    std::cout << "\n";
+
+    // Print residuals
+    std::cout << "C++ Residuals: ";
+    for (auto v : cpp_res.residuals) std::cout << v << " ";
+    std::cout << "\nR Residuals:   ";
+    for (auto v : r_resid) std::cout << v << " ";
+    std::cout << "\n";
+
+    // Print R^2
+    std::cout << "C++ R^2: " << cpp_res.r_squared << "\n";
+    std::cout << "R R^2:   " << r_r2 << "\n";
+
+
+    // Coefficients
+    REQUIRE(r_coef.size() == cpp_res.coefficients.size());
+    for (std::size_t i = 0; i < r_coef.size(); ++i) {
+        REQUIRE(Approx(r_coef[i]).margin(1e-10) == cpp_res.coefficients[i]);
+    }
+
+    // Fitted values
+    REQUIRE(r_fit.size() == cpp_res.fitted_values.size());
+    for (std::size_t i = 0; i < r_fit.size(); ++i) {
+        REQUIRE(Approx(r_fit[i]).margin(1e-10) == cpp_res.fitted_values[i]);
+    }
+
+    // Residuals
+    REQUIRE(r_resid.size() == cpp_res.residuals.size());
+    for (std::size_t i = 0; i < r_resid.size(); ++i) {
+        REQUIRE(Approx(r_resid[i]).margin(1e-10) == cpp_res.residuals[i]);
+    }
+
+    // R^2
+    REQUIRE(Approx(r_r2).margin(1e-10) == cpp_res.r_squared);
+
+}
+
+TEST_CASE("Version 2: NNS::fast_lm_mult output matches that of the legacy NNS R code", "[mean]")
+{
+    // Get the R inside singleton
+    auto &R = NNS_test::rinside::r();
+
+    // Create sample data for NNS-C++
+    using Scalar = double;
+    using Matrix = std::vector<std::vector<Scalar>>;
+    Matrix x = {
+        {1, 1, 6},
+        {2, 4, 7},
+        {3, 9, 2},
+        {4, 16, 5}
+    };
+    // Create sample data for Legacy NNS
+
+    // Construct NumericMatrix for R (4x3) in column-major layout
+    Rcpp::NumericMatrix r_x(4, 3);
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 3; ++j)
+            r_x(i, j) = x[i][j];  // ✅ Transpose: fix C++ (row-major) -> R (col-major)
+
+    R["x"] = r_x; // Assign x to R -- ready for direct use in R
+
+    vector<double> y = {5, 12, 3, 6};
+    R["y"] = y; // Assign b to R -- ready for direct use in R
+
+    LMResult cpp_res = NNS::fast_lm_mult(x, y);
+
+    Rcpp::List r_res = R.parseEval("fast_lm_mult(x,y)");
+
+    std::vector<double> r_coef = Rcpp::as<std::vector<double>>(r_res["coefficients"]);
+    std::vector<double> r_fit  = Rcpp::as<std::vector<double>>(r_res["fitted.values"]);
+    std::vector<double> r_resid = Rcpp::as<std::vector<double>>(r_res["residuals"]);
+    double r_r2 = Rcpp::as<double>(r_res["r.squared"]);
+
+    // Print coefficients
+    std::cout << "C++ Coefficients: ";
+    for (auto v : cpp_res.coefficients) std::cout << v << " ";
+    std::cout << "\nR Coefficients:   ";
+    for (auto v : r_coef) std::cout << v << " ";
+    std::cout << "\n";
+
+    // Print fitted values
+    std::cout << "C++ Fitted Values: ";
+    for (auto v : cpp_res.fitted_values) std::cout << v << " ";
+    std::cout << "\nR Fitted Values:   ";
+    for (auto v : r_fit) std::cout << v << " ";
+    std::cout << "\n";
+
+    // Print residuals
+    std::cout << "C++ Residuals: ";
+    for (auto v : cpp_res.residuals) std::cout << v << " ";
+    std::cout << "\nR Residuals:   ";
+    for (auto v : r_resid) std::cout << v << " ";
+    std::cout << "\n";
+
+    // Print R^2
+    std::cout << "C++ R^2: " << cpp_res.r_squared << "\n";
+    std::cout << "R R^2:   " << r_r2 << "\n";
+
 
     // Coefficients
     REQUIRE(r_coef.size() == cpp_res.coefficients.size());
