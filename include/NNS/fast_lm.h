@@ -4,6 +4,7 @@
 #include <numeric>
 #include <cmath>
 
+
 using std::sqrt;
 using std::vector;
 
