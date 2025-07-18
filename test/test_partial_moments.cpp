@@ -35,45 +35,72 @@ TEST_CASE("NNS::partial_moment - 1")
 
 TEST_CASE("NNS::co_partial_moment - 1")
 {
-    //
-    //-------------------------------------------------
-    // co_partial_moment
-    //-------------------------------------------------
+    // R instance --------------------------------------------------------------
+    RInside &R = NNS_test::rinside::r();
+
+    // sample data -------------------------------------------------------------
     Eigen::VectorXd x(5);
     x << 0.04, 0.06, 0.02, -0.01, 0.03;
     Eigen::VectorXd y(5);
     y << 0.01, 0.05, 0.00, -0.02, 0.04;
 
-    double k = 2.0;
-    double Tx = 0.0;
+    double k  = 2.0;   // moment degree
+    double Tx = 0.0;   // targets
     double Ty = 0.0;
 
-    double cpm_up = NNS::co_partial_moment<NNS::Tail::Upper>(k, x, y, Tx, Ty);
-    Rcpp::Rcout << "Upper-tail CPM  = " << cpm_up << '\n';
+    // shove C++ data into R ----------------------------------------------------
+    R["x"]  = Rcpp::NumericVector(x.data(), x.data() + x.size());
+    R["y"]  = Rcpp::NumericVector(y.data(), y.data() + y.size());
+    R["k"]  = k;
+    R["Tx"] = Tx;
+    R["Ty"] = Ty;
 
-    double cpm_lo = NNS::co_partial_moment<NNS::Tail::Lower>(k, x, y, Tx, Ty);
-    Rcpp::Rcout << "Lower-tail CPM  = " << cpm_lo << '\n';
+    // ---- upper–tail CPM ------------------------------------------------------
+    double cpm_up_cpp = NNS::co_partial_moment<NNS::Tail::Upper>(k, x, y, Tx, Ty);
+    double cpm_up_r   = R.parseEval("Co.UPM(k, x, y, Tx, Ty)");
+    REQUIRE(cpm_up_cpp == Catch::Approx(cpm_up_r).margin(1e-12));
+    Rcpp::Rcout << "Lower CPM C++ = " << cpm_up_cpp << "\n";
+    Rcpp::Rcout << "Lower CPM R   = " << cpm_up_r << "\n";
+
+    double cpm_lo_cpp = NNS::co_partial_moment<NNS::Tail::Lower>(k, x, y, Tx, Ty);
+    double cpm_lo_r   = R.parseEval("Co.LPM(k, x, y, Tx, Ty)");
+    REQUIRE(cpm_lo_cpp == Catch::Approx(cpm_lo_r).margin(1e-12));
+    Rcpp::Rcout << "Lower CPM C++ = " << cpm_lo_cpp << "\n";
+    Rcpp::Rcout << "Lower CPM R   = " << cpm_lo_r << "\n";
 }
 
 TEST_CASE("NNS::divergent_partial_moment - 1")
 {
-    //
-    //-------------------------------------------------
-    // divergent_partial_moment
-    //-------------------------------------------------
-    Eigen::VectorXd x(4);
-    x << -0.05, 0.02, -0.01, 0.03;
-    Eigen::VectorXd y(4);
-    y << 0.04, -0.02, 0.01, 0.05;
+    // R instance --------------------------------------------------------------
+    RInside &R = NNS_test::rinside::r();
 
-    double k = 1.0;
-    double Tx = 0.0;
+    // sample data -------------------------------------------------------------
+    Eigen::VectorXd x(5);
+    x << 0.04, 0.06, 0.02, -0.01, 0.03;
+    Eigen::VectorXd y(5);
+    y << 0.01, 0.05, 0.00, -0.02, 0.04;
+
+    double k  = 2.0;   // moment degree
+    double Tx = 0.0;   // targets
     double Ty = 0.0;
 
-    // Lower tail for x, upper tail for y
-    double dpm = NNS::divergent_partial_moment<
-        NNS::Tail::Lower,
-        NNS::Tail::Upper>(k, x, y, Tx, Ty);
+    // shove C++ data into R ----------------------------------------------------
+    R["x"]  = Rcpp::NumericVector(x.data(), x.data() + x.size());
+    R["y"]  = Rcpp::NumericVector(y.data(), y.data() + y.size());
+    R["k"]  = k;
+    R["Tx"] = Tx;
+    R["Ty"] = Ty;
 
-    Rcpp::Rcout << "Divergent PM (x lower, y upper) = " << dpm << '\n';
+    // ---- upper–tail CPM ------------------------------------------------------
+    double cpm_up_cpp = NNS::divergent_partial_moment<NNS::Tail::Upper, NNS::Tail::Lower>(k, x, y, Tx, Ty);
+    double cpm_up_r   = R.parseEval("D.UPM(k, k, x, y, Tx, Ty)");
+    REQUIRE(cpm_up_cpp == Catch::Approx(cpm_up_r).margin(1e-12));
+    Rcpp::Rcout << "Lower CPM C++ = " << cpm_up_cpp << "\n";
+    Rcpp::Rcout << "Lower CPM R   = " << cpm_up_r << "\n";
+
+    double cpm_lo_cpp = NNS::divergent_partial_moment<NNS::Tail::Lower, NNS::Tail::Upper>(k, x, y, Tx, Ty);
+    double cpm_lo_r   = R.parseEval("D.LPM(k, k, x, y, Tx, Ty)");
+    REQUIRE(cpm_lo_cpp == Catch::Approx(cpm_lo_r).margin(1e-12));
+    Rcpp::Rcout << "Lower CPM C++ = " << cpm_lo_cpp << "\n";
+    Rcpp::Rcout << "Lower CPM R   = " << cpm_lo_r << "\n";
 }
