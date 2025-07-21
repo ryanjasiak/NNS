@@ -8,6 +8,13 @@
 using std::sqrt;
 using std::vector;
 
+struct LMResult {
+    std::vector<double> coefficients;
+    std::vector<double> fitted_values;
+    std::vector<double> residuals;
+    double r_squared;
+};
+
 namespace NNS
 {
     template <typename Scalar>
@@ -80,7 +87,7 @@ namespace NNS
             // Compute L(j, i) for j > i
             for (int j = i + 1; j < n; ++j)
             {
-                sum = A(j, i);
+                sum = A[j][i];
                 for (int k = 0; k < i; ++k)
                 {
                     sum -= L[j][k] * L[i][k];
@@ -109,7 +116,7 @@ namespace NNS
     }
 
     template <typename Scalar>
-    vector<double> back_substitution(const vector<vector<Scalar>> &L, const vector<Scalar> &z)
+    vector<double> back_substitution_L_transpose(const vector<vector<Scalar>> &L, const vector<Scalar> &z)
     {
         int n = L.size();
         vector<double> x(n);
@@ -118,7 +125,7 @@ namespace NNS
             double sum = z[i];
             for (int j = i + 1; j < n; ++j)
             {
-                sum -= L[i][j] * x[j];
+            sum -= L[j][i] * x[j]; 
             }
             x[i] = sum / L[i][i];
         }
@@ -126,7 +133,7 @@ namespace NNS
     }
 
     template <typename Scalar>
-    vector<double> fast_lm_mult(const vector<vector<Scalar>> &x, const vector<Scalar> &y)
+    LMResult fast_lm_mult(const vector<vector<Scalar>> &x, const vector<Scalar> &y)
     {
         int n = x.size();
         int p = 0;
@@ -144,11 +151,11 @@ namespace NNS
             }
         }
 
-        vector<vector<double>> XtX(p + 1, vector<double>(p, 0.0));
+        vector<vector<double>> XtX(p + 1, vector<double>(p + 1, 0.0));
         vector<double> Xty(p + 1);
-        for (int i = 0; i < p; i++)
+        for (int i = 0; i < p + 1; i++)
         {
-            for (int j = 0; j < p; j++)
+            for (int j = 0; j < p + 1; j++)
             {
                 double sum = 0;
                 for (int k = 0; k < n; k++)
@@ -168,13 +175,13 @@ namespace NNS
 
         vector<double> z = forward_substitution(L, Xty);
 
-        vector<double> coef = back_substitution(L, z);
+        vector<double> coef = back_substitution_L_transpose(L, z);
 
         vector<double> fitted_values(n);
         for (int i = 0; i < n; i++)
         {
             double sum = 0;
-            for (int j = 0; j < p; j++)
+            for (int j = 0; j < p + 1; j++)
             {
                 sum += coef[j] * X[i][j];
             }
@@ -187,7 +194,22 @@ namespace NNS
             residuals[i] = y[i] - fitted_values[i];
         }
 
-        // double y_mean = mean(y);
-        return vector<double>();
+        // Compute R-squared
+        double y_mean = accumulate(y.begin(), y.end(), 0.0) / y.size();
+
+        double TSS = 0.0;
+        for (double val : y) {
+            TSS += pow(val - y_mean, 2);
+        }
+
+        double RSS = 0.0;
+        for (double res : residuals) {
+            RSS += pow(res, 2);
+        }
+
+        double R2 = 1.0 - (RSS / TSS);
+        // Return the result as a struct;
+        return LMResult{coef, fitted_values, residuals, R2};
+        ;
     }
 }
