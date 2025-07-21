@@ -32,7 +32,7 @@ namespace NNS
         template <class... Idx>
         constexpr const T &operator()(Idx... i) const noexcept { return span_(i...); }
 
-// mdspan supports slicing via std::submdspan (P0009r16); you can alias it:
+// mdspan supports slicing via std::submdspan (P0009r16);
 #ifdef __cpp_lib_submdspan
         template <class... SliceSpec>
         constexpr auto subview(SliceSpec... spec) const
