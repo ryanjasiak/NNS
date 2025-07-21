@@ -18,7 +18,6 @@ namespace NNS_P
         Upper
     };
 
-    // Lightweight portable view over a vector (can be reused on GPU)
     template <typename T>
     struct VectorView
     {
