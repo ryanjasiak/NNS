@@ -1,7 +1,3 @@
-// Portable & Parallelized Redesign of NNS Partial Moment
-// - OpenMP-ready
-// - CUDA-ready (host function only here, kernel would be separated)
-// - Eigen-free core logic
 
 #pragma once
 
