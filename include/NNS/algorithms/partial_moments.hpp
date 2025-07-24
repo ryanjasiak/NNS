@@ -1,9 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <ranges>
-#include <type_traits>
-#include <concepts>
 
 #include "../core/common.hpp"
 
