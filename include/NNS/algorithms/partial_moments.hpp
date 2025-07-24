@@ -25,7 +25,7 @@ namespace NNS
         return (val < 0.0) ? 0.0 : std::pow(val, degree);
     }
     template <Tail T, RealRange R>
-    inline double partial_moment_natty(double degree, double target, const R &v)
+    inline double partial_moment(double degree, double target, const R &v)
     {
         double n = static_cast<double>(std::ranges::size(v));
         if (n == 0.0)
@@ -56,12 +56,12 @@ namespace NNS
     template <RealRange R>
     inline double LPM(double d, const R &x, double t)
     {
-        return partial_moment_natty<Tail::Lower>(d, t, x);
+        return partial_moment<Tail::Lower>(d, t, x);
     }
     template <RealRange R>
     inline double UPM(double d, const R &x, double t)
     {
-        return partial_moment_natty<Tail::Upper>(d, t, x);
+        return partial_moment<Tail::Upper>(d, t, x);
     }
 
     //
