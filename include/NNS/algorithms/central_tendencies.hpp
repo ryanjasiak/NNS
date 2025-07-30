@@ -136,7 +136,7 @@ enum class Method { MinMax, RiskNeutral };
 enum class RiskNeutralType { Terminal, Discounted };
 
 template <RealRange Range, Real T>
-auto rescaleMinMax(const Range &x, T a, T b) -> std::vector<T> {
+auto rescale_min_max(const Range &x, T a, T b) -> std::vector<T> {
     auto [minIt, maxIt] = std::ranges::minmax_element(x);
     if (*minIt == *maxIt) {
         throw std::runtime_error("Cannot rescale: max(x) equals min(x)");
@@ -156,7 +156,7 @@ auto rescaleMinMax(const Range &x, T a, T b) -> std::vector<T> {
 }
 
 template <RealRange Range, Real T>
-auto rescaleRiskNeutral(const Range &x, T S0, T r, T T_maturity,
+auto rescale_risk_neutral(const Range &x, T S0, T r, T T_maturity,
                         RiskNeutralType type) -> std::vector<T> {
     if (S0 <= 0) {
         throw std::runtime_error("S0 must be positive for risk-neutral method");
@@ -195,13 +195,13 @@ auto rescale(const Range &x, T a, T b, Method method = Method::MinMax,
 
     switch (method) {
     case Method::MinMax:
-        return rescaleMinMax(x, a, b);
+        return rescale_min_max(x, a, b);
     case Method::RiskNeutral:
         if (!T_maturity.has_value()) {
             throw std::runtime_error("T (time to maturity) must be provided "
                                      "for risk-neutral method");
         }
-        return rescaleRiskNeutral(x, a, b, T_maturity.value(), type);
+        return rescale_risk_neutral(x, a, b, T_maturity.value(), type);
     default:
         throw std::runtime_error("Invalid method specified");
     }
