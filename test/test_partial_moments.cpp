@@ -25,7 +25,7 @@ TEST_CASE("NNS::partial_moment NATTY - 1")
     R["d"] = degree;
     R["t"] = target;
 
-    double e_res = NNS::partial_moment_natty<NNS::Tail::Lower>(degree, target, v);
+    double e_res = NNS::partial_moment<NNS::Tail::Lower>(degree, target, v);
     double r_res = R.parseEval("LPM(d, t, v)");
     Rcpp::Rcout << "e_res: " << e_res << "\n";
     Rcpp::Rcout << "r_res: " << r_res << "\n";

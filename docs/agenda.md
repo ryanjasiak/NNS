@@ -27,7 +27,7 @@ This file will help track the progress of translating each file/function
 | `NumericVector DLPM_RCPP`   | ❌  |
 | `NumericVector DUPM_RCPP`   | ❌  |
 | `List PMMatrix_RCPP`   | ❌  |
-| `List NNS_bin`   | ❌  |
+| `List NNS_bin`   | ✅  |
 
 |❌ [`src/partial_moments.cpp`](https://github.com/OVVO-Financial/NNS/blob/NNS-Beta-Version/src/partial_moments.cpp)   | Status |
 |------------------------------------------------|--------|
@@ -60,3 +60,10 @@ This file will help track the progress of translating each file/function
 | `NumericVector DUPM_RCPP` |❌|
 | `List PMMatrix_RCPP` |❌|
 | `List NNS_bin` |❌|
+
+
+|❌ [`R/Central_tendencies.R`](https://github.com/OVVO-Financial/NNS/blob/NNS-Beta-Version/R/Central_tendencies.R)                                 | Status |
+|------------------------------------------------|--------|
+| `mode` |✅|
+| `gravity` |✅|
+| `rescale` |✅|
