@@ -10,3 +10,4 @@ legacy/src/*.so
 build/
 .venv/
 .DS_Store
+legacy/

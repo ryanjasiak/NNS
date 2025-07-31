@@ -62,8 +62,29 @@ This file will help track the progress of translating each file/function
 | `List NNS_bin` |❌|
 
 
-|❌ [`R/Central_tendencies.R`](https://github.com/OVVO-Financial/NNS/blob/NNS-Beta-Version/R/Central_tendencies.R)                                 | Status |
+|❌ [`R/Central_tendencies.R`](https://github.com/OVVO-Financial/NNS/blob/NNS-Beta-Version/R/Central_tendencies.R) | Status |
 |------------------------------------------------|--------|
 | `mode` |✅|
 | `gravity` |✅|
 | `rescale` |✅|
+
+|❌ [`R/Regression.R`](https://github.com/OVVO-Financial/NNS/blob/NNS-Beta-Version/R/Regression.R) | Status |
+|------------------------------------------------|--------|
+|`univariate_regression`|❌|
+|`multivariate_regression`|❌|
+|`synthetic_regression`|❌|
+|`classification`|❌|
+|`predict_only`|❌|
+|`plot_regression`|❌|
+|`confidence_prediction_intervals`|❌|
+|`estimate_derivatives`|❌|
+
+
+|❌ [`R/LPM_UPM_VaR.R`](https://github.com/OVVO-Financial/NNS/blob/NNS-Beta-Version/R/LPM_UPM_VaR.R) | Status |
+|------------------------------------------------|--------|
+|`UPM.VaR`|❌|
+|`LPM.VaR`|❌|
+
+1. FSD.R
+2. SSD.R
+3. TSD.R
